@@ -1,6 +1,8 @@
 // import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import * as Typography from "@/components/ui/typography";
+import { usePrivy } from "@privy-io/react-auth";
 
 const ActivePlayerCard = () => {
   return (
@@ -34,8 +36,10 @@ const WaitingPlayerCard = () => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const WaitingRoom = () => {
+  const { logout } = usePrivy();
   return (
     <div>
+      <Button onClick={logout}>Log out</Button>
       <header>
         <Typography.TypographyLarge>Waiting for other players to join...</Typography.TypographyLarge>
         <Typography.TypographyMuted>
