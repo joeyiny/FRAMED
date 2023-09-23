@@ -9,6 +9,8 @@ import { ethers } from "ethers";
 import { ChainId } from "@biconomy/core-types";
 import { IPaymaster, BiconomyPaymaster } from "@biconomy/paymaster";
 import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "@biconomy/modules";
+import InGameScreen from "./screens/in-game";
+import { Button } from "./components/ui/button";
 
 const CHAIN_ID = ChainId.POLYGON_MUMBAI;
 
@@ -32,6 +34,7 @@ function App() {
       defaultWalletEntryPosition: ParticleAuthModule.WalletEntryPosition.BR,
     },
   });
+
   const connect = async () => {
     try {
       setLoading(true);
@@ -54,6 +57,7 @@ function App() {
         defaultValidationModule: module,
         activeValidationModule: module,
       });
+
       setAddress(await biconomySmartAccount.getAccountAddress());
       setSmartAccount(biconomySmartAccount);
       setLoading(false);
@@ -71,9 +75,9 @@ function App() {
     <main>
       {/* <h1>Based Account Abstraction</h1> */}
       {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
-      {!loading && !address && <button onClick={connect}>Connect to Based Web3</button>}
+      {!loading && !address && <Button onClick={connect}>Connect to Based Web3</Button>}
       {/* {loading && <p>Loading Smart Account...</p>} */}
-      {address && <h2>You are logged in :)</h2>}
+      {address && <InGameScreen />}
     </main>
   );
 }
