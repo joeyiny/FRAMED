@@ -18,6 +18,7 @@
     "@biconomy/particle-auth": "^3.1.0",
     "@biconomy/paymaster": "^3.1.0",
     "@biconomy/web3-auth": "^3.1.0",
+    "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
