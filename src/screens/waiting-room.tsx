@@ -15,7 +15,7 @@ const ActivePlayerCard = () => {
         />
       </CardContent>
       <CardFooter className="flex w-full flex-col text-left">
-        <Typography.TypographyP className="text-left w-full">Ice Spice</Typography.TypographyP>
+        <Typography.TypographyP className="text-left w-full">Your name</Typography.TypographyP>
         <Typography.TypographySmall className="text-left w-full">0x43f0...6560</Typography.TypographySmall>
       </CardFooter>
     </Card>
