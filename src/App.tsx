@@ -7,8 +7,9 @@ import WaitingRoom from "./screens/waiting-room";
 import { usePrivy } from "@privy-io/react-auth";
 
 function App() {
-  const { login, authenticated } = usePrivy();
+  const { login, authenticated, ready } = usePrivy();
 
+  if (!ready) return <p>loading...</p>;
   return (
     <main>
       {/* <h1>Based Account Abstraction</h1> */}
