@@ -8,7 +8,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Privy.PrivyProvider
       appId={"clmweg8kd00qfl70fb48z6afs"}
-      onSuccess={() => alert("logged in")}
       config={{
         loginMethods: ["email", "wallet"],
         appearance: {
