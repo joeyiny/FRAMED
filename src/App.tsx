@@ -9,8 +9,11 @@ import { ethers } from "ethers";
 import { ChainId } from "@biconomy/core-types";
 import { IPaymaster, BiconomyPaymaster } from "@biconomy/paymaster";
 import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "@biconomy/modules";
-import InGameScreen from "./screens/in-game";
+// import InGameScreen from "./screens/in-game";
 import { Button } from "./components/ui/button";
+import WaitingRoom from "./screens/waiting-room";
+import { useContext } from "react";
+import { StateContext } from "./context.ts";
 
 const CHAIN_ID = ChainId.POLYGON_MUMBAI;
 
@@ -77,7 +80,7 @@ function App() {
       {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
       {!loading && !address && <Button onClick={connect}>Connect to Based Web3</Button>}
       {/* {loading && <p>Loading Smart Account...</p>} */}
-      {address && <InGameScreen />}
+      {address && <WaitingRoom />}
     </main>
   );
 }
