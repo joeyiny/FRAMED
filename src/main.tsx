@@ -10,7 +10,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       appId={"clmweg8kd00qfl70fb48z6afs"}
       onSuccess={() => {}}
       config={{
-        loginMethods: ["wallet", "sms"],
+        loginMethods: ["wallet", "sms", "apple", "google"],
         appearance: {
           theme: "light",
           accentColor: "#FF3D00",
