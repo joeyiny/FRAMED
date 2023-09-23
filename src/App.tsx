@@ -77,7 +77,7 @@ function App() {
     <main>
       {/* <h1>Based Account Abstraction</h1> */}
       {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
-      {!loading && !address && <Button onClick={connect}>Connect to Based Web3</Button>}
+      {!loading && !address && <Button onClick={connect}>JOIN GAME</Button>}
       {/* {loading && <p>Loading Smart Account...</p>} */}
       {address && <WaitingRoom particle={particle} />}
     </main>
