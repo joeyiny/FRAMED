@@ -1,4 +1,12 @@
-# React + TypeScript + Vite
+# Mafia — EthGlobal NY 2023 Hackathon Submission
+
+---
+
+Classic campfire game put onchain with cutting-edge fhEVM technology.
+
+--
+
+## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
