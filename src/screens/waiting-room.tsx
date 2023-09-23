@@ -41,7 +41,7 @@ const WaitingPlayerCard = () => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const WaitingRoom = () => {
-  const { logout, createWallet, user } = usePrivy();
+  const { logout, user } = usePrivy();
 
   return (
     <div className="w-full">
