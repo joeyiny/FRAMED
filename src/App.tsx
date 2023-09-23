@@ -79,7 +79,7 @@ function App() {
       {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
       {!loading && !address && <Button onClick={connect}>Connect to Based Web3</Button>}
       {/* {loading && <p>Loading Smart Account...</p>} */}
-      {address && <WaitingRoom />}
+      {address && <WaitingRoom particle={particle} />}
     </main>
   );
 }
