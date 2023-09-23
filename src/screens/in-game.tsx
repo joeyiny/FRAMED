@@ -1,4 +1,6 @@
+import WaitingRoom from "./waiting-room";
+
 const InGameScreen = () => {
-  return <div>u are in the game.</div>;
+  return <WaitingRoom />;
 };
 export default InGameScreen;
