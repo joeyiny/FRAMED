@@ -30,9 +30,9 @@ const ActivePlayerCard = ({ address }: { address: string }) => {
 
 const WaitingPlayerCard = () => {
   return (
-    <Card className="w-[115px]  text-left bg-none">
+    <Card className="w-[115px]  text-left bg-none border-dashed text-slate-500">
       <CardContent></CardContent>
-      <CardFooter className="flex w-full flex-row">
+      <CardFooter className="flex w-full flex-row items-center justify-center align-middle">
         <Typography.TypographySmall>Waiting for frens to join...</Typography.TypographySmall>
       </CardFooter>
     </Card>
