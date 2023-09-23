@@ -13,7 +13,6 @@ import { ECDSAOwnershipValidationModule, DEFAULT_ECDSA_OWNERSHIP_MODULE } from "
 import { Button } from "./components/ui/button";
 import WaitingRoom from "./screens/waiting-room";
 import { useContext } from "react";
-import { StateContext } from "./context.ts";
 
 const CHAIN_ID = ChainId.POLYGON_MUMBAI;
 
