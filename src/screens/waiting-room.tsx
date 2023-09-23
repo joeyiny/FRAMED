@@ -2,11 +2,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import * as Typography from "@/components/ui/typography";
+import { shortenEthAddress } from "@/lib/utils";
 import { usePrivy } from "@privy-io/react-auth";
-import { fetchEnsName } from "@wagmi/core";
-import { useState, useEffect } from "react";
+// import { fetchEnsName } from "@wagmi/core";
+// import { useState, useEffect } from "react";
 
-const ActivePlayerCard = () => {
+const ActivePlayerCard = ({ address }: { address: string }) => {
   return (
     <Card className="w-[232px] p-4 text-left ">
       <CardContent>
@@ -18,8 +19,10 @@ const ActivePlayerCard = () => {
         />
       </CardContent>
       <CardFooter className="flex w-full flex-col text-left">
-        <Typography.TypographyP className="text-left w-full">Your name</Typography.TypographyP>
-        <Typography.TypographySmall className="text-left w-full">0x43f0...6560</Typography.TypographySmall>
+        <Typography.TypographyP className="text-left w-full">You!</Typography.TypographyP>
+        <Typography.TypographySmall className="text-left w-full">
+          {shortenEthAddress(address)}
+        </Typography.TypographySmall>
       </CardFooter>
     </Card>
   );
@@ -38,12 +41,21 @@ const WaitingPlayerCard = () => {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const WaitingRoom = () => {
-  const { logout } = usePrivy();
+  const { logout, createWallet, user } = usePrivy();
 
   return (
     <div className="w-full">
       <nav className="justify-between w-full flex border-b border-slate-200 items-center py-1">
         <span className="text-red-500 font-bold ">Framed!</span>
+
+        {/* {user?.wallet ? (
+          <p>{user.wallet.address}</p>
+        ) : (
+          <Button size="sm" onClick={async () => await createWallet()}>
+            Create Wallet
+          </Button>
+        )} */}
+
         <Button size="sm" variant="secondary" onClick={logout}>
           Log out
         </Button>
@@ -56,7 +68,7 @@ const WaitingRoom = () => {
         </Typography.TypographyMuted>
       </header>
       <div id="waiting-cards" className="flex flex-row gap-2">
-        <ActivePlayerCard />
+        <ActivePlayerCard address={user?.wallet?.address || ""} />
         <WaitingPlayerCard />
         <WaitingPlayerCard />
         <WaitingPlayerCard />
