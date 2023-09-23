@@ -11,6 +11,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       onSuccess={() => {}}
       config={{
         loginMethods: ["wallet", "sms", "apple", "google"],
+        embeddedWallets: {
+          createOnLogin: "users-without-wallets",
+        },
         appearance: {
           theme: "light",
           accentColor: "#FF3D00",

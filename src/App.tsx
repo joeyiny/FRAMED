@@ -8,10 +8,10 @@ import WaitingRoom from "./screens/waiting-room";
 import { usePrivy } from "@privy-io/react-auth";
 
 function App() {
-  const { authenticated, ready } = usePrivy();
+  const { authenticated, ready, user } = usePrivy();
 
   if (!ready) return <p>loading...</p>;
-  return <>{authenticated ? <WaitingRoom /> : <LoginScreen />}</>;
+  return <>{authenticated && user?.wallet ? <WaitingRoom /> : <LoginScreen />}</>;
 }
 
 export default App;
