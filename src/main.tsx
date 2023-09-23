@@ -1,10 +1,23 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+import * as Privy from "@privy-io/react-auth";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-)
+    <Privy.PrivyProvider
+      appId={"clmweg8kd00qfl70fb48z6afs"}
+      onSuccess={() => alert("logged in")}
+      config={{
+        loginMethods: ["email", "wallet"],
+        appearance: {
+          theme: "light",
+          accentColor: "#676FFF",
+          logo: "https://your-logo-url",
+        },
+      }}>
+      <App />
+    </Privy.PrivyProvider>
+  </React.StrictMode>
+);

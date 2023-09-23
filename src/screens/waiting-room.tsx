@@ -1,7 +1,6 @@
 // import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import * as Typography from "@/components/ui/typography";
-import { ParticleAuthModule } from "@biconomy/particle-auth";
 
 const ActivePlayerCard = () => {
   return (
@@ -34,7 +33,7 @@ const WaitingPlayerCard = () => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const WaitingRoom = ({ particle }: { particle: ParticleAuthModule.ParticleNetwork }) => {
+const WaitingRoom = () => {
   return (
     <div>
       <header>
