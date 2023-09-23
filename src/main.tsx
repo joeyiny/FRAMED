@@ -8,8 +8,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <Privy.PrivyProvider
       appId={"clmweg8kd00qfl70fb48z6afs"}
+      onSuccess={() => {}}
       config={{
-        loginMethods: ["email", "wallet"],
+        loginMethods: ["sms"],
         appearance: {
           theme: "light",
           accentColor: "#676FFF",
