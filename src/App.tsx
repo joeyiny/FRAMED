@@ -27,6 +27,8 @@ function App() {
     paymasterUrl: "https://paymaster.biconomy.io/api/v1/80001/guQhvlLnJ.fdbac399-b062-443c-a827-0d18d45f879a",
   });
 
+  //PRIVY app id: clmweg8kd00qfl70fb48z6afs
+
   const particle = new ParticleAuthModule.ParticleNetwork({
     projectId: "af0a7a24-5167-41ae-b85d-e4f70503553f",
     clientKey: "cm3nVwaX5JFjjtzwacZAGof9Op4oB34X8g3BzN8b",
