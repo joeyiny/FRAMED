@@ -2,7 +2,7 @@
 import "./App.css";
 
 // import InGameScreen from "./screens/in-game";
-import { Button } from "./components/ui/button";
+// import { Button } from "./components/ui/button";
 import LoginScreen from "./screens/login";
 import WaitingRoom from "./screens/waiting-room";
 import { usePrivy } from "@privy-io/react-auth";
