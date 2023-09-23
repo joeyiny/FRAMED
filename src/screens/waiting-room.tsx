@@ -81,6 +81,9 @@ const WaitingRoom = () => {
         <WaitingPlayerCard />
         <WaitingPlayerCard />
       </div>
+      <Button size="lg" disabled className="mt-8">
+        Start Game
+      </Button>
     </div>
   );
 };
