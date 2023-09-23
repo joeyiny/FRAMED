@@ -11,10 +11,18 @@ function App() {
 
   if (!ready) return <p>loading...</p>;
   return (
-    <main>
+    <main className="flex items-center justify-center min-h-screen min-w-screen">
       {/* <h1>Based Account Abstraction</h1> */}
       {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
-      {!authenticated && <Button onClick={login}>PLAY FRAMED!</Button>}
+      <div className="space-y-6">
+        <img src="assets/logo.png" width={220} alt="FRAMED!"></img>
+
+        {!authenticated && (
+          <Button size={"lg"} onClick={login}>
+            PLAY!
+          </Button>
+        )}
+      </div>
       {/* {loading && <p>Loading Smart Account...</p>} */}
       {authenticated && <WaitingRoom />}
     </main>
