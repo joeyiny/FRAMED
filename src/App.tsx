@@ -14,7 +14,7 @@ function App() {
     <main>
       {/* <h1>Based Account Abstraction</h1> */}
       {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
-      {!authenticated && <Button onClick={login}>JOIN GAME</Button>}
+      {!authenticated && <Button onClick={login}>PLAY FRAMED!</Button>}
       {/* {loading && <p>Loading Smart Account...</p>} */}
       {authenticated && <WaitingRoom />}
     </main>

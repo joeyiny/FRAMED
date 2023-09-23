@@ -10,11 +10,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       appId={"clmweg8kd00qfl70fb48z6afs"}
       onSuccess={() => {}}
       config={{
-        loginMethods: ["sms"],
+        loginMethods: ["wallet", "sms"],
         appearance: {
           theme: "light",
-          accentColor: "#676FFF",
-          logo: "https://your-logo-url",
+          accentColor: "#FF3D00",
+          logo: "https://i.imgur.com/N9VR8K1.png",
         },
       }}>
       <App />
