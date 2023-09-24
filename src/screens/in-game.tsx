@@ -22,7 +22,7 @@ import {
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
-export const CONTRACT_ADDRESS = "0x94552868518b7Dec3cA5EA0E1BdD92503D366bb7";
+export const CONTRACT_ADDRESS = "0xF8F7799aB5Edf9F5D32B9658b227BE90Cc3d00B3";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
@@ -83,7 +83,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       {/* <p>{ensName}</p> */}
       <div className="my-16">
         {/* {gamePhase} */}
-        {gamePhase === GamePhase.WaitingForPlayers && (
+        {!loading && gamePhase === GamePhase.WaitingForPlayers && (
           <Typography.TypographyLarge className="animate-pulse">
             {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
           </Typography.TypographyLarge>
@@ -123,7 +123,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
         )}
       </div>
       {loading ? (
-        "loading..."
+        <div className="w-full">loading...</div>
       ) : (
         <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
           {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}
