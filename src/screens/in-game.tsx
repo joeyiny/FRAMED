@@ -32,7 +32,6 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       console.log(log);
     },
   });
-  let instance: any;
 
   useEffect(() => {
     async function fetchInstance() {
@@ -40,34 +39,6 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     }
     fetchInstance();
   }, []);
-
-  const initializeGame = async () => {
-    // const originalArray = [1, 2, 3, 4, 4];
-    const originalArray = [1, 2, 3];
-    const shuffledArray = [...originalArray];
-    // Shuffle the copied array
-    shuffleArray(shuffledArray);
-
-    for (let i = 0; i < shuffledArray.length; i++) {
-      shuffledArray[i] = instance.encrypt8(shuffledArray[i]);
-    }
-
-    console.log(shuffledArray.length);
-    try {
-      const signer = await provider.getSigner();
-      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
-      setLoading("Initializing game...");
-      const transaction = await contract.initializeGame(shuffledArray);
-      setLoading("Waiting for transaction validation...");
-      await provider.waitForTransaction(transaction.hash);
-      setLoading("");
-      setDialog("Game Initialized!");
-    } catch (e) {
-      console.log(e);
-      setLoading("");
-      setDialog("Transaction error!");
-    }
-  };
 
   return (
     <>
