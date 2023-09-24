@@ -58,7 +58,7 @@ export const queryUsers = async () => {
     const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
     // setLoading("Joining Game...");
     const result = await contract.getPlayersArray();
-    console.log(result);
+    return result;
     // setLoading("Success!");
   } catch (e) {
     console.log(e);

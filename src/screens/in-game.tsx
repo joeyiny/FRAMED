@@ -18,16 +18,20 @@ export const CONTRACT_ADDRESS = "0x1d576bE5C42dd9A0682f8E1354EB15A4Ce2d0795";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
   const { user } = usePrivy();
-  const [loading, setLoading] = useState("");
+  const [loading, setLoading] = useState(true);
   const [dialog, setDialog] = useState("");
   const [userRole, setUserRole] = useState("");
   const [isCaught, setIsCaught] = useState(null);
-  // const [players, setPlayers] = useState<[unknown] | null>();
+  const [players, setPlayers] = useState<[unknown] | null>();
+  const eventListener = (log) => {
+    console.log(log);
+  };
 
   useContractEvent({
     address: CONTRACT_ADDRESS,
     abi: mafiaABI,
     eventName: "JoinGame",
+    // listener: eventListener,
     listener(log) {
       console.log(log);
     },
@@ -38,6 +42,15 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       instance = await getInstance();
     }
     fetchInstance();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const p = await queryUsers();
+      setLoading(false);
+      setPlayers(p);
+    };
+    fetchData();
   }, []);
 
   return (
@@ -51,15 +64,20 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
           {/* <Typography.TypographySmall>1/6 players joined</Typography.TypographySmall> */}
         </Typography.TypographyMuted>
       </div>
-      <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
-        <ActivePlayerCard address={user?.wallet?.address || ""} />
-        <WaitingPlayerCard />
-        <WaitingPlayerCard />
-        <WaitingPlayerCard />
-        <WaitingPlayerCard />
-      </div>
+      {loading ? (
+        "loading..."
+      ) : (
+        <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
+          {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}
+          {players && players.map((p) => <ActivePlayerCard address={p} />)}
+          {/* <WaitingPlayerCard />
+          <WaitingPlayerCard />
+          <WaitingPlayerCard />
+          <WaitingPlayerCard /> */}
+        </div>
+      )}
       {dialog && <div>{dialog}</div>}
-      {loading && <div>{loading}</div>}
+      {/* {loading && <div>{loading}</div>} */}
       {gamePhase === GamePhase.WaitingForPlayers && (
         <Button onClick={joinGame} size="lg" className="mt-8">
           Join Game
