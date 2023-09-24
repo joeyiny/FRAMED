@@ -84,8 +84,8 @@ export const joinGame = async () => {
   }
 };
 
-export const takeAction = async () => {
-  const playerId = 2;
+export const takeAction = async (playerId: number) => {
+  // const playerId = 2;
   try {
     const instance = await getInstance();
     const encryptedData = instance.encrypt8(playerId);

@@ -109,7 +109,9 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
             players.map((p) => <ActivePlayerCard address={p} />)}
           {players &&
             gamePhase === GamePhase.AwaitPlayerActions &&
-            players.map((p, i) => <ClickablePlayerCard index={i} address={p} onClick={() => alert(i)} />)}
+            players.map((p, i) => (
+              <ClickablePlayerCard index={i} address={p} onClick={async () => await doAction(i)} />
+            ))}
           {/* <WaitingPlayerCard />
           <WaitingPlayerCard />
           <WaitingPlayerCard />
@@ -164,4 +166,6 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
 };
 export default InGameScreen;
 
-let selectCard = () => {};
+const doAction = async (i: number) => {
+  takeAction(i);
+};
