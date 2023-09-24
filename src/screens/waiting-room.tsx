@@ -7,7 +7,7 @@ import { shortenEthAddress } from "@/lib/utils";
 import { usePrivy } from "@privy-io/react-auth";
 // import { fetchEnsName } from "@wagmi/core";
 import { useState, useEffect } from "react";
-import { getInstance, provider } from "../lib/fhevm";
+import { getInstance, provider, getTokenSignature } from "../lib/fhevm";
 import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 
@@ -66,6 +66,16 @@ const WaitingRoom = () => {
   const { user } = usePrivy();
   const [loading, setLoading] = useState("");
   const [dialog, setDialog] = useState("");
+  const [userRole, setUserRole] = useState("");
+  const [isCaught, setIsCaught] = useState(null);
+  let instance: any;
+
+  useEffect(() => {
+    async function fetchInstance() {
+      instance = await getInstance();
+    }
+    fetchInstance();
+  }, []);
 
   const joinGame = async () => {
     try {
@@ -79,6 +89,129 @@ const WaitingRoom = () => {
       console.log(e);
       setLoading("");
       setDialog("Error during joining!");
+    }
+  };
+
+  const takeAction = async () => {
+    const playerId = 2;
+    try {
+      const encryptedData = instance.encrypt8(playerId);
+      const signer = await provider.getSigner();
+      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
+      setLoading("Taking Action on selected player...");
+      const transaction = await contract.action(encryptedData);
+      console.log(encryptedData);
+      setLoading("Waiting for transaction validation...");
+      await provider.waitForTransaction(transaction.hash);
+      setLoading("");
+      setDialog("Action has been taken");
+    } catch (e) {
+      console.log(e);
+      setLoading("");
+      setDialog("Transaction error!");
+    }
+  };
+
+  const votePlayer = async () => {
+    const playerId = 2;
+    try {
+      const signer = await provider.getSigner();
+      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
+      setLoading("Casting vote on selected player...");
+      const transaction = await contract.castVote(playerId);
+      setLoading("Waiting for transaction validation...");
+      await provider.waitForTransaction(transaction.hash);
+      setLoading("");
+      setDialog("Vote has been casted");
+    } catch (e) {
+      console.log(e);
+      setLoading("");
+      setDialog("Transaction error!");
+    }
+  };
+
+  const viewRole = async () => {
+    try {
+      const signer = await provider.getSigner();
+      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
+      setLoading("Decrypting User Role...");
+      const { publicKey, signature } = await getTokenSignature(
+        CONTRACT_ADDRESS,
+        signer.address
+      );
+      const ciphertext = await contract.viewOwnRole(publicKey, signature);
+      console.log(ciphertext);
+      const userCreditScoreDecrypted = instance.decrypt(
+        CONTRACT_ADDRESS,
+        ciphertext
+      );
+      console.log(ciphertext, userCreditScoreDecrypted);
+      setUserRole(userCreditScoreDecrypted);
+      setLoading("");
+    } catch (e) {
+      console.log(e);
+      setLoading("");
+      setDialog("Error during reencrypt!");
+    }
+  };
+
+  const shuffleArray = (arr: any) => {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+  };
+
+  const initializeGame = async () => {
+    // const originalArray = [1, 2, 3, 4, 4];
+    const originalArray = [1, 2, 3];
+    const shuffledArray = [...originalArray];
+    // Shuffle the copied array
+    shuffleArray(shuffledArray);
+
+    for (let i = 0; i < shuffledArray.length; i++) {
+      shuffledArray[i] = instance.encrypt8(shuffledArray[i]);
+    }
+
+    console.log(shuffledArray.length);
+    try {
+      const signer = await provider.getSigner();
+      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
+      setLoading("Initializing game...");
+      const transaction = await contract.initializeGame(shuffledArray);
+      setLoading("Waiting for transaction validation...");
+      await provider.waitForTransaction(transaction.hash);
+      setLoading("");
+      setDialog("Game Initialized!");
+    } catch (e) {
+      console.log(e);
+      setLoading("");
+      setDialog("Transaction error!");
+    }
+  };
+
+  const viewCaught = async () => {
+    try {
+      const signer = await provider.getSigner();
+      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
+      setLoading("Decrypting if selected target is Mafia...");
+      const { publicKey, signature } = await getTokenSignature(
+        CONTRACT_ADDRESS,
+        signer.address
+      );
+      const ciphertext = await contract.viewCaught(publicKey, signature);
+      console.log(ciphertext);
+      const userCreditScoreDecrypted = instance.decrypt(
+        CONTRACT_ADDRESS,
+        ciphertext
+      );
+      console.log(ciphertext, userCreditScoreDecrypted);
+      setUserRole(userCreditScoreDecrypted);
+      setLoading("");
+    } catch (e) {
+      console.log(e);
+      setLoading("");
+      setDialog("Error during reencrypt!");
     }
   };
 
@@ -109,6 +242,13 @@ const WaitingRoom = () => {
       <Button onClick={joinGame} size="lg" className="mt-8">
         Join Game
       </Button>
+      <Button onClick={initializeGame}>Initialize Game</Button>
+      <Button onClick={takeAction}>Take Action</Button>
+      <Button onClick={votePlayer}>Vote Player</Button>
+      <Button onClick={viewRole}>View Role</Button>
+      {userRole && <div>{userRole}</div>}
+      <Button onClick={viewCaught}>View Caught</Button>
+      {isCaught && <div>{isCaught}</div>}
     </>
   );
 };
