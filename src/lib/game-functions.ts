@@ -112,3 +112,15 @@ export const viewRole = async () => {
     // setDialog("Error during reencrypt!");
   }
 };
+
+export const getGameStateFromContract = async () => {
+  try {
+    const signer = await provider.getSigner();
+    const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
+    const r = await contract.gameState();
+    return Number(r);
+  } catch (e) {
+    console.log(e);
+    console.log("Couldnt get game state from the contract.");
+  }
+};

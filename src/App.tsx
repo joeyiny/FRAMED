@@ -35,7 +35,7 @@ function App() {
             {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
             {!authenticated && <Button onClick={login}>JOIN GAME</Button>}
             {/* {loading && <p>Loading Smart Account...</p>} */}
-            {authenticated && <WaitingRoom />}
+            {authenticated && <InGameScreen />}
           </div>
         )}
       </Connect>

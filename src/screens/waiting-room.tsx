@@ -11,7 +11,7 @@ import mafiaABI from "../abi/mafia.json";
 import { useContractEvent } from "wagmi";
 import { joinGame, queryUsers, takeAction, viewCaught, viewRole, votePlayer } from "@/lib/game-functions";
 
-export const CONTRACT_ADDRESS = "0x8690183c936864a6a65280DBAd00004493B3020D";
+export const CONTRACT_ADDRESS = "0x1d576bE5C42dd9A0682f8E1354EB15A4Ce2d0795";
 
 const ActivePlayerCard = ({ address }: { address: string }) => {
   const { user } = usePrivy();
