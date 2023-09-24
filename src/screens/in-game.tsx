@@ -62,42 +62,41 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     fetchData();
   }, []);
 
-  const renderWaitingPhase = () => (
-    <Typography.TypographyLarge className="animate-pulse">
-      {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
-    </Typography.TypographyLarge>
-  );
-
-  const renderActionPhase = () => (
-    <>
-      <Typography.TypographyLarge>Your role is {playerRole}</Typography.TypographyLarge>
-      {playerRole !== PlayerRole.Unknown && (
-        <Typography.TypographyMuted>
-          <Typography.TypographySmall>{actionTextByRole[playerRole]}</Typography.TypographySmall>
-        </Typography.TypographyMuted>
-      )}
-    </>
-  );
-
-  const actionTextByRole = {
-    [PlayerRole.Citizen]: "Vote for who you think the thief is.",
-    [PlayerRole.Thief]: "Choose the player you want to kill.",
-    [PlayerRole.Detective]: "Choose the player you want to examine.",
-    [PlayerRole.Cop]: "Choose the player you want to save.",
-  };
-
   return (
     <>
+      {/* <p>{ensName}</p> */}
       <div className="my-16">
-        {gamePhase === GamePhase.WaitingForPlayers && renderWaitingPhase()}
-        {gamePhase === GamePhase.AwaitPlayerActions && (
-          <>
-            {playerRole === PlayerRole.Unknown ? (
-              <Typography.TypographyLarge>Let's check to see what your role is!</Typography.TypographyLarge>
-            ) : (
-              renderActionPhase()
-            )}
-          </>
+        {gamePhase === GamePhase.WaitingForPlayers && (
+          <Typography.TypographyLarge className="animate-pulse">
+            {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
+          </Typography.TypographyLarge>
+        )}
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && (
+          <Typography.TypographyLarge>Let's check to see what your role is!</Typography.TypographyLarge>
+        )}
+
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole !== PlayerRole.Unknown && (
+          <Typography.TypographyLarge>Your role is {playerRole}</Typography.TypographyLarge>
+        )}
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Citizen && (
+          <Typography.TypographyMuted>
+            <Typography.TypographySmall>Vote for who you think the thief is.</Typography.TypographySmall>
+          </Typography.TypographyMuted>
+        )}
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Thief && (
+          <Typography.TypographyMuted>
+            <Typography.TypographySmall>Choose the player you want to kill.</Typography.TypographySmall>
+          </Typography.TypographyMuted>
+        )}
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Cop && (
+          <Typography.TypographyMuted>
+            <Typography.TypographySmall>Choose the player you want to save.</Typography.TypographySmall>
+          </Typography.TypographyMuted>
+        )}
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Detective && (
+          <Typography.TypographyMuted>
+            <Typography.TypographySmall>Choose the player you want to examine.</Typography.TypographySmall>
+          </Typography.TypographyMuted>
         )}
       </div>
       {loading ? (
