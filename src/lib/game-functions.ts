@@ -1,4 +1,4 @@
-import { CONTRACT_ADDRESS } from "@/screens/waiting-room";
+import { CONTRACT_ADDRESS } from "@/screens/in-game";
 import { getInstance, getTokenSignature, provider } from "../lib/fhevm";
 import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
