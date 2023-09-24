@@ -3,7 +3,7 @@ import { TypographyH2 } from "@/components/ui/typography";
 const PendingGame = () => {
   return (
     <div>
-      <TypographyH2>Checking game state...</TypographyH2>
+      <TypographyH2>Loading...</TypographyH2>
     </div>
   );
 };
