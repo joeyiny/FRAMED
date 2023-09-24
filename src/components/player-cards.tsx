@@ -4,8 +4,9 @@ import { Badge } from "./ui/badge";
 import * as Typography from "./ui/typography";
 import { shortenEthAddress } from "@/lib/utils";
 
-export const ActivePlayerCard = ({ address }: { address: string }) => {
+export const ActivePlayerCard = ({ address, index }: { address: string; index: number }) => {
   const { user } = usePrivy();
+
   return (
     <Card
       className="w-[180px] p-4 text-left bg-white  "
@@ -17,7 +18,7 @@ export const ActivePlayerCard = ({ address }: { address: string }) => {
           <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>
         )}
         <img
-          src="https://s3-alpha-sig.figma.com/img/c3c5/6ff8/3dc3aa718f4d938a03dfe6d5a1fa9001?Expires=1696204800&Signature=XYOcIlYbd2v29OdbO8jk3D~PyHBzTgVmBqKCswyl~-Cttm6XkbmACDIO-l12FqEJ1qg-C~Dlfi-M-qBPYUhjL-i-ALPoBXznJctnekksJeb8wsUyMqGhx5cI64qhkIQm-aYgWAuWt-nQGAHljbNA55pYtxoV3hdjfcmJt001pwMzIDZBF87wn2sksYCjn5MRqAVWQlI0LHPpl2p~vnBzHwGgZYAykGAGosH71vbUI7Qvgc8K-NK~KNn1kr4-4R9ux04oX2tB~TwIVYKK5YDBi2sCBg-dXhjdWZfNFBDsHOn1ypFWjT0YIHqRqcCkzdcaGoM6dIUt1THbOpPDJuIvLA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"
+          src={`assets/avatars/${index}.jpeg`}
           width={200}
           height={200}
           // fill
@@ -66,8 +67,7 @@ export const ClickablePlayerCard = ({
             <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>
           )}
           <img
-            draggable={false}
-            src="https://s3-alpha-sig.figma.com/img/c3c5/6ff8/3dc3aa718f4d938a03dfe6d5a1fa9001?Expires=1696204800&Signature=XYOcIlYbd2v29OdbO8jk3D~PyHBzTgVmBqKCswyl~-Cttm6XkbmACDIO-l12FqEJ1qg-C~Dlfi-M-qBPYUhjL-i-ALPoBXznJctnekksJeb8wsUyMqGhx5cI64qhkIQm-aYgWAuWt-nQGAHljbNA55pYtxoV3hdjfcmJt001pwMzIDZBF87wn2sksYCjn5MRqAVWQlI0LHPpl2p~vnBzHwGgZYAykGAGosH71vbUI7Qvgc8K-NK~KNn1kr4-4R9ux04oX2tB~TwIVYKK5YDBi2sCBg-dXhjdWZfNFBDsHOn1ypFWjT0YIHqRqcCkzdcaGoM6dIUt1THbOpPDJuIvLA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4"
+            src={`assets/avatars/${index}.jpeg`}
             width={200}
             height={200}
             // fill
