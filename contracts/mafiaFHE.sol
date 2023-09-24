@@ -31,6 +31,7 @@ contract Mafia is EIP712WithModifier {
     }
 
     mapping (address => Player) public players;
+    mapping (address => bool) joinedGame;
     mapping (address => euint8) public target;
     mapping (uint8 => Player) public idToPlayer; 
     mapping (address => bool) public hasVoted;
@@ -55,6 +56,10 @@ contract Mafia is EIP712WithModifier {
 
     constructor() EIP712WithModifier("Authorization token", "1") {
         owner = msg.sender;
+    }
+
+    function getPlayersArray() public view returns(address[] memory) {
+        return playersList;
     }
 
     function initializeGame(bytes[] calldata roles) public {
@@ -85,7 +90,9 @@ contract Mafia is EIP712WithModifier {
     // join the game
     function joinGame() public {
         require(playersList.length < 3);
+        require(!joinedGame[msg.sender]);
         playersList.push(msg.sender);
+        joinedGame[msg.sender] = true;
         emit JoinGame(msg.sender, playerCount);
     }
 
@@ -123,6 +130,7 @@ contract Mafia is EIP712WithModifier {
         }
 
     }
+
 
     function revealNextDay() public {
         ebool isVictimSaved = TFHE.eq(killedPlayerId, savedPlayerId);

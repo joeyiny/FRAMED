@@ -1,5 +1,38 @@
 [
 	{
+		"inputs": [
+			{
+				"internalType": "bytes",
+				"name": "selectedPlayer",
+				"type": "bytes"
+			}
+		],
+		"name": "action",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "_playerId",
+				"type": "uint8"
+			}
+		],
+		"name": "castVote",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "checkIfMafiaKilled",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
 		"type": "constructor"
@@ -28,6 +61,12 @@
 				"internalType": "address",
 				"name": "_playerAddress",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint8",
+				"name": "_actionCount",
+				"type": "uint8"
 			}
 		],
 		"name": "Action",
@@ -77,12 +116,45 @@
 			{
 				"indexed": false,
 				"internalType": "uint8",
+				"name": "_playerExiled",
+				"type": "uint8"
+			}
+		],
+		"name": "Exiled",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint8",
 				"name": "_gameCount",
 				"type": "uint8"
 			}
 		],
 		"name": "InitGame",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes[]",
+				"name": "roles",
+				"type": "bytes[]"
+			}
+		],
+		"name": "initializeGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "joinGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -92,6 +164,12 @@
 				"internalType": "address",
 				"name": "_playerAddress",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint8",
+				"name": "_playerId",
+				"type": "uint8"
 			}
 		],
 		"name": "JoinGame",
@@ -102,19 +180,46 @@
 		"inputs": [
 			{
 				"indexed": false,
+				"internalType": "uint8",
+				"name": "_playerKilled",
+				"type": "uint8"
+			}
+		],
+		"name": "Killed",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes[]",
+				"name": "roles",
+				"type": "bytes[]"
+			}
+		],
+		"name": "newGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
 				"internalType": "bool",
 				"name": "_killed",
 				"type": "bool"
-			},
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_killedAddress",
-				"type": "address"
 			}
 		],
 		"name": "NextDay",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "revealNextDay",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -142,19 +247,6 @@
 		"type": "event"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "bytes",
-				"name": "selectedPlayer",
-				"type": "bytes"
-			}
-		],
-		"name": "action",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "actionCount",
 		"outputs": [
@@ -165,26 +257,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "_playerId",
-				"type": "uint8"
-			}
-		],
-		"name": "castVote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "checkIfMafiaKilled",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -225,6 +297,19 @@
 				"internalType": "uint256[]",
 				"name": "extensions",
 				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getPlayersArray",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
 			}
 		],
 		"stateMutability": "view",
@@ -303,19 +388,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "bytes[]",
-				"name": "roles",
-				"type": "bytes[]"
-			}
-		],
-		"name": "initializeGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "investigatedPlayerId",
 		"outputs": [
@@ -356,13 +428,6 @@
 	},
 	{
 		"inputs": [],
-		"name": "joinGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "killedPlayerId",
 		"outputs": [
 			{
@@ -385,19 +450,6 @@
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes[]",
-				"name": "roles",
-				"type": "bytes[]"
-			}
-		],
-		"name": "newGame",
-		"outputs": [],
-		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -429,25 +481,6 @@
 	{
 		"inputs": [],
 		"name": "playerKilled",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"name": "playerVoteCount",
 		"outputs": [
 			{
 				"internalType": "uint8",
@@ -512,10 +545,22 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "revealNextDay",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"inputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"name": "playerVoteCount",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
