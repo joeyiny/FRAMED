@@ -22,8 +22,47 @@
 	},
 	{
 		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_playerAddress",
+				"type": "address"
+			}
+		],
+		"name": "Action",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
 		"inputs": [],
 		"name": "EIP712DomainChanged",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "uint8",
+				"name": "_gameCount",
+				"type": "uint8"
+			}
+		],
+		"name": "InitializeGame",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_playerAddress",
+				"type": "address"
+			}
+		],
+		"name": "JoinGame",
 		"type": "event"
 	},
 	{
@@ -330,6 +369,19 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "bytes[]",
+				"name": "roles",
+				"type": "bytes[]"
+			}
+		],
+		"name": "newGame",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "owner",
 		"outputs": [
@@ -455,6 +507,32 @@
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "viewOwnRole",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "voteCount",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
