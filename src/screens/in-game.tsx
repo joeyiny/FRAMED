@@ -14,9 +14,9 @@ const InGameScreen = () => {
         {gamePhase === "tutorial" && <TutorialFlow setGamePhase={setGamePhase} />}
         {gamePhase === "inRoom" && <WaitingRoom />}
       </main>
-      {/* <section className="absolute w-72 right-0 top-0 h-screen">
+      <section className="absolute w-80 right-0 top-0 h-screen">
         <Chat />
-      </section> */}
+      </section>
     </div>
   );
 };

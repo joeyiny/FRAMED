@@ -10,7 +10,7 @@ const Login = () => {
       <div className="space-y-2 flex flex-col items-center">
         <img src="assets/logo.png" width={220} alt="FRAMED!" />
         {/* the image below */}
-        <img src="assets/sticker.png" className="absolute right-[450px] bottom-[90px]" width={320} />
+        <img src="assets/sticker.png" className="absolute right-[520px] bottom-[210px]" width={200} />
         <TypographyH4 className="text-slate-700 text-base">in it for the art 🫡</TypographyH4>
 
         {/* <TypographyH4 className="text-slate-700 text-base">Groundbreaking encrypted blockchain game</TypographyH4> */}
