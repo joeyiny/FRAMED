@@ -7,10 +7,10 @@ const Login = () => {
   return (
     <main className="flex items-center justify-center min-h-screen min-w-screen">
       <img src="assets/frame.png" className="w-[480px] absolute -z-20" />
-      <div className="space-y-2 flex flex-col items-center relative">
-        <img src="assets/logo.png" width={220} alt="FRAMED!"></img>
+      <div className="space-y-2 flex flex-col items-center">
+        <img src="assets/logo.png" width={220} alt="FRAMED!" />
         {/* the image below */}
-        <img src="assets/sticker.png" className="absolute left-32 top-36"></img>
+        <img src="assets/sticker.png" className="absolute right-[450px] bottom-[90px]" width={320} />
         <TypographyH4 className="text-slate-700 text-base">in it for the art 🫡</TypographyH4>
 
         {/* <TypographyH4 className="text-slate-700 text-base">Groundbreaking encrypted blockchain game</TypographyH4> */}
