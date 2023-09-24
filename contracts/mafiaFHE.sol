@@ -8,14 +8,12 @@ import "hardhat/console.sol";
 
 contract Mafia is EIP712WithModifier {
 
-    event JoinGame(address _playerAddress, uint8 _playerId);
+    event JoinGame(address _playerAddress);
     event InitGame(uint8 _gameCount);
-    event Action(address _playerAddress, uint8 _actionCount); 
-    event NextDay(bool _killed);
+    event Action(address _playerAddress); 
+    event NextDay(bool _killed, address _killedAddress);
     event CastVote(address _voter, uint8 _playerId);
     event CheckMafia(bool _mafiaKilled);
-    event Killed(uint8 _playerKilled);
-    event Exiled(uint8 _playerExiled);
     
     // 1 is mafia | 2 is detective | 3 is doctor | 4 is citizen
 
@@ -31,7 +29,6 @@ contract Mafia is EIP712WithModifier {
     }
 
     mapping (address => Player) public players;
-    mapping (address => bool) joinedGame;
     mapping (address => euint8) public target;
     mapping (uint8 => Player) public idToPlayer; 
     mapping (address => bool) public hasVoted;
@@ -44,6 +41,7 @@ contract Mafia is EIP712WithModifier {
     ebool public isCaught;
 
     address[] public playersList;
+    address[] public hasTakenActionArray;
     uint8 public playerKilled;
     uint8 public largestVoteCount;
     uint8 public playerIdWithLargestVoteCount;
@@ -56,10 +54,6 @@ contract Mafia is EIP712WithModifier {
 
     constructor() EIP712WithModifier("Authorization token", "1") {
         owner = msg.sender;
-    }
-
-    function getPlayersArray() public view returns(address[] memory) {
-        return playersList;
     }
 
     function initializeGame(bytes[] calldata roles) public {
@@ -90,10 +84,8 @@ contract Mafia is EIP712WithModifier {
     // join the game
     function joinGame() public {
         require(playersList.length < 3);
-        require(!joinedGame[msg.sender]);
         playersList.push(msg.sender);
-        joinedGame[msg.sender] = true;
-        emit JoinGame(msg.sender, playerCount);
+        emit JoinGame(msg.sender);
     }
 
     // //testing 
@@ -122,13 +114,17 @@ contract Mafia is EIP712WithModifier {
         investigatedPlayerId = TFHE.add(investigatedPlayerId, TFHE.cmux(isDetective, TFHE.asEuint8(selectedPlayer), TFHE.asEuint8(0)));
 
         hasTakenAction[msg.sender] = true;
-        emit Action(msg.sender, actionCount);
+        hasTakenActionArray.push(msg.sender);
         if (actionCount == 2) {
             revealNextDay();
         } else {
             actionCount++;
         }
 
+    }
+
+    function checkHasTakenAction(address _address) public returns(address[] memory) {
+        return hasTakenActionArray;
     }
 
 
@@ -142,10 +138,6 @@ contract Mafia is EIP712WithModifier {
             players[idToPlayer[playerKilled].playerAddress].alive = false;
             voteCount++;
             // Emit dead event
-            emit NextDay(true);
-            emit Killed(playerKilled);
-        } else {
-            emit NextDay(false);
         }
 
         euint8 investigatedPlayerIdRole = TFHE.asEuint8(0);
@@ -155,7 +147,6 @@ contract Mafia is EIP712WithModifier {
             investigatedPlayerIdRole = TFHE.add(investigatedPlayerIdRole, TFHE.cmux(isMatchingId, idToPlayer[i].role, TFHE.asEuint8(0)));
         }
         isCaught = TFHE.eq(TFHE.asEuint8(1), investigatedPlayerIdRole);
-        
     }
 
     function viewCaught(bytes32 publicKey, bytes calldata signature) public view onlySignedPublicKey(publicKey, signature) returns (bytes memory) {
@@ -195,7 +186,6 @@ contract Mafia is EIP712WithModifier {
         } else {
             voteCount++;
         }
-
     }
 
     function checkIfMafiaKilled() public {
@@ -203,11 +193,9 @@ contract Mafia is EIP712WithModifier {
         players[idToPlayer[playerIdWithLargestVoteCount].playerAddress].alive = false;
         uint8 role = TFHE.decrypt(idToPlayer[playerIdWithLargestVoteCount].role);
         if (role == 1 && !tieExists) {
-            isMafiaKilled = 1; //true
-            emit CheckMafia(true);
+            isMafiaKilled = 1;
         } else {
-            isMafiaKilled = 0; //false
-            emit CheckMafia(false);
+            isMafiaKilled = 0;
         }
     }
 

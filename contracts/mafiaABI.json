@@ -26,9 +26,21 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "checkIfMafiaKilled",
-		"outputs": [],
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "_address",
+				"type": "address"
+			}
+		],
+		"name": "checkHasTakenAction",
+		"outputs": [
+			{
+				"internalType": "address[]",
+				"name": "",
+				"type": "address[]"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -61,12 +73,6 @@
 				"internalType": "address",
 				"name": "_playerAddress",
 				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint8",
-				"name": "_actionCount",
-				"type": "uint8"
 			}
 		],
 		"name": "Action",
@@ -92,6 +98,13 @@
 		"type": "event"
 	},
 	{
+		"inputs": [],
+		"name": "checkIfMafiaKilled",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -108,19 +121,6 @@
 		"anonymous": false,
 		"inputs": [],
 		"name": "EIP712DomainChanged",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint8",
-				"name": "_playerExiled",
-				"type": "uint8"
-			}
-		],
-		"name": "Exiled",
 		"type": "event"
 	},
 	{
@@ -164,28 +164,9 @@
 				"internalType": "address",
 				"name": "_playerAddress",
 				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint8",
-				"name": "_playerId",
-				"type": "uint8"
 			}
 		],
 		"name": "JoinGame",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "uint8",
-				"name": "_playerKilled",
-				"type": "uint8"
-			}
-		],
-		"name": "Killed",
 		"type": "event"
 	},
 	{
@@ -209,6 +190,12 @@
 				"internalType": "bool",
 				"name": "_killed",
 				"type": "bool"
+			},
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_killedAddress",
+				"type": "address"
 			}
 		],
 		"name": "NextDay",
@@ -303,19 +290,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "getPlayersArray",
-		"outputs": [
-			{
-				"internalType": "address[]",
-				"name": "",
-				"type": "address[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
@@ -329,6 +303,25 @@
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "hasTakenActionArray",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
