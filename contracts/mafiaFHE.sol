@@ -7,16 +7,15 @@ import "fhevm/lib/TFHE.sol";
 import "hardhat/console.sol";
 
 contract Mafia is EIP712WithModifier {
-
     event JoinGame(address _playerAddress, uint8 _playerId);
     event InitGame(uint8 _gameCount);
-    event Action(address _playerAddress, uint8 _actionCount); 
+    event Action(address _playerAddress, uint8 _actionCount);
     event NextDay(bool _killed);
     event CastVote(address _voter, uint8 _playerId);
     event CheckMafia(bool _mafiaKilled);
     event Killed(uint8 _playerKilled);
     event Exiled(uint8 _playerExiled);
-    
+
     // 1 is mafia | 2 is detective | 3 is doctor | 4 is citizen
 
     address public owner;
@@ -30,12 +29,12 @@ contract Mafia is EIP712WithModifier {
         bool alive;
     }
 
-    mapping (address => Player) public players;
-    mapping (address => euint8) public target;
-    mapping (uint8 => Player) public idToPlayer; 
-    mapping (address => bool) public hasVoted;
-    mapping (address => bool) public hasTakenAction;
-    mapping (uint8 => uint8) public playerVoteCount;
+    mapping(address => Player) public players;
+    mapping(address => euint8) public target;
+    mapping(uint8 => Player) public idToPlayer;
+    mapping(address => bool) public hasVoted;
+    mapping(address => bool) public hasTakenAction;
+    mapping(uint8 => uint8) public playerVoteCount;
 
     euint8 public killedPlayerId;
     euint8 public savedPlayerId;
@@ -50,7 +49,7 @@ contract Mafia is EIP712WithModifier {
     uint8 public voteCount;
     uint8 public isMafiaKilled = 255;
     bool public tieExists = false;
-    
+
     event Voted(address voter, uint8 playerId, uint8 votes);
 
     constructor() EIP712WithModifier("Authorization token", "1") {
@@ -60,8 +59,18 @@ contract Mafia is EIP712WithModifier {
     function initializeGame(bytes[] calldata roles) public {
         require(playersList.length == 3);
         for (uint8 i = 0; i < 3; i++) {
-            players[playersList[i]] = Player(i, playersList[i], TFHE.asEuint8(roles[i]), true);
-            idToPlayer[i] = Player(i, playersList[i], TFHE.asEuint8(roles[i]), true);
+            players[playersList[i]] = Player(
+                i,
+                playersList[i],
+                TFHE.asEuint8(roles[i]),
+                true
+            );
+            idToPlayer[i] = Player(
+                i,
+                playersList[i],
+                TFHE.asEuint8(roles[i]),
+                true
+            );
         }
         gameCount++;
         emit InitGame(gameCount);
@@ -89,13 +98,13 @@ contract Mafia is EIP712WithModifier {
         emit JoinGame(msg.sender, playerCount);
     }
 
-    // //testing 
+    // //testing
     // function batchJoin() public {
     //     joinGame(0x17e968F5C0472941767F06b660Ab2E7149Bdf7ED); // 1 (mafia)
     //     joinGame(0x08d8E680A2d295Af8CbCD8B8e07f900275bc6B8D); // 2 (detective)
     //     joinGame(0xaf9c5FD073933C6f7eb654542e6c6b205572Fdb4); // 3 (doctor)
     //     // joinGame(0xbb15Fa688139452f542d15778F6b4A187f6857F5); // 4 (citizen)
-    //     // joinGame(0xcE716032dFe9d5BB840568171F541A6A046bBf90); // 4 (citizen) 
+    //     // joinGame(0xcE716032dFe9d5BB840568171F541A6A046bBf90); // 4 (citizen)
     // }
 
     // selectedPlayer is an uint8 ciphertext
@@ -104,15 +113,28 @@ contract Mafia is EIP712WithModifier {
 
         // check if player is mafia
         ebool isMafia = TFHE.eq(TFHE.asEuint8(1), players[msg.sender].role);
-        killedPlayerId = TFHE.add(killedPlayerId, TFHE.cmux(isMafia, TFHE.asEuint8(selectedPlayer), TFHE.asEuint8(0)));
+        killedPlayerId = TFHE.add(
+            killedPlayerId,
+            TFHE.cmux(isMafia, TFHE.asEuint8(selectedPlayer), TFHE.asEuint8(0))
+        );
 
         // check if player is a doctor
         ebool isDoctor = TFHE.eq(TFHE.asEuint8(3), players[msg.sender].role);
-        savedPlayerId = TFHE.add(savedPlayerId, TFHE.cmux(isDoctor, TFHE.asEuint8(selectedPlayer), TFHE.asEuint8(0)));
+        savedPlayerId = TFHE.add(
+            savedPlayerId,
+            TFHE.cmux(isDoctor, TFHE.asEuint8(selectedPlayer), TFHE.asEuint8(0))
+        );
 
         // check if player is detective
         ebool isDetective = TFHE.eq(TFHE.asEuint8(2), players[msg.sender].role);
-        investigatedPlayerId = TFHE.add(investigatedPlayerId, TFHE.cmux(isDetective, TFHE.asEuint8(selectedPlayer), TFHE.asEuint8(0)));
+        investigatedPlayerId = TFHE.add(
+            investigatedPlayerId,
+            TFHE.cmux(
+                isDetective,
+                TFHE.asEuint8(selectedPlayer),
+                TFHE.asEuint8(0)
+            )
+        );
 
         hasTakenAction[msg.sender] = true;
         emit Action(msg.sender, actionCount);
@@ -121,9 +143,7 @@ contract Mafia is EIP712WithModifier {
         } else {
             actionCount++;
         }
-
     }
-
 
     function revealNextDay() public {
         ebool isVictimSaved = TFHE.eq(killedPlayerId, savedPlayerId);
@@ -144,20 +164,45 @@ contract Mafia is EIP712WithModifier {
         euint8 investigatedPlayerIdRole = TFHE.asEuint8(0);
 
         for (uint8 i = 0; i < playersList.length; i++) {
-            ebool isMatchingId = TFHE.eq(TFHE.asEuint8(players[playersList[i]].playerId), investigatedPlayerId);
-            investigatedPlayerIdRole = TFHE.add(investigatedPlayerIdRole, TFHE.cmux(isMatchingId, idToPlayer[i].role, TFHE.asEuint8(0)));
+            ebool isMatchingId = TFHE.eq(
+                TFHE.asEuint8(players[playersList[i]].playerId),
+                investigatedPlayerId
+            );
+            investigatedPlayerIdRole = TFHE.add(
+                investigatedPlayerIdRole,
+                TFHE.cmux(isMatchingId, idToPlayer[i].role, TFHE.asEuint8(0))
+            );
         }
         isCaught = TFHE.eq(TFHE.asEuint8(1), investigatedPlayerIdRole);
-        
     }
 
-    function viewCaught(bytes32 publicKey, bytes calldata signature) public view onlySignedPublicKey(publicKey, signature) returns (bytes memory) {
+    function viewCaught(
+        bytes32 publicKey,
+        bytes calldata signature
+    )
+        public
+        view
+        onlySignedPublicKey(publicKey, signature)
+        returns (bytes memory)
+    {
         ebool isDetective = TFHE.eq(TFHE.asEuint8(2), players[msg.sender].role);
-        euint8 valid = TFHE.cmux(isDetective, TFHE.asEuint8(isCaught), TFHE.asEuint8(255));
+        euint8 valid = TFHE.cmux(
+            isDetective,
+            TFHE.asEuint8(isCaught),
+            TFHE.asEuint8(255)
+        );
         return TFHE.reencrypt(valid, publicKey, 0);
     }
 
-    function viewOwnRole(bytes32 publicKey, bytes calldata signature) public view onlySignedPublicKey(publicKey, signature) returns (bytes memory) {
+    function viewOwnRole(
+        bytes32 publicKey,
+        bytes calldata signature
+    )
+        public
+        view
+        onlySignedPublicKey(publicKey, signature)
+        returns (bytes memory)
+    {
         // return TFHE.decrypt(players[msg.sender].role);
         return TFHE.reencrypt(players[msg.sender].role, publicKey, 0);
     }
@@ -172,7 +217,7 @@ contract Mafia is EIP712WithModifier {
         if (largestVoteCount == playerVoteCount[_playerId]) {
             tieExists = true;
         }
-        
+
         if (largestVoteCount == 0) {
             largestVoteCount = 1;
             playerIdWithLargestVoteCount = _playerId;
@@ -188,13 +233,15 @@ contract Mafia is EIP712WithModifier {
         } else {
             voteCount++;
         }
-
     }
 
     function checkIfMafiaKilled() public {
         idToPlayer[playerIdWithLargestVoteCount].alive = false;
-        players[idToPlayer[playerIdWithLargestVoteCount].playerAddress].alive = false;
-        uint8 role = TFHE.decrypt(idToPlayer[playerIdWithLargestVoteCount].role);
+        players[idToPlayer[playerIdWithLargestVoteCount].playerAddress]
+            .alive = false;
+        uint8 role = TFHE.decrypt(
+            idToPlayer[playerIdWithLargestVoteCount].role
+        );
         if (role == 1 && !tieExists) {
             isMafiaKilled = 1; //true
             emit CheckMafia(true);
@@ -203,14 +250,4 @@ contract Mafia is EIP712WithModifier {
             emit CheckMafia(false);
         }
     }
-
-
-
 }
-
-
-
-
-
-
-
