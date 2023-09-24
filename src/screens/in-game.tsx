@@ -22,7 +22,7 @@ import {
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
-export const CONTRACT_ADDRESS = "0x94552868518b7Dec3cA5EA0E1BdD92503D366bb7";
+export const CONTRACT_ADDRESS = "0xa3761B532C563857704B1824fB75421c8B86EF1D";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
@@ -31,7 +31,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
   const [dialog, setDialog] = useState("");
   const [userRole, setUserRole] = useState("");
   const [isCaught, setIsCaught] = useState(null);
-  const [resultsText, setResultsText] = useState("loading results...");
+  const [resultsText, setResultsText] = useState("loading winner...");
   const [players, setPlayers] = useState<[unknown] | null>();
   const [playerRole, setPlayerRole] = useState(PlayerRole.Unknown);
 
@@ -123,7 +123,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
         )}
       </div>
       {loading ? (
-        "loading..."
+        <div className="w-full">loading...</div>
       ) : (
         <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
           {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}

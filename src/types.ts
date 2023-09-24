@@ -8,6 +8,7 @@ export enum GamePhase {
   AwaitPlayerActions = "awaitPlayerActions",
   Voting = "voting",
   Results = "results",
+  Loading = "loading",
 }
 
 export enum PlayerRole {

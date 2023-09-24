@@ -9,7 +9,7 @@ import { ClientState, GamePhase } from "@/types";
 
 const Authenticated = () => {
   const [clientState, setClientState] = useState<ClientState>(ClientState.Tutorial);
-  const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
+  const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.Loading);
   useEffect(() => {
     const fetchGameState = async () => {
       try {
