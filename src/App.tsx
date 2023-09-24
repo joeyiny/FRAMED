@@ -13,20 +13,20 @@ import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 function App() {
   const { authenticated, ready, user } = usePrivy();
-  const { wallets } = useWallets();
-  const [provider, setProvider] = useState<unknown>();
-  useEffect(() => {
-    const getProvider = async () => {
-      const p = await wallets[0]?.getEthersProvider();
-      // setProvider(p);
-      const signer = await p?.getSigner();
-      const xmtp = await Client.create(signer, { env: "dev" });
-      // console.log(xmtp);
+  // const { wallets } = useWallets();
+  // const [provider, setProvider] = useState<unknown>();
+  // useEffect(() => {
+  //   const getProvider = async () => {
+  //     const p = await wallets[0]?.getEthersProvider();
+  //     // setProvider(p);
+  //     const signer = await p?.getSigner();
+  //     const xmtp = await Client.create(signer, { env: "dev" });
+  //     // console.log(xmtp);
 
-      const c = await xmtp.canMessage("0x2777C7735BCa78870978599ec0f98EAcBfc570A5");
-    };
-    getProvider();
-  }, []);
+  //     const c = await xmtp.canMessage("0x2777C7735BCa78870978599ec0f98EAcBfc570A5");
+  //   };
+  //   getProvider();
+  // }, []);
 
   if (!ready) return <PendingGame />;
   return <>{authenticated && user?.wallet ? <InGameScreen /> : <LoginScreen />}</>;
