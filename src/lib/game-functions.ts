@@ -4,6 +4,11 @@ import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import { shuffleArray } from "./utils";
 
+export const getPlayerAddress = async () => {
+  const signer = await provider.getSigner();
+  return signer.address;
+};
+
 export const initializeGame = async () => {
   const instance = await getInstance();
   // const originalArray = [1, 2, 3, 4, 4];

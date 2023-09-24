@@ -10,6 +10,7 @@ import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import { useContractEvent } from "wagmi";
 import {
+  getPlayerAddress,
   initializeGame,
   isMafiaKilled,
   joinGame,
@@ -29,8 +30,6 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
   const { user } = usePrivy();
   const [loading, setLoading] = useState(true);
   const [dialog, setDialog] = useState("");
-  const [userRole, setUserRole] = useState("");
-  const [isCaught, setIsCaught] = useState(null);
   const [resultsText, setResultsText] = useState("loading results...");
   const [playerIsJoined, setPlayerIsJoined] = useState(false);
   const [players, setPlayers] = useState<[unknown] | null>();
@@ -60,8 +59,13 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
   useEffect(() => {
     const fetchData = async () => {
       const p = await queryUsers();
+      const w = await getPlayerAddress();
       setLoading(false);
       setPlayers(p);
+      const inGame = Object.values(p).includes(w);
+      setPlayerIsJoined(inGame);
+      // if(p.includes)
+      console.log(inGame);
     };
     fetchData();
   }, []);
