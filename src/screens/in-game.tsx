@@ -78,9 +78,26 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
         {gamePhase === GamePhase.AwaitPlayerActions && playerRole !== PlayerRole.Unknown && (
           <Typography.TypographyLarge>Your role is {playerRole}</Typography.TypographyLarge>
         )}
-        <Typography.TypographyMuted>
-          {/* <Typography.TypographySmall>1/6 players joined</Typography.TypographySmall> */}
-        </Typography.TypographyMuted>
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Citizen && (
+          <Typography.TypographyMuted>
+            <Typography.TypographySmall>Vote for who you think the thief is.</Typography.TypographySmall>
+          </Typography.TypographyMuted>
+        )}
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Thief && (
+          <Typography.TypographyMuted>
+            <Typography.TypographySmall>Choose the player you want to kill.</Typography.TypographySmall>
+          </Typography.TypographyMuted>
+        )}
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Cop && (
+          <Typography.TypographyMuted>
+            <Typography.TypographySmall>Choose the player you want to save.</Typography.TypographySmall>
+          </Typography.TypographyMuted>
+        )}
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Detective && (
+          <Typography.TypographyMuted>
+            <Typography.TypographySmall>Choose the player you want to examine.</Typography.TypographySmall>
+          </Typography.TypographyMuted>
+        )}
       </div>
       {loading ? (
         "loading..."
