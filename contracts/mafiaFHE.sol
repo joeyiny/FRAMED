@@ -8,6 +8,10 @@ import "hardhat/console.sol";
 
 contract Mafia is EIP712WithModifier {
 
+    event JoinGame(address _playerAddress);
+    event InitializeGame(uint8 _gameCount);
+    event Action(address _playerAddress); 
+
     // 1 is mafia | 2 is detective | 3 is doctor | 4 is citizen
 
     address public owner;
@@ -38,6 +42,7 @@ contract Mafia is EIP712WithModifier {
     uint8 public largestVoteCount;
     uint8 public playerIdWithLargestVoteCount;
     uint8 public actionCount;
+    uint8 public voteCount;
 
     bool public isMafiaKilled;
     
@@ -48,16 +53,30 @@ contract Mafia is EIP712WithModifier {
     }
 
     function initializeGame(bytes[] calldata roles) public {
-        for (uint8 i = 0; i < 5; i++) {
+        for (uint8 i = 0; i < 3; i++) {
             players[playersList[i]] = Player(i, playersList[i], TFHE.asEuint8(roles[i]), true);
             idToPlayer[i] = Player(i, playersList[i], TFHE.asEuint8(roles[i]), true);
         }
         gameCount++;
     }
 
+    function newGame(bytes[] calldata roles) public {
+        killedPlayerId = TFHE.asEuint8(0);
+        savedPlayerId = TFHE.asEuint8(0);
+        investigatedPlayerId = TFHE.asEuint8(0);
+        isCaught = TFHE.asEbool(false);
+        voteCount = 0;
+        actionCount = 0;
+        for (uint8 i = 0; i < 3; i++) {
+            players[playersList[i]].role = TFHE.asEuint8(roles[i]);
+            players[playersList[i]].alive = true;
+        }
+        gameCount++;
+    }
+
     // join the game
     function joinGame(address _address) public {
-        require(playersList.length < 5);
+        require(playersList.length < 3);
         playersList.push(_address);
     }
 
@@ -66,8 +85,8 @@ contract Mafia is EIP712WithModifier {
         joinGame(0x17e968F5C0472941767F06b660Ab2E7149Bdf7ED); // 1 (mafia)
         joinGame(0x08d8E680A2d295Af8CbCD8B8e07f900275bc6B8D); // 2 (detective)
         joinGame(0xaf9c5FD073933C6f7eb654542e6c6b205572Fdb4); // 3 (doctor)
-        joinGame(0xbb15Fa688139452f542d15778F6b4A187f6857F5); // 4 (citizen)
-        joinGame(0xcE716032dFe9d5BB840568171F541A6A046bBf90); // 4 (citizen) 
+        // joinGame(0xbb15Fa688139452f542d15778F6b4A187f6857F5); // 4 (citizen)
+        // joinGame(0xcE716032dFe9d5BB840568171F541A6A046bBf90); // 4 (citizen) 
     }
 
     // selectedPlayer is an uint8 ciphertext
@@ -87,6 +106,12 @@ contract Mafia is EIP712WithModifier {
         investigatedPlayerId = TFHE.add(investigatedPlayerId, TFHE.cmux(isDetective, TFHE.asEuint8(selectedPlayer), TFHE.asEuint8(0)));
 
         hasTakenAction[msg.sender] = true;
+        if (actionCount == 4) {
+            revealNextDay();
+        } else {
+            actionCount++;
+        }
+
     }
 
     function revealNextDay() public {
@@ -96,22 +121,27 @@ contract Mafia is EIP712WithModifier {
         if (playerKilled != playerSaved) {
             idToPlayer[playerKilled].alive = false;
             players[idToPlayer[playerKilled].playerAddress].alive = false;
-        }
+            voteCount++;
+        } 
 
         euint8 investigatedPlayerIdRole = TFHE.asEuint8(0);
 
         for (uint8 i = 0; i < playersList.length; i++) {
-            ebool isMatchingId = TFHE.eq(TFHE.asEuint8(0), investigatedPlayerId);
+            ebool isMatchingId = TFHE.eq(TFHE.asEuint8(players[playersList[i]].playerId), investigatedPlayerId);
             investigatedPlayerIdRole = TFHE.add(investigatedPlayerIdRole, TFHE.cmux(isMatchingId, idToPlayer[i].role, TFHE.asEuint8(0)));
         }
         isCaught = TFHE.eq(TFHE.asEuint8(1), investigatedPlayerIdRole);
     }
 
     function viewCaught() public view returns (bool) {
-        ebool isDetective = TFHE.eq(TFHE.asEuint8(3), players[msg.sender].role);
+        ebool isDetective = TFHE.eq(TFHE.asEuint8(2), players[msg.sender].role);
         TFHE.optReq(isDetective);
         // return TFHE.reencrypt(caught, publicKey, 0);
         return TFHE.decrypt(isCaught);
+    }
+
+    function viewOwnRole() public view returns (uint8) {
+        return TFHE.decrypt(players[msg.sender].role);
     }
 
     function castVote(uint8 _playerId) public {
@@ -128,8 +158,12 @@ contract Mafia is EIP712WithModifier {
             largestVoteCount = playerVoteCount[_playerId];
             playerIdWithLargestVoteCount = _playerId;
         }
-        
         emit Voted(msg.sender, _playerId, playerVoteCount[_playerId]);
+        if (voteCount == 4) {
+            checkIfMafiaKilled();
+        } else {
+            voteCount++;
+        }
     }
 
     function checkIfMafiaKilled() public returns (bool) {
@@ -137,8 +171,11 @@ contract Mafia is EIP712WithModifier {
         players[idToPlayer[playerIdWithLargestVoteCount].playerAddress].alive = false;
         uint8 role = TFHE.decrypt(idToPlayer[playerIdWithLargestVoteCount].role);
         isMafiaKilled = role == 1;
+
         return isMafiaKilled;
     }
+
+
 
 }
 
