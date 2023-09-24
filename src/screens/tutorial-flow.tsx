@@ -1,11 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { TypographyH3 } from "@/components/ui/typography";
 
-const TutorialFlow = () => {
+const TutorialFlow = ({ setGamePhase }: { setGamePhase: React.Dispatch<React.SetStateAction<string>> }) => {
   return (
     <div className="mt-8">
       <TypographyH3>How to play:</TypographyH3>
-      <Button size="lg">Ok, start game</Button>
+      <Button
+        size="lg"
+        onClick={() => {
+          setGamePhase("inRoom");
+        }}>
+        Ok, start game
+      </Button>
     </div>
   );
 };
