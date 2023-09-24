@@ -40,7 +40,7 @@ contract Mafia is EIP712WithModifier {
     euint8 public investigatedPlayerId;
     ebool public isCaught;
 
-    address[] playersList;
+    address[] public playersList;
     uint8 public playerKilled;
     uint8 public largestVoteCount;
     uint8 public playerIdWithLargestVoteCount;
@@ -56,6 +56,7 @@ contract Mafia is EIP712WithModifier {
     }
 
     function initializeGame(bytes[] calldata roles) public {
+        require(playersList.length == 3);
         for (uint8 i = 0; i < 3; i++) {
             players[playersList[i]] = Player(i, playersList[i], TFHE.asEuint8(roles[i]), true);
             idToPlayer[i] = Player(i, playersList[i], TFHE.asEuint8(roles[i]), true);
