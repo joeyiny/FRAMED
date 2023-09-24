@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "./App.css";
-import InGameScreen from "./screens/in-game";
+import Authenticated from "./screens/authenticated";
 import PendingGame from "./screens/loading";
 
 // import InGameScreen from "./screens/in-game";
 import { useState, useEffect } from "react";
 import { init, getInstance } from "./lib/fhevm";
 import { Button } from "./components/ui/button";
-import WaitingRoom from "./screens/waiting-room";
+// import WaitingRoom from "./screens/waiting-room";
 import { usePrivy } from "@privy-io/react-auth";
 import { Connect } from "./components/ui/connect";
 
@@ -35,7 +35,7 @@ function App() {
             {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
             {!authenticated && <Button onClick={login}>JOIN GAME</Button>}
             {/* {loading && <p>Loading Smart Account...</p>} */}
-            {authenticated && <InGameScreen />}
+            {authenticated && <Authenticated />}
           </div>
         )}
       </Connect>
