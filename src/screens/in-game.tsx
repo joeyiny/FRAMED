@@ -30,7 +30,7 @@ const InGameScreen = () => {
     <div>
       <Navbar />
       {clientState === "tutorial" && <TutorialFlow setClientState={setClientState} />}
-      {clientState === "inGame" && <WaitingRoom />}
+      {clientState === "inGame" && <WaitingRoom gamePhase={gamePhase} />}
     </div>
   );
 };

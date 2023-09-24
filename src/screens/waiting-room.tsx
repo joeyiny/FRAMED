@@ -10,6 +10,7 @@ import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import { useContractEvent } from "wagmi";
 import { joinGame, queryUsers, takeAction, viewCaught, viewRole, votePlayer } from "@/lib/game-functions";
+import { GamePhase } from "@/types";
 
 export const CONTRACT_ADDRESS = "0x1d576bE5C42dd9A0682f8E1354EB15A4Ce2d0795";
 
@@ -54,7 +55,7 @@ const WaitingPlayerCard = () => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const WaitingRoom = () => {
+const WaitingRoom = ({ gamePhase }: { gamePhase: GamePhase }) => {
   const { user } = usePrivy();
   const [loading, setLoading] = useState("");
   const [dialog, setDialog] = useState("");
@@ -128,17 +129,19 @@ const WaitingRoom = () => {
       </div>
       {dialog && <div>{dialog}</div>}
       {loading && <div>{loading}</div>}
-      <Button onClick={joinGame} size="lg" className="mt-8">
-        Join Game
-      </Button>
-      <Button onClick={initializeGame}>Initialize Game</Button>
+      {gamePhase === GamePhase.WaitingForPlayers && (
+        <Button onClick={joinGame} size="lg" className="mt-8">
+          Join Game
+        </Button>
+      )}
+      {/* <Button onClick={initializeGame}>Initialize Game</Button>
       <Button onClick={takeAction}>Take Action</Button>
       <Button onClick={votePlayer}>Vote Player</Button>
       <Button onClick={viewRole}>View Role</Button>
       <Button onClick={queryUsers}>Get users</Button>
       {userRole && <div>{userRole}</div>}
       <Button onClick={viewCaught}>View Caught</Button>
-      {isCaught && <div>{isCaught}</div>}
+      {isCaught && <div>{isCaught}</div>} */}
     </>
   );
 };
