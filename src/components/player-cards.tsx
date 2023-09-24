@@ -44,10 +44,18 @@ export const WaitingPlayerCard = () => {
   );
 };
 
-export const ClickablePlayerCard = ({ address }: { address: string }) => {
+export const ClickablePlayerCard = ({
+  address,
+  index,
+  onClick,
+}: {
+  address: string;
+  index: number;
+  onClick: () => void;
+}) => {
   const { user } = usePrivy();
   return (
-    <button onClick={() => alert("hi")}>
+    <button onClick={onClick}>
       <Card
         className="w-[180px] p-4 text-left bg-white  "
         style={{

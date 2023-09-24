@@ -109,7 +109,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
             players.map((p) => <ActivePlayerCard address={p} />)}
           {players &&
             gamePhase === GamePhase.AwaitPlayerActions &&
-            players.map((p) => <ClickablePlayerCard address={p} />)}
+            players.map((p, i) => <ClickablePlayerCard index={i} address={p} onClick={() => alert(i)} />)}
           {/* <WaitingPlayerCard />
           <WaitingPlayerCard />
           <WaitingPlayerCard />
@@ -163,3 +163,5 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
   );
 };
 export default InGameScreen;
+
+let selectCard = () => {};
