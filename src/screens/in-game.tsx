@@ -3,7 +3,7 @@ import Navbar from "@/components/navbar";
 import TutorialFlow from "./tutorial-flow";
 import { useState } from "react";
 import WaitingRoom from "./waiting-room";
-import Chat from "@/components/chat";
+import Chat from "@/components/Chat";
 
 const InGameScreen = () => {
   const [gamePhase, setGamePhase] = useState<"tutorial" | "inRoom">("tutorial");
