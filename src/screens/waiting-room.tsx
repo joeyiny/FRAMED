@@ -10,8 +10,9 @@ import { useState, useEffect } from "react";
 import { getInstance, provider, getTokenSignature } from "../lib/fhevm";
 import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
+import { useContractEvent } from "wagmi";
 
-const CONTRACT_ADDRESS = "0xCC34578E2c6f0a3CB3ccba7e2F58F31b4A612D00";
+const CONTRACT_ADDRESS = "0x8690183c936864a6a65280DBAd00004493B3020D";
 
 const ActivePlayerCard = ({ address }: { address: string }) => {
   const { user } = usePrivy();
@@ -60,7 +61,16 @@ const WaitingRoom = () => {
   const [dialog, setDialog] = useState("");
   const [userRole, setUserRole] = useState("");
   const [isCaught, setIsCaught] = useState(null);
-  const [players, setPlayers] = useState<[unknown] | null>();
+  // const [players, setPlayers] = useState<[unknown] | null>();
+
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName: "JoinGame",
+    listener(log) {
+      console.log(log);
+    },
+  });
   let instance: any;
 
   useEffect(() => {
