@@ -8,12 +8,14 @@ import "hardhat/console.sol";
 
 contract Mafia is EIP712WithModifier {
 
-    event JoinGame(address _playerAddress);
+    event JoinGame(address _playerAddress, uint8 _playerId);
     event InitGame(uint8 _gameCount);
-    event Action(address _playerAddress); 
-    event NextDay(bool _killed, address _killedAddress);
+    event Action(address _playerAddress, uint8 _actionCount); 
+    event NextDay(bool _killed);
     event CastVote(address _voter, uint8 _playerId);
     event CheckMafia(bool _mafiaKilled);
+    event Killed(uint8 _playerKilled);
+    event Exiled(uint8 _playerExiled);
     
     // 1 is mafia | 2 is detective | 3 is doctor | 4 is citizen
 
@@ -84,7 +86,7 @@ contract Mafia is EIP712WithModifier {
     function joinGame() public {
         require(playersList.length < 3);
         playersList.push(msg.sender);
-        emit JoinGame(msg.sender);
+        emit JoinGame(msg.sender, playerCount);
     }
 
     // //testing 
@@ -113,6 +115,7 @@ contract Mafia is EIP712WithModifier {
         investigatedPlayerId = TFHE.add(investigatedPlayerId, TFHE.cmux(isDetective, TFHE.asEuint8(selectedPlayer), TFHE.asEuint8(0)));
 
         hasTakenAction[msg.sender] = true;
+        emit Action(msg.sender, actionCount);
         if (actionCount == 2) {
             revealNextDay();
         } else {
@@ -132,6 +135,10 @@ contract Mafia is EIP712WithModifier {
             players[idToPlayer[playerKilled].playerAddress].alive = false;
             voteCount++;
             // Emit dead event
+            emit NextDay(true);
+            emit Killed(playerKilled);
+        } else {
+            emit NextDay(false);
         }
 
         euint8 investigatedPlayerIdRole = TFHE.asEuint8(0);
@@ -141,6 +148,7 @@ contract Mafia is EIP712WithModifier {
             investigatedPlayerIdRole = TFHE.add(investigatedPlayerIdRole, TFHE.cmux(isMatchingId, idToPlayer[i].role, TFHE.asEuint8(0)));
         }
         isCaught = TFHE.eq(TFHE.asEuint8(1), investigatedPlayerIdRole);
+        
     }
 
     function viewCaught(bytes32 publicKey, bytes calldata signature) public view onlySignedPublicKey(publicKey, signature) returns (bytes memory) {
@@ -180,6 +188,7 @@ contract Mafia is EIP712WithModifier {
         } else {
             voteCount++;
         }
+
     }
 
     function checkIfMafiaKilled() public {
@@ -187,9 +196,11 @@ contract Mafia is EIP712WithModifier {
         players[idToPlayer[playerIdWithLargestVoteCount].playerAddress].alive = false;
         uint8 role = TFHE.decrypt(idToPlayer[playerIdWithLargestVoteCount].role);
         if (role == 1 && !tieExists) {
-            isMafiaKilled = 1;
+            isMafiaKilled = 1; //true
+            emit CheckMafia(true);
         } else {
-            isMafiaKilled = 0;
+            isMafiaKilled = 0; //false
+            emit CheckMafia(false);
         }
     }
 
