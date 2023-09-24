@@ -1,3 +1,6 @@
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+
 const Chat = () => {
   return (
     <div className="w-full h-full pt-[44px]">
@@ -12,6 +15,12 @@ const Chat = () => {
             </p>
           </div>
         </div>
+      </div>
+      <div id="input" className="bottom-0 w-full absolute h-14 flex items-center px-2 space-x-2">
+        {/* <input type="text" className="flex-grow border rounded px-2 py-1" placeholder="Type a message..." /> */}
+        {/* <button className="ml-2 bg-blue-500 text-white rounded px-2 py-1">Send</button> */}
+        <Input placeholder="Type a message..."></Input>
+        <Button size="sm">Send</Button>
       </div>
     </div>
   );
