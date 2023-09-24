@@ -20,6 +20,9 @@ const Authenticated = () => {
         if (r === 0) {
           setGamePhase(GamePhase.WaitingForPlayers);
         }
+        if (r === 1) {
+          setGamePhase(GamePhase.AwaitPlayerActions);
+        }
       } catch (err) {
         console.error(err);
       }

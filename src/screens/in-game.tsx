@@ -45,12 +45,15 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     },
   });
 
-  useEffect(() => {
-    async function fetchInstance() {
-      instance = await getInstance();
-    }
-    fetchInstance();
-  }, []);
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName: "NewState",
+    // listener: eventListener,
+    listener(log) {
+      console.log(log);
+    },
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +92,12 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       {/* {loading && <div>{loading}</div>} */}
       {gamePhase === GamePhase.WaitingForPlayers &&
         (players && players.length >= 3 ? (
-          <Button onClick={initializeGame} size="lg" className="mt-8">
+          <Button
+            onClick={() => {
+              initializeGame();
+            }}
+            size="lg"
+            className="mt-8">
             Begin Game
           </Button>
         ) : (
@@ -97,6 +105,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
             Join Game
           </Button>
         ))}
+      {gamePhase === GamePhase.AwaitPlayerActions && <p>awaiting action</p>}
       {/* <Button onClick={initializeGame}>Initialize Game</Button>
       <Button onClick={takeAction}>Take Action</Button>
       <Button onClick={votePlayer}>Vote Player</Button>

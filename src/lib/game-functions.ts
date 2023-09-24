@@ -24,6 +24,8 @@ export const initializeGame = async () => {
     const transaction = await contract.initializeGame(shuffledArray);
     // setLoading("Waiting for transaction validation...");
     await provider.waitForTransaction(transaction.hash);
+
+    return transaction;
     // setLoading("");
     // setDialog("Game Initialized!");
   } catch (e) {
