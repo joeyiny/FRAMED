@@ -4,8 +4,8 @@ import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import { shuffleArray } from "./utils";
 
-let instance: any;
 export const initializeGame = async () => {
+  const instance = await getInstance();
   // const originalArray = [1, 2, 3, 4, 4];
   const originalArray = [1, 2, 3];
   const shuffledArray = [...originalArray];
@@ -16,7 +16,7 @@ export const initializeGame = async () => {
     shuffledArray[i] = instance.encrypt8(shuffledArray[i]);
   }
 
-  console.log(shuffledArray.length);
+  // console.log(shuffledArray.length);/
   try {
     const signer = await provider.getSigner();
     const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
