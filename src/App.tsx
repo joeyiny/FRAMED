@@ -33,7 +33,7 @@ function App() {
           <div>
             {/* <h1>Based Account Abstraction</h1> */}
             {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
-            {!authenticated && <Button onClick={login}>JOIN GAME</Button>}
+            {!authenticated && <Button onClick={login}>Enter app</Button>}
             {/* {loading && <p>Loading Smart Account...</p>} */}
             {authenticated && <Authenticated />}
           </div>
