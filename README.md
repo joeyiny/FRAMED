@@ -1,5 +1,5 @@
-# FRAMED!
+# FRAMED! — EthGlobal NY 2023 Hackathon Submission
 
-How We are using FHE (Fully Homomorphic Encreyption)
+---
 
-
+Classic campfire game put onchain with cutting-edge fhEVM technology.

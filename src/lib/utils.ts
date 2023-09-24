@@ -23,3 +23,6 @@ export function shortenEthAddress(address: string, frontLength = 4, backLength =
   // Finally add 0x back
   return "0x" + shortenedAddress;
 }
+
+export const toHexString = (bytes: any) =>
+  bytes.reduce((str: any, byte: any) => str + byte.toString(16).padStart(2, "0"), "");
