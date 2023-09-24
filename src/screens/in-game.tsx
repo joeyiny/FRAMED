@@ -19,7 +19,7 @@ import {
   votePlayer,
 } from "@/lib/game-functions";
 import { GamePhase, PlayerRole } from "@/types";
-import { ActivePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
+import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
 export const CONTRACT_ADDRESS = "0x1d576bE5C42dd9A0682f8E1354EB15A4Ce2d0795";
 
@@ -104,7 +104,12 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       ) : (
         <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
           {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}
-          {players && players.map((p) => <ActivePlayerCard address={p} />)}
+          {players &&
+            gamePhase !== GamePhase.AwaitPlayerActions &&
+            players.map((p) => <ActivePlayerCard address={p} />)}
+          {players &&
+            gamePhase === GamePhase.AwaitPlayerActions &&
+            players.map((p) => <ClickablePlayerCard address={p} />)}
           {/* <WaitingPlayerCard />
           <WaitingPlayerCard />
           <WaitingPlayerCard />
