@@ -3,6 +3,9 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import InGameScreen from "./screens/in-game";
 import PendingGame from "./screens/loading";
+import { useContractEvent } from 'wagmi'
+import mafiaAbi from "../contracts/mafiaABI.json";
+
 
 import { Client } from "@xmtp/xmtp-js";
 
@@ -13,6 +16,14 @@ import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 function App() {
   const { authenticated, ready, user } = usePrivy();
+  useContractEvent({
+    address: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e',
+    abi: mafiaAbi,
+    eventName: 'JoinGame',
+    listener(log) {
+      console.log(log)
+    },
+  })
   // const { wallets } = useWallets();
   // const [provider, setProvider] = useState<unknown>();
   // useEffect(() => {
