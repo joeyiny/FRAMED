@@ -3,9 +3,32 @@ import { Card, CardContent, CardFooter } from "./ui/card";
 import { Badge } from "./ui/badge";
 import * as Typography from "./ui/typography";
 import { shortenEthAddress } from "@/lib/utils";
+import { useEffect, useState } from "react";
+import { getPlayerAddress } from "@/lib/game-functions";
 
 export const ActivePlayerCard = ({ address, index }: { address: string; index: number }) => {
   const { user } = usePrivy();
+  const [isYou, setIsYou] = useState<"loading" | true | false>("loading");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // const p = await queryUsers();
+      const w = await getPlayerAddress();
+      console.log(w, address);
+      if (w === address) {
+        setIsYou(true);
+      } else {
+        setIsYou(false);
+      }
+      // setLoading(false);
+      // setPlayers(p);
+      // const inGame = Object.values(p).includes(w);
+      // setPlayerIsJoined(inGame);
+      // if(p.includes)
+      // console.log(inGame);
+    };
+    fetchData();
+  }, []);
 
   return (
     <Card
@@ -14,9 +37,7 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
         boxShadow: "0px 8px 10px -3px rgba(0, 0, 0, 0.04), 0px 2px 4px -4px rgba(16, 24, 40, 0.02)",
       }}>
       <CardContent className="p-0">
-        {user?.wallet?.address === address && (
-          <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>
-        )}
+        {isYou && <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>}
         <img
           src={`assets/avatars/${index}.jpeg`}
           width={200}
