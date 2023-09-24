@@ -1,11 +1,9 @@
-// import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import * as Typography from "@/components/ui/typography";
 import { shortenEthAddress, shuffleArray } from "@/lib/utils";
 import { usePrivy } from "@privy-io/react-auth";
-// import { fetchEnsName } from "@wagmi/core";
 import { useState, useEffect } from "react";
 import { getInstance, provider } from "../lib/fhevm";
 import { Contract } from "ethers";
