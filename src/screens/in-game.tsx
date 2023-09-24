@@ -9,7 +9,15 @@ import { getInstance, provider } from "../lib/fhevm";
 import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import { useContractEvent } from "wagmi";
-import { joinGame, queryUsers, takeAction, viewCaught, viewRole, votePlayer } from "@/lib/game-functions";
+import {
+  initializeGame,
+  joinGame,
+  queryUsers,
+  takeAction,
+  viewCaught,
+  viewRole,
+  votePlayer,
+} from "@/lib/game-functions";
 import { GamePhase } from "@/types";
 import { ActivePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
@@ -58,8 +66,9 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       {/* <p>{ensName}</p> */}
       <div className="my-16">
         <Typography.TypographyLarge className="animate-pulse">
-          Waiting for other players to join...
+          {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
         </Typography.TypographyLarge>
+
         <Typography.TypographyMuted>
           {/* <Typography.TypographySmall>1/6 players joined</Typography.TypographySmall> */}
         </Typography.TypographyMuted>
@@ -78,11 +87,16 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       )}
       {dialog && <div>{dialog}</div>}
       {/* {loading && <div>{loading}</div>} */}
-      {gamePhase === GamePhase.WaitingForPlayers && (
-        <Button onClick={joinGame} size="lg" className="mt-8">
-          Join Game
-        </Button>
-      )}
+      {gamePhase === GamePhase.WaitingForPlayers &&
+        (players && players.length >= 3 ? (
+          <Button onClick={initializeGame} size="lg" className="mt-8">
+            Begin Game
+          </Button>
+        ) : (
+          <Button onClick={joinGame} size="lg" className="mt-8">
+            Join Game
+          </Button>
+        ))}
       {/* <Button onClick={initializeGame}>Initialize Game</Button>
       <Button onClick={takeAction}>Take Action</Button>
       <Button onClick={votePlayer}>Vote Player</Button>
