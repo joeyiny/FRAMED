@@ -18,17 +18,6 @@ contract Mafia is EIP712WithModifier {
 
     // 1 is mafia | 2 is detective | 3 is doctor | 4 is citizen
 
-    event JoinGame(address _playerAddress, uint8 _playerId);
-    event InitGame(uint8 _gameCount);
-    event Action(address _playerAddress, uint8 _actionCount);
-    event NextDay(bool _killed);
-    event CastVote(address _voter, uint8 _playerId);
-    event CheckMafia(bool _mafiaKilled);
-    event Killed(uint8 _playerKilled);
-    event Exiled(uint8 _playerExiled);
-
-    // 1 is mafia | 2 is detective | 3 is doctor | 4 is citizen
-
     address public owner;
     uint8 playerCount = 0;
     uint8 gameCount = 0;
@@ -41,7 +30,6 @@ contract Mafia is EIP712WithModifier {
     }
 
     mapping(address => Player) public players;
-    mapping(address => bool) joinedGame;
     mapping(address => euint8) public target;
     mapping(uint8 => Player) public idToPlayer;
     mapping(address => bool) public hasVoted;
@@ -66,10 +54,6 @@ contract Mafia is EIP712WithModifier {
 
     constructor() EIP712WithModifier("Authorization token", "1") {
         owner = msg.sender;
-    }
-
-    function getPlayersArray() public view returns (address[] memory) {
-        return playersList;
     }
 
     function initializeGame(bytes[] calldata roles) public {
@@ -110,9 +94,7 @@ contract Mafia is EIP712WithModifier {
     // join the game
     function joinGame() public {
         require(playersList.length < 3);
-        require(!joinedGame[msg.sender]);
         playersList.push(msg.sender);
-        joinedGame[msg.sender] = true;
         emit JoinGame(msg.sender, playerCount);
     }
 
@@ -161,32 +143,6 @@ contract Mafia is EIP712WithModifier {
         } else {
             actionCount++;
         }
-
-        if (!isVictimSavedDecrypted) {
-            playerKilled = TFHE.decrypt(killedPlayerId);
-            idToPlayer[playerKilled].alive = false;
-            players[idToPlayer[playerKilled].playerAddress].alive = false;
-            voteCount++;
-            // Emit dead event
-            emit NextDay(true);
-            emit Killed(playerKilled);
-        } else {
-            emit NextDay(false);
-        }
-
-        euint8 investigatedPlayerIdRole = TFHE.asEuint8(0);
-
-        for (uint8 i = 0; i < playersList.length; i++) {
-            ebool isMatchingId = TFHE.eq(
-                TFHE.asEuint8(players[playersList[i]].playerId),
-                investigatedPlayerId
-            );
-            investigatedPlayerIdRole = TFHE.add(
-                investigatedPlayerIdRole,
-                TFHE.cmux(isMatchingId, idToPlayer[i].role, TFHE.asEuint8(0))
-            );
-        }
-        isCaught = TFHE.eq(TFHE.asEuint8(1), investigatedPlayerIdRole);
     }
 
     function revealNextDay() public {
