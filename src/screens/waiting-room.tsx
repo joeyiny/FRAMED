@@ -7,12 +7,13 @@ import { shortenEthAddress } from "@/lib/utils";
 import { usePrivy } from "@privy-io/react-auth";
 // import { fetchEnsName } from "@wagmi/core";
 import { useState, useEffect } from "react";
-import { getInstance, provider, getTokenSignature } from "../lib/fhevm";
+import { getInstance, provider } from "../lib/fhevm";
 import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import { useContractEvent } from "wagmi";
+import { joinGame, queryUsers, takeAction, viewCaught, viewRole, votePlayer } from "@/lib/game-functions";
 
-const CONTRACT_ADDRESS = "0x8690183c936864a6a65280DBAd00004493B3020D";
+export const CONTRACT_ADDRESS = "0x8690183c936864a6a65280DBAd00004493B3020D";
 
 const ActivePlayerCard = ({ address }: { address: string }) => {
   const { user } = usePrivy();
@@ -80,93 +81,6 @@ const WaitingRoom = () => {
     fetchInstance();
   }, []);
 
-  const queryUsers = async () => {
-    try {
-      const signer = await provider.getSigner();
-      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
-      setLoading("Joining Game...");
-      const result = await contract.getPlayersArray();
-      console.log(result);
-      setLoading("Success!");
-    } catch (e) {
-      console.log(e);
-      setLoading("");
-      setDialog("Error querying users!");
-    }
-  };
-
-  const joinGame = async () => {
-    try {
-      const signer = await provider.getSigner();
-      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
-      setLoading("Joining Game...");
-      const result = await contract.joinGame();
-      console.log(result);
-      setLoading("Success!");
-    } catch (e) {
-      console.log(e);
-      setLoading("");
-      setDialog("Error during joining!");
-    }
-  };
-
-  const takeAction = async () => {
-    const playerId = 2;
-    try {
-      const encryptedData = instance.encrypt8(playerId);
-      const signer = await provider.getSigner();
-      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
-      setLoading("Taking Action on selected player...");
-      const transaction = await contract.action(encryptedData);
-      console.log(encryptedData);
-      setLoading("Waiting for transaction validation...");
-      await provider.waitForTransaction(transaction.hash);
-      setLoading("");
-      setDialog("Action has been taken");
-    } catch (e) {
-      console.log(e);
-      setLoading("");
-      setDialog("Transaction error!");
-    }
-  };
-
-  const votePlayer = async () => {
-    const playerId = 2;
-    try {
-      const signer = await provider.getSigner();
-      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
-      setLoading("Casting vote on selected player...");
-      const transaction = await contract.castVote(playerId);
-      setLoading("Waiting for transaction validation...");
-      await provider.waitForTransaction(transaction.hash);
-      setLoading("");
-      setDialog("Vote has been casted");
-    } catch (e) {
-      console.log(e);
-      setLoading("");
-      setDialog("Transaction error!");
-    }
-  };
-
-  const viewRole = async () => {
-    try {
-      const signer = await provider.getSigner();
-      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
-      setLoading("Decrypting User Role...");
-      const { publicKey, signature } = await getTokenSignature(CONTRACT_ADDRESS, signer.address);
-      const ciphertext = await contract.viewOwnRole(publicKey, signature);
-      console.log(ciphertext);
-      const userCreditScoreDecrypted = instance.decrypt(CONTRACT_ADDRESS, ciphertext);
-      console.log(ciphertext, userCreditScoreDecrypted);
-      setUserRole(userCreditScoreDecrypted);
-      setLoading("");
-    } catch (e) {
-      console.log(e);
-      setLoading("");
-      setDialog("Error during reencrypt!");
-    }
-  };
-
   const shuffleArray = (arr: any) => {
     for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
@@ -199,25 +113,6 @@ const WaitingRoom = () => {
       console.log(e);
       setLoading("");
       setDialog("Transaction error!");
-    }
-  };
-
-  const viewCaught = async () => {
-    try {
-      const signer = await provider.getSigner();
-      const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
-      setLoading("Decrypting if selected target is Mafia...");
-      const { publicKey, signature } = await getTokenSignature(CONTRACT_ADDRESS, signer.address);
-      const ciphertext = await contract.viewCaught(publicKey, signature);
-      console.log(ciphertext);
-      const userCreditScoreDecrypted = instance.decrypt(CONTRACT_ADDRESS, ciphertext);
-      console.log(ciphertext, userCreditScoreDecrypted);
-      setUserRole(userCreditScoreDecrypted);
-      setLoading("");
-    } catch (e) {
-      console.log(e);
-      setLoading("");
-      setDialog("Error during reencrypt!");
     }
   };
 
