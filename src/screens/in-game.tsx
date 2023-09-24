@@ -22,7 +22,7 @@ import {
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
-export const CONTRACT_ADDRESS = "0xF8F7799aB5Edf9F5D32B9658b227BE90Cc3d00B3";
+export const CONTRACT_ADDRESS = "0x8B317f3F224cd73E9fb8DEC1235108afe34dB41e";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
@@ -32,6 +32,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
   const [userRole, setUserRole] = useState("");
   const [isCaught, setIsCaught] = useState(null);
   const [resultsText, setResultsText] = useState("loading results...");
+  const [playerIsJoined, setPlayerIsJoined] = useState(false);
   const [players, setPlayers] = useState<[unknown] | null>();
   const [playerRole, setPlayerRole] = useState(PlayerRole.Unknown);
 
@@ -130,6 +131,17 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
             players.map((p, i) => <ActivePlayerCard address={p} index={i} />)}
+
+          {Array(3 - (players ? players.length : 0))
+            .fill()
+            .map((_, i) => (
+              <WaitingPlayerCard key={i} />
+            ))}
+
+          {/* <WaitingPlayerCard />
+          <WaitingPlayerCard />
+          <WaitingPlayerCard />
+          <WaitingPlayerCard /> */}
           {players &&
             gamePhase === GamePhase.AwaitPlayerActions &&
             players.map((p, i) => (
@@ -140,11 +152,6 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
             players.map((p, i) => (
               <ClickablePlayerCard index={i} address={p} onClick={async () => await votePlayer(i)} />
             ))}
-          {/* {gamePhase === GamePhase.Results && <div>the game has ended.</div>} */}
-          {/* <WaitingPlayerCard />
-          <WaitingPlayerCard />
-          <WaitingPlayerCard />
-          <WaitingPlayerCard /> */}
         </div>
       )}
       {dialog && <div>{dialog}</div>}
@@ -160,7 +167,14 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
             Begin Game
           </Button>
         ) : (
-          <Button onClick={joinGame} size="lg" className="mt-8">
+          <Button
+            onClick={async () => {
+              const r = await joinGame();
+              if (r) setPlayerIsJoined(true);
+            }}
+            disabled={playerIsJoined}
+            size="lg"
+            className="mt-8">
             Join Game
           </Button>
         ))}
