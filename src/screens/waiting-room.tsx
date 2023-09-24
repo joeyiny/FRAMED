@@ -11,7 +11,7 @@ import { getInstance, provider, getTokenSignature } from "../lib/fhevm";
 import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 
-const CONTRACT_ADDRESS = "0x0e9A9Ac3Aaf264Af4F6716C2FC982CF58F3E591D";
+const CONTRACT_ADDRESS = "0xCC34578E2c6f0a3CB3ccba7e2F58F31b4A612D00";
 
 const ActivePlayerCard = ({ address }: { address: string }) => {
   const { user } = usePrivy();
@@ -75,7 +75,7 @@ const WaitingRoom = () => {
       const signer = await provider.getSigner();
       const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
       setLoading("Joining Game...");
-      const result = await contract.playerCount;
+      const result = await contract.getPlayersArray();
       console.log(result);
       setLoading("Success!");
     } catch (e) {
