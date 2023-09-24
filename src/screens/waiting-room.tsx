@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import * as Typography from "@/components/ui/typography";
-import { shortenEthAddress } from "@/lib/utils";
+import { shortenEthAddress, shuffleArray } from "@/lib/utils";
 import { usePrivy } from "@privy-io/react-auth";
 // import { fetchEnsName } from "@wagmi/core";
 import { useState, useEffect } from "react";
@@ -80,13 +80,6 @@ const WaitingRoom = () => {
     }
     fetchInstance();
   }, []);
-
-  const shuffleArray = (arr: any) => {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-  };
 
   const initializeGame = async () => {
     // const originalArray = [1, 2, 3, 4, 4];

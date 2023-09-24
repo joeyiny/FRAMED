@@ -26,3 +26,12 @@ export function shortenEthAddress(address: string, frontLength = 4, backLength =
 
 export const toHexString = (bytes: any) =>
   bytes.reduce((str: any, byte: any) => str + byte.toString(16).padStart(2, "0"), "");
+
+export const shuffleArray = <T>(arr: T[]): T[] => {
+  const newArr = [...arr];
+  for (let i = newArr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+  }
+  return newArr;
+};
