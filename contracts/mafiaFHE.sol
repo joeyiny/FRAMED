@@ -46,8 +46,8 @@ contract Mafia is EIP712WithModifier {
     uint8 public playerIdWithLargestVoteCount;
     uint8 public actionCount;
     uint8 public voteCount;
-
-    bool public isMafiaKilled;
+    uint8 public isMafiaKilled = 255;
+    bool public tieExists = false;
     
     event Voted(address voter, uint8 playerId, uint8 votes);
 
@@ -160,13 +160,19 @@ contract Mafia is EIP712WithModifier {
 
         playerVoteCount[_playerId]++;
         hasVoted[msg.sender] = true;
+
+        if (largestVoteCount == playerVoteCount[_playerId]) {
+            tieExists = true;
+        }
         
         if (largestVoteCount == 0) {
             largestVoteCount = 1;
             playerIdWithLargestVoteCount = _playerId;
+            tieExists = false;
         } else if (largestVoteCount < playerVoteCount[_playerId]) {
             largestVoteCount = playerVoteCount[_playerId];
             playerIdWithLargestVoteCount = _playerId;
+            tieExists = false;
         }
         emit Voted(msg.sender, _playerId, playerVoteCount[_playerId]);
         if (voteCount == 2) {
@@ -176,12 +182,15 @@ contract Mafia is EIP712WithModifier {
         }
     }
 
-    function checkIfMafiaKilled() public returns (bool) {
+    function checkIfMafiaKilled() public {
         idToPlayer[playerIdWithLargestVoteCount].alive = false;
         players[idToPlayer[playerIdWithLargestVoteCount].playerAddress].alive = false;
         uint8 role = TFHE.decrypt(idToPlayer[playerIdWithLargestVoteCount].role);
-        isMafiaKilled = role == 1;
-        return isMafiaKilled;
+        if (role == 1 && !tieExists) {
+            isMafiaKilled = 1;
+        } else {
+            isMafiaKilled = 0;
+        }
     }
 
 
