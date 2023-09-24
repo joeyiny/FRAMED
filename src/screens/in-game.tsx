@@ -1,12 +1,13 @@
 import Navbar from "@/components/navbar";
-import WaitingRoom from "./waiting-room";
+
+import TutorialFlow from "./tutorial-flow";
 
 const InGameScreen = () => {
   return (
     <div>
       <Navbar />
 
-      <WaitingRoom />
+      <TutorialFlow />
     </div>
   );
 };
