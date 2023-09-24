@@ -11,6 +11,7 @@ import mafiaABI from "../abi/mafia.json";
 import { useContractEvent } from "wagmi";
 import {
   initializeGame,
+  isMafiaKilled,
   joinGame,
   queryUsers,
   takeAction,
@@ -21,7 +22,7 @@ import {
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
-export const CONTRACT_ADDRESS = "0xB8f1afb3CD00e9118B9bF8194B0CAC59A10FaA88";
+export const CONTRACT_ADDRESS = "0xed8aaD2d7bE0419D991d3c24C57ABDfa04aB9bF2";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
@@ -30,6 +31,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
   const [dialog, setDialog] = useState("");
   const [userRole, setUserRole] = useState("");
   const [isCaught, setIsCaught] = useState(null);
+  const [resultsText, setResultsText] = useState("loading results...");
   const [players, setPlayers] = useState<[unknown] | null>();
   const [playerRole, setPlayerRole] = useState(PlayerRole.Unknown);
 
@@ -39,6 +41,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     eventName: "JoinGame",
     // listener: eventListener,
     listener(log) {
+      console.log("THIS HAPPENED!!!!!!");
       console.log(log);
     },
   });
@@ -58,6 +61,19 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       const p = await queryUsers();
       setLoading(false);
       setPlayers(p);
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (gamePhase !== GamePhase.Results) return;
+      const r = await isMafiaKilled();
+      if (r === 0) {
+        setResultsText("The mafia has won!");
+      } else {
+        setResultsText("The players have won!");
+      }
     };
     fetchData();
   }, []);
@@ -101,6 +117,9 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
         )}
         {gamePhase === GamePhase.Voting && (
           <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
+        )}
+        {gamePhase === GamePhase.Results && (
+          <Typography.TypographyLarge>And the winner is...</Typography.TypographyLarge>
         )}
       </div>
       {loading ? (
@@ -163,7 +182,12 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
           View Role
         </Button>
       )}
-      {gamePhase === GamePhase.Results && <Button className="mt-4">Play Again</Button>}
+      {gamePhase === GamePhase.Results && (
+        <div>
+          <Typography.TypographyH3>{resultsText}</Typography.TypographyH3>
+          <Button className="mt-4">Play Again</Button>
+        </div>
+      )}
       {/* <Button onClick={initializeGame}>Initialize Game</Button>
       <Button onClick={takeAction}>Take Action</Button>
       <Button onClick={votePlayer}>Vote Player</Button>

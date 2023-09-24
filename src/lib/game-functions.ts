@@ -167,3 +167,15 @@ export const getDeadPlayer = async () => {
     console.log("Couldnt get game state from the contract.");
   }
 };
+
+export const isMafiaKilled = async () => {
+  try {
+    const signer = await provider.getSigner();
+    const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
+    const r = await contract.isMafiaKilled();
+    return Number(r);
+  } catch (e) {
+    console.log(e);
+    console.log("Couldnt get game state from the contract.");
+  }
+};
