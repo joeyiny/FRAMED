@@ -23,6 +23,12 @@ const Authenticated = () => {
         if (r === 1) {
           setGamePhase(GamePhase.AwaitPlayerActions);
         }
+        if (r === 2) {
+          setGamePhase(GamePhase.Voting);
+        }
+        if (r === 3) {
+          setGamePhase(GamePhase.Results);
+        }
       } catch (err) {
         console.error(err);
       }

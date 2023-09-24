@@ -105,8 +105,7 @@ export const takeAction = async (playerId: number) => {
   }
 };
 
-export const votePlayer = async () => {
-  const playerId = 2;
+export const votePlayer = async (playerId: number) => {
   try {
     const signer = await provider.getSigner();
     const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
@@ -150,6 +149,18 @@ export const getGameStateFromContract = async () => {
     const signer = await provider.getSigner();
     const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
     const r = await contract.gameState();
+    return Number(r);
+  } catch (e) {
+    console.log(e);
+    console.log("Couldnt get game state from the contract.");
+  }
+};
+
+export const getDeadPlayer = async () => {
+  try {
+    const signer = await provider.getSigner();
+    const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
+    const r = await contract.playerKilled();
     return Number(r);
   } catch (e) {
     console.log(e);

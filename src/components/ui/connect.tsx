@@ -117,10 +117,7 @@ export const Connect: React.FC<ConnectProps> = ({ children }) => {
         <div>
           <p>You're not on the correct network</p>
           <p>
-            <button
-              className="Connect__button bg-gray-200 hover:bg-blue-400"
-              onClick={switchNetwork}
-            >
+            <button className="Connect__button bg-gray-200 hover:bg-blue-400" onClick={switchNetwork}>
               Switch to Inco Network Devnet
             </button>
           </p>
@@ -137,29 +134,26 @@ export const Connect: React.FC<ConnectProps> = ({ children }) => {
 
   const connectInfos = (
     <div className="Connect__info flex flex-col">
-      <a
+      {/* <a
         href="https://faucetdev.inco.network/"
         target="_blank"
         className="mb-16 text-gray-500 hover:text-gray-900"
       >
         Get test tokens from Faucet
-      </a>
+      </a> */}
       {!connected && (
-        <button
-          className="Connect__button bg-gray-200 hover:bg-blue-400"
-          onClick={connect}
-        >
+        <button className="Connect__button bg-gray-200 hover:bg-blue-400" onClick={connect}>
           Connect your wallet
         </button>
       )}
-      {connected && (
+      {/* {connected && (
         <div className="Connect__account">
           Connected with{" "}
           {account.substring(0, 5) +
             "..." +
             account.substring(account.length - 5, account.length)}
         </div>
-      )}
+      )} */}
     </div>
   );
 

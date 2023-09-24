@@ -66,6 +66,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     <>
       {/* <p>{ensName}</p> */}
       <div className="my-16">
+        {/* {gamePhase} */}
         {gamePhase === GamePhase.WaitingForPlayers && (
           <Typography.TypographyLarge className="animate-pulse">
             {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
@@ -98,6 +99,9 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
             <Typography.TypographySmall>Choose the player you want to examine.</Typography.TypographySmall>
           </Typography.TypographyMuted>
         )}
+        {gamePhase === GamePhase.Voting && (
+          <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
+        )}
       </div>
       {loading ? (
         "loading..."
@@ -105,13 +109,19 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
         <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
           {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}
           {players &&
-            gamePhase !== GamePhase.AwaitPlayerActions &&
-            players.map((p) => <ActivePlayerCard address={p} />)}
+            gamePhase === GamePhase.WaitingForPlayers &&
+            players.map((p, i) => <ActivePlayerCard address={p} index={i} />)}
           {players &&
             gamePhase === GamePhase.AwaitPlayerActions &&
             players.map((p, i) => (
               <ClickablePlayerCard index={i} address={p} onClick={async () => await doAction(i)} />
             ))}
+          {players &&
+            gamePhase === GamePhase.Voting &&
+            players.map((p, i) => (
+              <ClickablePlayerCard index={i} address={p} onClick={async () => await votePlayer(i)} />
+            ))}
+          {/* {gamePhase === GamePhase.Results && <div>the game has ended.</div>} */}
           {/* <WaitingPlayerCard />
           <WaitingPlayerCard />
           <WaitingPlayerCard />
@@ -153,6 +163,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
           View Role
         </Button>
       )}
+      {gamePhase === GamePhase.Results && <Button className="mt-4">Play Again</Button>}
       {/* <Button onClick={initializeGame}>Initialize Game</Button>
       <Button onClick={takeAction}>Take Action</Button>
       <Button onClick={votePlayer}>Vote Player</Button>
