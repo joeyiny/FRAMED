@@ -135,6 +135,7 @@ export const viewRole = async () => {
     console.log(ciphertext);
     const userCreditScoreDecrypted = instance.decrypt(CONTRACT_ADDRESS, ciphertext);
     console.log(ciphertext, userCreditScoreDecrypted);
+    return userCreditScoreDecrypted;
     // setUserRole(userCreditScoreDecrypted);
     // setLoading("");
   } catch (e) {

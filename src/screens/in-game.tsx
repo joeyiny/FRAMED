@@ -18,7 +18,7 @@ import {
   viewRole,
   votePlayer,
 } from "@/lib/game-functions";
-import { GamePhase } from "@/types";
+import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
 export const CONTRACT_ADDRESS = "0x1d576bE5C42dd9A0682f8E1354EB15A4Ce2d0795";
@@ -31,9 +31,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
   const [userRole, setUserRole] = useState("");
   const [isCaught, setIsCaught] = useState(null);
   const [players, setPlayers] = useState<[unknown] | null>();
-  const eventListener = (log) => {
-    console.log(log);
-  };
+  const [playerRole, setPlayerRole] = useState(PlayerRole.Unknown);
 
   useContractEvent({
     address: CONTRACT_ADDRESS,
@@ -68,10 +66,18 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     <>
       {/* <p>{ensName}</p> */}
       <div className="my-16">
-        <Typography.TypographyLarge className="animate-pulse">
-          {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
-        </Typography.TypographyLarge>
+        {gamePhase === GamePhase.WaitingForPlayers && (
+          <Typography.TypographyLarge className="animate-pulse">
+            {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
+          </Typography.TypographyLarge>
+        )}
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && (
+          <Typography.TypographyLarge>Let's check to see what your role is!</Typography.TypographyLarge>
+        )}
 
+        {gamePhase === GamePhase.AwaitPlayerActions && playerRole !== PlayerRole.Unknown && (
+          <Typography.TypographyLarge>Your role is {playerRole}</Typography.TypographyLarge>
+        )}
         <Typography.TypographyMuted>
           {/* <Typography.TypographySmall>1/6 players joined</Typography.TypographySmall> */}
         </Typography.TypographyMuted>
@@ -105,7 +111,24 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
             Join Game
           </Button>
         ))}
-      {gamePhase === GamePhase.AwaitPlayerActions && <p>awaiting action</p>}
+      {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && (
+        <Button
+          className="mt-4"
+          onClick={async () => {
+            const role = await viewRole();
+            if (role === 0) {
+              setPlayerRole(PlayerRole.Citizen);
+            } else if (role === 1) {
+              setPlayerRole(PlayerRole.Thief);
+            } else if (role === 2) {
+              setPlayerRole(PlayerRole.Detective);
+            } else if (role === 3) {
+              setPlayerRole(PlayerRole.Cop);
+            }
+          }}>
+          View Role
+        </Button>
+      )}
       {/* <Button onClick={initializeGame}>Initialize Game</Button>
       <Button onClick={takeAction}>Take Action</Button>
       <Button onClick={votePlayer}>Vote Player</Button>
