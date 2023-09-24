@@ -11,7 +11,7 @@ interface ConnectProps {
 
 export const Connect: React.FC<ConnectProps> = ({ children }) => {
   const [connected, setConnected] = useState<boolean>(false);
-  const [validNetwork, setValidNetwork] = useState<boolean>(false);
+  const [networkState, setNetworkState] = useState<"invalid" | "valid" | "loading">("loading");
   const [account, setAccount] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const [provider, setProvider] = useState<any | null>(null);
@@ -31,9 +31,9 @@ export const Connect: React.FC<ConnectProps> = ({ children }) => {
   const refreshNetwork = useCallback(async () => {
     if (await hasValidNetwork()) {
       await createFhevmInstance();
-      setValidNetwork(true);
+      setNetworkState("valid");
     } else {
-      setValidNetwork(false);
+      setNetworkState("invalid");
     }
   }, [hasValidNetwork]);
 
@@ -112,7 +112,7 @@ export const Connect: React.FC<ConnectProps> = ({ children }) => {
       return null;
     }
 
-    if (!validNetwork) {
+    if (networkState === "invalid") {
       return (
         <div>
           <p>You're not on the correct network</p>
@@ -126,7 +126,7 @@ export const Connect: React.FC<ConnectProps> = ({ children }) => {
     }
 
     return children(account, provider);
-  }, [account, provider, validNetwork, children, switchNetwork]);
+  }, [account, provider, networkState, children, switchNetwork]);
 
   if (error) {
     return <p>No wallet has been found.</p>;
