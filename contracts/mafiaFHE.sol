@@ -124,7 +124,6 @@ contract Mafia is EIP712WithModifier {
 
     }
 
-
     function revealNextDay() public {
         ebool isVictimSaved = TFHE.eq(killedPlayerId, savedPlayerId);
         bool isVictimSavedDecrypted = TFHE.decrypt(isVictimSaved);
