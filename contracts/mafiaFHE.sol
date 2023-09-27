@@ -34,11 +34,11 @@ contract Mafia is EIP712WithModifier {
 
     mapping (address => Player) public players;
     mapping (address => bool) joinedGame;
-    mapping (address => euint8) public target;
+    mapping (uint8 => mapping(address => euint8)) public target;
     mapping (uint8 => Player) public idToPlayer; 
-    mapping (address => bool) public hasVoted;
-    mapping (address => bool) public hasTakenAction;
-    mapping (uint8 => uint8) public playerVoteCount;
+    mapping (uint8 => mapping(address => bool)) public hasVoted;
+    mapping (uint8 => mapping(address => bool)) public hasTakenAction;
+    mapping (uint8 => mapping(uint8 => uint8)) public playerVoteCount;
 
     euint8 public killedPlayerId;
     euint8 public savedPlayerId;
@@ -76,6 +76,7 @@ contract Mafia is EIP712WithModifier {
         emit NewState(gameState);
     }
 
+
     function newGame(bytes[] calldata roles) public {
         killedPlayerId = TFHE.asEuint8(0);
         savedPlayerId = TFHE.asEuint8(0);
@@ -83,11 +84,19 @@ contract Mafia is EIP712WithModifier {
         isCaught = TFHE.asEbool(false);
         voteCount = 0;
         actionCount = 0;
+        gameState = 0;
         for (uint8 i = 0; i < 3; i++) {
             players[playersList[i]].role = TFHE.asEuint8(roles[i]);
             players[playersList[i]].alive = true;
         }
         gameCount++;
+        playerKilled = 0;
+        largestVoteCount = 0;
+        playerIdWithLargestVoteCount = 0;
+        actionCount = 0;
+        voteCount = 0;
+        isMafiaKilled = 255;
+        tieExists = false;
         emit InitGame(gameCount);
     }
 
@@ -111,7 +120,7 @@ contract Mafia is EIP712WithModifier {
 
     // selectedPlayer is an uint8 ciphertext
     function action(bytes calldata selectedPlayer) public {
-        require(!hasTakenAction[msg.sender], "Already played turn");
+        require(!hasTakenAction[gameCount][msg.sender], "Already played turn");
 
         // check if player is mafia
         ebool isMafia = TFHE.eq(TFHE.asEuint8(1), players[msg.sender].role);
@@ -125,7 +134,7 @@ contract Mafia is EIP712WithModifier {
         ebool isDetective = TFHE.eq(TFHE.asEuint8(2), players[msg.sender].role);
         investigatedPlayerId = TFHE.add(investigatedPlayerId, TFHE.cmux(isDetective, TFHE.asEuint8(selectedPlayer), TFHE.asEuint8(0)));
 
-        hasTakenAction[msg.sender] = true;
+        hasTakenAction[gameCount][msg.sender] = true;
         emit Action(msg.sender, actionCount);
         if (actionCount == 2) {
             revealNextDay();
@@ -177,12 +186,12 @@ contract Mafia is EIP712WithModifier {
 
     function castVote(uint8 _playerId) public {
         require(idToPlayer[_playerId].alive);
-        require(!hasVoted[msg.sender], "You have already voted");
+        require(!hasVoted[gameCount][msg.sender], "You have already voted");
 
-        playerVoteCount[_playerId]++;
-        hasVoted[msg.sender] = true;
+        playerVoteCount[gameCount][_playerId]++;
+        hasVoted[gameCount][msg.sender] = true;
 
-        if (largestVoteCount == playerVoteCount[_playerId]) {
+        if (largestVoteCount == playerVoteCount[gameCount][_playerId]) {
             tieExists = true;
         }
         
@@ -190,12 +199,12 @@ contract Mafia is EIP712WithModifier {
             largestVoteCount = 1;
             playerIdWithLargestVoteCount = _playerId;
             tieExists = false;
-        } else if (largestVoteCount < playerVoteCount[_playerId]) {
-            largestVoteCount = playerVoteCount[_playerId];
+        } else if (largestVoteCount < playerVoteCount[gameCount][_playerId]) {
+            largestVoteCount = playerVoteCount[gameCount][_playerId];
             playerIdWithLargestVoteCount = _playerId;
             tieExists = false;
         }
-        emit Voted(msg.sender, _playerId, playerVoteCount[_playerId]);
+        emit Voted(msg.sender, _playerId, playerVoteCount[gameCount][_playerId]);
         if (voteCount == 2) {
             checkIfMafiaKilled();
         } else {
