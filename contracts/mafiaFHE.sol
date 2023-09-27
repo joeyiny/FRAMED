@@ -109,14 +109,9 @@ contract Mafia is EIP712WithModifier {
         emit JoinGame(msg.sender, playerCount);
     }
 
-    // //testing 
-    // function batchJoin() public {
-    //     joinGame(0x17e968F5C0472941767F06b660Ab2E7149Bdf7ED); // 1 (mafia)
-    //     joinGame(0x08d8E680A2d295Af8CbCD8B8e07f900275bc6B8D); // 2 (detective)
-    //     joinGame(0xaf9c5FD073933C6f7eb654542e6c6b205572Fdb4); // 3 (doctor)
-    //     // joinGame(0xbb15Fa688139452f542d15778F6b4A187f6857F5); // 4 (citizen)
-    //     // joinGame(0xcE716032dFe9d5BB840568171F541A6A046bBf90); // 4 (citizen) 
-    // }
+    function setGameState(uint8 _gameState) public {
+        gameState = _gameState;
+    } 
 
     // selectedPlayer is an uint8 ciphertext
     function action(bytes calldata selectedPlayer) public {
