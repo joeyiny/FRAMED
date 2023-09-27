@@ -23,7 +23,7 @@ import {
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
-export const CONTRACT_ADDRESS = "0x8B317f3F224cd73E9fb8DEC1235108afe34dB41e";
+export const CONTRACT_ADDRESS = "0xE055834f9892Dd486dBDAC0D43a61b30AaE5cA33";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
