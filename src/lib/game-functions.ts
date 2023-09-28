@@ -1,8 +1,9 @@
 import { CONTRACT_ADDRESS } from "@/screens/in-game";
 import { getInstance, getTokenSignature, provider } from "../lib/fhevm";
-import { Contract } from "ethers";
+import { BrowserProvider, Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import { shuffleArray } from "./utils";
+import { ConnectedWallet } from "@privy-io/react-auth";
 
 export const getPlayerAddress = async () => {
   const signer = await provider.getSigner();
@@ -74,9 +75,12 @@ export const queryUsers = async () => {
   }
 };
 
-export const joinGame = async () => {
+export const joinGame = async (w: ConnectedWallet) => {
   try {
-    const signer = await provider.getSigner();
+    w.switchChain(9000);
+    const a = await w.getEthereumProvider();
+    const p = new BrowserProvider(a);
+    const signer = await p.getSigner();
     const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
     // setLoading("Joining Game...");
     const result = await contract.joinGame();
