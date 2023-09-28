@@ -17,6 +17,7 @@ contract Mafia is EIP712WithModifier {
     event Killed(uint8 _playerKilled);
     event Exiled(uint8 _playerExiled);
     event NewState(uint8 gameState);
+    event RestartGame(uint8 _gameCount);
     
     // 1 is mafia | 2 is detective | 3 is doctor | 4 is citizen
 
@@ -102,7 +103,7 @@ contract Mafia is EIP712WithModifier {
 
     // join the game
     function joinGame() public {
-        require(playersList.length < 3);
+        require(playersList.length < 4);
         require(!joinedGame[msg.sender]);
         playersList.push(msg.sender);
         joinedGame[msg.sender] = true;
