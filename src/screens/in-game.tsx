@@ -18,7 +18,7 @@ import {
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
-export const CONTRACT_ADDRESS = "0xE055834f9892Dd486dBDAC0D43a61b30AaE5cA33";
+export const CONTRACT_ADDRESS = "0x0A2e88521783F7ad77b81d2FBCEbE86f81B5A11d";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
@@ -36,9 +36,32 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     eventName: "JoinGame",
     // listener: eventListener,
     listener(log) {
-      console.log("THIS HAPPENED!!!!!!");
+      console.log("event from wagmi");
       console.log(log);
     },
+    chainId: 9000,
+  });
+
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName: "InitGame",
+    listener(log) {
+      console.log("event from wagmi");
+      console.log(log);
+    },
+    chainId: 9000,
+  });
+
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName: "NewState",
+    listener(log) {
+      console.log("event from wagmi");
+      console.log(log);
+    },
+    chainId: 9000,
   });
 
   useContractEvent({
@@ -60,7 +83,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       const inGame = Object.values(p).includes(w);
       setPlayerIsJoined(inGame);
       // if(p.includes)
-      console.log(inGame);
+      // console.log(inGame);
     };
     fetchData();
   }, []);
