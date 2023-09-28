@@ -6,7 +6,7 @@ import React from "react";
 const AUTHORIZED_CHAIN_ID = ["0x2328"];
 
 interface ConnectProps {
-  children: (account: string, provider: any) => React.ReactNode;
+  children: (account: string, provider) => React.ReactNode;
 }
 
 export const Connect: React.FC<ConnectProps> = ({ children }) => {

@@ -32,7 +32,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
   const [dialog, setDialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [playerIsJoined, setPlayerIsJoined] = useState(false);
-  const [players, setPlayers] = useState<[unknown] | null>();
+  const [players, setPlayers] = useState<[string] | null>();
   const [playerRole, setPlayerRole] = useState(PlayerRole.Unknown);
 
   useContractEvent({
@@ -134,10 +134,10 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
           {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
-            players.map((p, i) => <ActivePlayerCard address={p} index={i} />)}
+            players.map((p: string, i) => <ActivePlayerCard address={p} index={i} />)}
 
           {Array(3 - (players ? players.length : 0))
-            .fill()
+            .fill(null)
             .map((_, i) => (
               <WaitingPlayerCard key={i} />
             ))}
