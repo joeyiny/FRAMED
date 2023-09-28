@@ -39,7 +39,7 @@ const Authenticated = () => {
     <div>
       <Navbar />
       {clientState === "tutorial" && <TutorialFlow setClientState={setClientState} />}
-      {clientState === "inGame" && <InGameScreen gamePhase={gamePhase} />}
+      {clientState === "inGame" && <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />}
     </div>
   );
 };

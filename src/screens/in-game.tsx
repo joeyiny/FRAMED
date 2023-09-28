@@ -18,10 +18,16 @@ import {
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 
-export const CONTRACT_ADDRESS = "0x0A2e88521783F7ad77b81d2FBCEbE86f81B5A11d";
+export const CONTRACT_ADDRESS = "0x820eAB1E39B6eC8F171f04B85C48Dd0Cf86147c4";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
+const InGameScreen = ({
+  gamePhase,
+  setGamePhase,
+}: {
+  gamePhase: GamePhase;
+  setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
+}) => {
   // const { user } = usePrivy();
   const [loading, setLoading] = useState(true);
   const [dialog] = useState("");
@@ -59,7 +65,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     eventName: "NewState",
     listener(log) {
       console.log("event from wagmi");
-      console.log(log);
+      log[0].data;
     },
     chainId: 9000,
   });
@@ -71,6 +77,25 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     // listener: eventListener,
     listener(log) {
       console.log(log);
+      // log[0].data
+      const hexString = log[0].data;
+      const r = parseInt(hexString, 16);
+      console.log(r);
+      if (!r) {
+        throw Error("There was an issue getting the game state from the contract.");
+      }
+      if (r === 0) {
+        setGamePhase(GamePhase.WaitingForPlayers);
+      }
+      if (r === 1) {
+        setGamePhase(GamePhase.AwaitPlayerActions);
+      }
+      if (r === 2) {
+        setGamePhase(GamePhase.Voting);
+      }
+      if (r === 3) {
+        setGamePhase(GamePhase.Results);
+      }
     },
   });
 
