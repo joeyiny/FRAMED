@@ -2,11 +2,7 @@
 import { Button } from "@/components/ui/button";
 // import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import * as Typography from "@/components/ui/typography";
-import { shortenEthAddress, shuffleArray } from "@/lib/utils";
-import { usePrivy } from "@privy-io/react-auth";
 import { useState, useEffect } from "react";
-import { getInstance, provider } from "../lib/fhevm";
-import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import { useContractEvent } from "wagmi";
 import {
@@ -16,7 +12,6 @@ import {
   joinGame,
   queryUsers,
   takeAction,
-  viewCaught,
   viewRole,
   votePlayer,
 } from "@/lib/game-functions";
@@ -27,9 +22,9 @@ export const CONTRACT_ADDRESS = "0xE055834f9892Dd486dBDAC0D43a61b30AaE5cA33";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
-  const { user } = usePrivy();
+  // const { user } = usePrivy();
   const [loading, setLoading] = useState(true);
-  const [dialog, setDialog] = useState("");
+  const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [playerIsJoined, setPlayerIsJoined] = useState(false);
   const [players, setPlayers] = useState<[string] | null>();
@@ -81,7 +76,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       }
     };
     fetchData();
-  }, []);
+  }, [gamePhase]);
 
   return (
     <>
