@@ -2,11 +2,7 @@
 import { Button } from "@/components/ui/button";
 // import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import * as Typography from "@/components/ui/typography";
-import { shortenEthAddress, shuffleArray } from "@/lib/utils";
-import { usePrivy } from "@privy-io/react-auth";
 import { useState, useEffect } from "react";
-import { getInstance, provider } from "../lib/fhevm";
-import { Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import { useContractEvent } from "wagmi";
 import {
@@ -16,24 +12,40 @@ import {
   joinGame,
   queryUsers,
   takeAction,
-  viewCaught,
   viewRole,
   votePlayer,
 } from "@/lib/game-functions";
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
+import { useWallets } from "@privy-io/react-auth";
+// import { usePrivy } from "@privy-io/react-auth";
 
-export const CONTRACT_ADDRESS = "0x8B317f3F224cd73E9fb8DEC1235108afe34dB41e";
+export const CONTRACT_ADDRESS = "0xB97b316D05e59a0D25A8C1c2606e6FcB37b6A6D2";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
-  const { user } = usePrivy();
+const InGameScreen = ({
+  gamePhase,
+  setGamePhase,
+}: {
+  gamePhase: GamePhase;
+  setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
+}) => {
+  const { wallets } = useWallets();
+
+  const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
   const [loading, setLoading] = useState(true);
-  const [dialog, setDialog] = useState("");
+  const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [playerIsJoined, setPlayerIsJoined] = useState(false);
-  const [players, setPlayers] = useState<[unknown] | null>();
+  const [players, setPlayers] = useState<[string] | null>();
   const [playerRole, setPlayerRole] = useState(PlayerRole.Unknown);
+
+  // const joinGame = () => {
+  //   sendTransaction({
+  //     chainId:9000,
+
+  //   });
+  // }
 
   useContractEvent({
     address: CONTRACT_ADDRESS,
@@ -41,9 +53,32 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     eventName: "JoinGame",
     // listener: eventListener,
     listener(log) {
-      console.log("THIS HAPPENED!!!!!!");
+      console.log("event from wagmi");
       console.log(log);
     },
+    chainId: 9000,
+  });
+
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName: "InitGame",
+    listener(log) {
+      console.log("event from wagmi");
+      console.log(log);
+    },
+    chainId: 9000,
+  });
+
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName: "NewState",
+    listener(log) {
+      console.log("event from wagmi");
+      log[0].data;
+    },
+    chainId: 9000,
   });
 
   useContractEvent({
@@ -53,6 +88,25 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
     // listener: eventListener,
     listener(log) {
       console.log(log);
+      // log[0].data
+      const hexString = log[0].data;
+      const r = parseInt(hexString, 16);
+      console.log(r);
+      if (!r) {
+        throw Error("There was an issue getting the game state from the contract.");
+      }
+      if (r === 0) {
+        setGamePhase(GamePhase.WaitingForPlayers);
+      }
+      if (r === 1) {
+        setGamePhase(GamePhase.AwaitPlayerActions);
+      }
+      if (r === 2) {
+        setGamePhase(GamePhase.Voting);
+      }
+      if (r === 3) {
+        setGamePhase(GamePhase.Results);
+      }
     },
   });
 
@@ -65,7 +119,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       const inGame = Object.values(p).includes(w);
       setPlayerIsJoined(inGame);
       // if(p.includes)
-      console.log(inGame);
+      // console.log(inGame);
     };
     fetchData();
   }, []);
@@ -81,7 +135,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
       }
     };
     fetchData();
-  }, []);
+  }, [gamePhase]);
 
   return (
     <>
@@ -134,10 +188,10 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
           {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
-            players.map((p, i) => <ActivePlayerCard address={p} index={i} />)}
+            players.map((p: string, i) => <ActivePlayerCard address={p} index={i} />)}
 
           {Array(3 - (players ? players.length : 0))
-            .fill()
+            .fill(null)
             .map((_, i) => (
               <WaitingPlayerCard key={i} />
             ))}
@@ -173,7 +227,7 @@ const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
         ) : (
           <Button
             onClick={async () => {
-              const r = await joinGame();
+              const r = await joinGame(embeddedWallet);
               if (r) setPlayerIsJoined(true);
             }}
             disabled={playerIsJoined}

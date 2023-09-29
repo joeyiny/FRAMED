@@ -8,7 +8,7 @@ import { WagmiConfig, createConfig, configureChains } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
 
 const incoChain: Chain = {
-  id: 9000,
+  id: 9090,
   name: "Inco",
   network: "inco",
   nativeCurrency: {

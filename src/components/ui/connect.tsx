@@ -1,12 +1,12 @@
-import { BrowserProvider } from "ethers";
+import { BrowserProvider, Eip1193Provider } from "ethers";
 import { createFhevmInstance } from "../../lib/fhevm";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import React from "react";
 
-const AUTHORIZED_CHAIN_ID = ["0x2328"];
+const AUTHORIZED_CHAIN_ID = ["0x2382"];
 
 interface ConnectProps {
-  children: (account: string, provider: any) => React.ReactNode;
+  children: (account: string, provider: BrowserProvider) => React.ReactNode;
 }
 
 export const Connect: React.FC<ConnectProps> = ({ children }) => {
@@ -14,7 +14,7 @@ export const Connect: React.FC<ConnectProps> = ({ children }) => {
   const [networkState, setNetworkState] = useState<"invalid" | "valid" | "loading">("loading");
   const [account, setAccount] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
-  const [provider, setProvider] = useState<any | null>(null);
+  const [provider, setProvider] = useState<BrowserProvider | null>(null);
 
   const refreshAccounts = useCallback(async (accounts: string[]) => {
     setAccount(accounts[0] || "");
@@ -37,7 +37,7 @@ export const Connect: React.FC<ConnectProps> = ({ children }) => {
     }
   }, [hasValidNetwork]);
 
-  const refreshProvider = useCallback((eth: any) => {
+  const refreshProvider = useCallback((eth: Eip1193Provider) => {
     const p = new BrowserProvider(eth);
     setProvider(p);
     return p;

@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { getPlayerAddress } from "@/lib/game-functions";
 
 export const ActivePlayerCard = ({ address, index }: { address: string; index: number }) => {
-  const { user } = usePrivy();
   const [isYou, setIsYou] = useState<"loading" | true | false>("loading");
 
   useEffect(() => {
@@ -28,7 +27,7 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
       // console.log(inGame);
     };
     fetchData();
-  }, []);
+  }, [address]);
 
   return (
     <Card
