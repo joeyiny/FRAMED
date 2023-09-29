@@ -17,8 +17,10 @@ import {
 } from "@/lib/game-functions";
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
+import { useWallets } from "@privy-io/react-auth";
+// import { usePrivy } from "@privy-io/react-auth";
 
-export const CONTRACT_ADDRESS = "0x820eAB1E39B6eC8F171f04B85C48Dd0Cf86147c4";
+export const CONTRACT_ADDRESS = "0xB97b316D05e59a0D25A8C1c2606e6FcB37b6A6D2";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({
@@ -28,13 +30,22 @@ const InGameScreen = ({
   gamePhase: GamePhase;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
 }) => {
-  // const { user } = usePrivy();
+  const { wallets } = useWallets();
+
+  const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
   const [loading, setLoading] = useState(true);
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [playerIsJoined, setPlayerIsJoined] = useState(false);
   const [players, setPlayers] = useState<[string] | null>();
   const [playerRole, setPlayerRole] = useState(PlayerRole.Unknown);
+
+  // const joinGame = () => {
+  //   sendTransaction({
+  //     chainId:9000,
+
+  //   });
+  // }
 
   useContractEvent({
     address: CONTRACT_ADDRESS,
@@ -216,7 +227,7 @@ const InGameScreen = ({
         ) : (
           <Button
             onClick={async () => {
-              const r = await joinGame();
+              const r = await joinGame(embeddedWallet);
               if (r) setPlayerIsJoined(true);
             }}
             disabled={playerIsJoined}

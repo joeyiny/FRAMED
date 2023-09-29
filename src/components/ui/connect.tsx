@@ -3,7 +3,7 @@ import { createFhevmInstance } from "../../lib/fhevm";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import React from "react";
 
-const AUTHORIZED_CHAIN_ID = ["0x2328"];
+const AUTHORIZED_CHAIN_ID = ["0x2382"];
 
 interface ConnectProps {
   children: (account: string, provider: BrowserProvider) => React.ReactNode;
