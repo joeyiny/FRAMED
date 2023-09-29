@@ -20,7 +20,7 @@ import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/comp
 import { useWallets } from "@privy-io/react-auth";
 // import { usePrivy } from "@privy-io/react-auth";
 
-export const CONTRACT_ADDRESS = "0xB08697F6472152cECed560DF810838d521eF60c8";
+export const CONTRACT_ADDRESS = "0xB97b316D05e59a0D25A8C1c2606e6FcB37b6A6D2";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({ gamePhase }: { gamePhase: GamePhase }) => {
