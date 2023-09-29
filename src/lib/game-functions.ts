@@ -77,7 +77,7 @@ export const queryUsers = async () => {
 
 export const joinGame = async (w: ConnectedWallet) => {
   try {
-    w.switchChain(9000);
+    w.switchChain(9090);
     const a = await w.getEthereumProvider();
     const p = new BrowserProvider(a);
     const signer = await p.getSigner();
