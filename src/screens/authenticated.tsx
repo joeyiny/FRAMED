@@ -6,10 +6,8 @@ import InGameScreen from "./in-game";
 // import { CONTRACT_ADDRESS } from "./waiting-room";
 import { getGameStateFromContract } from "@/lib/game-functions";
 import { ClientState, GamePhase } from "@/types";
-import { usePrivy } from "@privy-io/react-auth";
 
 const Authenticated = () => {
-  const { user } = usePrivy();
   const [clientState, setClientState] = useState<ClientState>(ClientState.Tutorial);
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
   useEffect(() => {
@@ -40,7 +38,6 @@ const Authenticated = () => {
   return (
     <div>
       <Navbar />
-      {user.wallet.chainId}
       {clientState === "tutorial" && <TutorialFlow setClientState={setClientState} />}
       {clientState === "inGame" && <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />}
     </div>
