@@ -3,7 +3,6 @@ import Navbar from "@/components/navbar";
 import TutorialFlow from "./tutorial-flow";
 import { useEffect, useState } from "react";
 import InGameScreen from "./in-game";
-// import { CONTRACT_ADDRESS } from "./waiting-room";
 import { getGameStateFromContract } from "@/lib/game-functions";
 import { ClientState, GamePhase } from "@/types";
 

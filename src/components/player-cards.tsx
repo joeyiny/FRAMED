@@ -4,15 +4,15 @@ import { Badge } from "./ui/badge";
 import * as Typography from "./ui/typography";
 import { shortenEthAddress } from "@/lib/utils";
 import { useEffect, useState } from "react";
-import { getPlayerAddress } from "@/lib/game-functions";
 
 export const ActivePlayerCard = ({ address, index }: { address: string; index: number }) => {
+  const { user } = usePrivy();
   const [isYou, setIsYou] = useState<"loading" | true | false>("loading");
 
   useEffect(() => {
     const fetchData = async () => {
       // const p = await queryUsers();
-      const w = await getPlayerAddress();
+      const w = user.wallet.address;
       console.log(w, address);
       if (w === address) {
         setIsYou(true);
