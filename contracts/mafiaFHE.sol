@@ -7,6 +7,7 @@ import "fhevm/lib/TFHE.sol";
 import "hardhat/console.sol";
 
 contract Mafia is EIP712WithModifier {
+
     event JoinGame(address _playerAddress, uint8 _playerId);
     event InitGame(uint8 _gameCount);
     event Action(address _playerAddress, uint8 _actionCount);
@@ -188,7 +189,7 @@ contract Mafia is EIP712WithModifier {
         }
         isCaught = TFHE.eq(TFHE.asEuint8(1), investigatedPlayerIdRole);
     }
-
+    
     function revealNextDay() public {
         ebool isVictimSaved = TFHE.eq(killedPlayerId, savedPlayerId);
         bool isVictimSavedDecrypted = TFHE.decrypt(isVictimSaved);
