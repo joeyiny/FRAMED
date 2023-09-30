@@ -27,7 +27,7 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
       // console.log(inGame);
     };
     fetchData();
-  }, [address]);
+  }, [address, user.wallet.address]);
 
   return (
     <Card
