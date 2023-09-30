@@ -9,7 +9,6 @@ import { init, getInstance } from "./lib/fhevm";
 import { Button } from "./components/ui/button";
 // import WaitingRoom from "./screens/waiting-room";
 import { usePrivy } from "@privy-io/react-auth";
-import { Connect } from "./components/ui/connect";
 import Login from "./screens/login";
 
 function App() {
@@ -29,17 +28,9 @@ function App() {
   if (!ready) return <p>loading...</p>;
   return (
     <main>
-      <Connect>
-        {(account, provider) => (
-          <>
-            {/* <h1>Based Account Abstraction</h1> */}
-            {/* <h2>Connect and Mint your AA powered NFT now</h2> */}
-            {!authenticated && <Login />}
-            {/* {loading && <p>Loading Smart Account...</p>} */}
-            {authenticated && <Authenticated />}
-          </>
-        )}
-      </Connect>
+      {!authenticated && <Login />}
+      {/* {loading && <p>Loading Smart Account...</p>} */}
+      {authenticated && <Authenticated />}
     </main>
   );
 }
