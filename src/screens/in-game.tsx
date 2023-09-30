@@ -39,13 +39,6 @@ const InGameScreen = ({
   const [players, setPlayers] = useState<[string] | null>();
   const [playerRole, setPlayerRole] = useState(PlayerRole.Unknown);
 
-  // const joinGame = () => {
-  //   sendTransaction({
-  //     chainId:9000,
-
-  //   });
-  // }
-
   useContractEvent({
     address: CONTRACT_ADDRESS,
     abi: mafiaABI,
@@ -55,7 +48,7 @@ const InGameScreen = ({
       console.log("event from wagmi");
       console.log(log);
     },
-    chainId: 9000,
+    chainId: 9090,
   });
 
   useContractEvent({
@@ -66,7 +59,7 @@ const InGameScreen = ({
       console.log("event from wagmi");
       console.log(log);
     },
-    chainId: 9000,
+    chainId: 9090,
   });
 
   useContractEvent({
@@ -77,7 +70,7 @@ const InGameScreen = ({
       console.log("event from wagmi");
       log[0].data;
     },
-    chainId: 9000,
+    chainId: 9090,
   });
 
   useContractEvent({
