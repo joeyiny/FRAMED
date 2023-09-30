@@ -6,7 +6,6 @@ import { useState, useEffect } from "react";
 import mafiaABI from "../abi/mafia.json";
 import { useContractEvent } from "wagmi";
 import {
-  getPlayerAddress,
   initializeGame,
   isMafiaKilled,
   joinGame,
