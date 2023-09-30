@@ -4,10 +4,10 @@ export enum ClientState {
 }
 
 export enum GamePhase {
-  WaitingForPlayers = "waitingForPlayers",
-  AwaitPlayerActions = "awaitPlayerActions",
-  Voting = "voting",
-  Results = "results",
+  WaitingForPlayers = 0,
+  AwaitPlayerActions = 1,
+  Voting = 2,
+  Results = 3,
 }
 
 export enum PlayerRole {

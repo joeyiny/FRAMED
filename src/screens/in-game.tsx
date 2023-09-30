@@ -93,18 +93,8 @@ const InGameScreen = ({
       console.log(r);
       if (!r) {
         throw Error("There was an issue getting the game state from the contract.");
-      }
-      if (r === 0) {
-        setGamePhase(GamePhase.WaitingForPlayers);
-      }
-      if (r === 1) {
-        setGamePhase(GamePhase.AwaitPlayerActions);
-      }
-      if (r === 2) {
-        setGamePhase(GamePhase.Voting);
-      }
-      if (r === 3) {
-        setGamePhase(GamePhase.Results);
+      } else {
+        setGamePhase(r);
       }
     },
   });
