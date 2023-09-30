@@ -19,7 +19,18 @@ import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/comp
 import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 
-export const CONTRACT_ADDRESS = "0xB97b316D05e59a0D25A8C1c2606e6FcB37b6A6D2";
+export const CONTRACT_ADDRESS = "0x31238F667F86D0A1867D7c747bC74CD2F6dD6438";
+const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName,
+    listener(log) {
+      callback(log);
+    },
+    chainId: 9090,
+  });
+};
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({
@@ -29,6 +40,7 @@ const InGameScreen = ({
   gamePhase: GamePhase;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
 }) => {
+  // State and Variables
   const { wallets } = useWallets();
   const { user } = usePrivy();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
@@ -36,72 +48,36 @@ const InGameScreen = ({
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [playerIsJoined, setPlayerIsJoined] = useState(false);
-  const [players, setPlayers] = useState<[string] | null>();
-  const [playerRole, setPlayerRole] = useState(PlayerRole.Unknown);
+  const [players, setPlayers] = useState<string[] | null>(null);
+  const [playerRole, setPlayerRole] = useState<PlayerRole>(PlayerRole.Unknown);
 
-  useContractEvent({
-    address: CONTRACT_ADDRESS,
-    abi: mafiaABI,
-    eventName: "JoinGame",
-    // listener: eventListener,
-    listener(log) {
-      console.log("event from wagmi");
-      console.log(log);
-    },
-    chainId: 9090,
+  // Contract Event Hooks
+  useGameEvents("JoinGame", (log) => {
+    console.log("JoinGame event from wagmi:", log);
   });
 
-  useContractEvent({
-    address: CONTRACT_ADDRESS,
-    abi: mafiaABI,
-    eventName: "InitGame",
-    listener(log) {
-      console.log("event from wagmi");
-      console.log(log);
-    },
-    chainId: 9090,
+  useGameEvents("InitGame", (log) => {
+    console.log("InitGame event from wagmi:", log);
   });
 
-  useContractEvent({
-    address: CONTRACT_ADDRESS,
-    abi: mafiaABI,
-    eventName: "NewState",
-    listener(log) {
-      console.log("event from wagmi");
-      log[0].data;
-    },
-    chainId: 9090,
+  useGameEvents("NewState", (log) => {
+    const hexString = log[0].data;
+    const r = parseInt(hexString, 16);
+    if (!r) {
+      throw Error("There was an issue getting the game state from the contract.");
+    } else {
+      setGamePhase(r);
+    }
   });
 
-  useContractEvent({
-    address: CONTRACT_ADDRESS,
-    abi: mafiaABI,
-    eventName: "NewState",
-    // listener: eventListener,
-    listener(log) {
-      console.log(log);
-      // log[0].data
-      const hexString = log[0].data;
-      const r = parseInt(hexString, 16);
-      console.log(r);
-      if (!r) {
-        throw Error("There was an issue getting the game state from the contract.");
-      } else {
-        setGamePhase(r);
-      }
-    },
-  });
-
+  // Effects
   useEffect(() => {
     const fetchData = async () => {
       const p = await queryUsers();
       const w = user.wallet.address;
       setLoading(false);
       setPlayers(p);
-      const inGame = Object.values(p).includes(w);
-      setPlayerIsJoined(inGame);
-      // if(p.includes)
-      // console.log(inGame);
+      setPlayerIsJoined(Object.values(p).includes(w));
     };
     fetchData();
   }, [user.wallet.address]);
@@ -110,11 +86,7 @@ const InGameScreen = ({
     const fetchData = async () => {
       if (gamePhase !== GamePhase.Results) return;
       const r = await isMafiaKilled();
-      if (r === 0) {
-        setResultsText("The mafia has won!");
-      } else {
-        setResultsText("The players have won!");
-      }
+      setResultsText(r === 0 ? "The mafia has won!" : "The players have won!");
     };
     fetchData();
   }, [gamePhase]);
