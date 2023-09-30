@@ -6,9 +6,8 @@ const Navbar = () => {
 
   return (
     <div className="w-full">
-      <nav className="justify-between w-full flex border-b border-slate-200 items-center py-1 px-8 z-20">
-        {/* <span className="text-red-500 font-bold ">Framed!</span> */}
-        <img src="/assets/logo_small.png" className="w-20"></img>
+      <nav className="justify-between w-full flex border-b border-slate-200 items-center py-1 px-8">
+        <span className="text-red-500 font-bold ">Framed!</span>
         {/* {user?.wallet ? (
         <p>{user.wallet.address}</p>
           ) : (

@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useEffect, useState } from "react";
 import "./App.css";
 import Authenticated from "./screens/authenticated";
 import PendingGame from "./screens/loading";
-import { useContractEvent } from 'wagmi'
-import mafiaAbi from "../contracts/mafiaABI.json";
-
-
-import { Client } from "@xmtp/xmtp-js";
 
 // import InGameScreen from "./screens/in-game";
 import { useState, useEffect } from "react";
@@ -20,7 +14,6 @@ import Login from "./screens/login";
 function App() {
   const { login, authenticated, ready } = usePrivy();
   const [isInitialized, setIsInitialized] = useState(false);
-
 
   useEffect(() => {
     init()
