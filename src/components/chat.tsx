@@ -1,7 +1,6 @@
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
-  useEffect(() => {
 const Chat = () => {
   return (
     <div className="w-full h-full pt-[44px]">
