@@ -18,7 +18,7 @@ import {
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 import { useWallets } from "@privy-io/react-auth";
-// import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy } from "@privy-io/react-auth";
 
 export const CONTRACT_ADDRESS = "0xB97b316D05e59a0D25A8C1c2606e6FcB37b6A6D2";
 
@@ -31,7 +31,7 @@ const InGameScreen = ({
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
 }) => {
   const { wallets } = useWallets();
-
+  const { user } = usePrivy();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
   const [loading, setLoading] = useState(true);
   const [dialog] = useState("");
@@ -113,7 +113,7 @@ const InGameScreen = ({
   useEffect(() => {
     const fetchData = async () => {
       const p = await queryUsers();
-      const w = await getPlayerAddress();
+      const w = user.wallet.address;
       setLoading(false);
       setPlayers(p);
       const inGame = Object.values(p).includes(w);
@@ -122,7 +122,7 @@ const InGameScreen = ({
       // console.log(inGame);
     };
     fetchData();
-  }, []);
+  }, [user.wallet.address]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -233,7 +233,7 @@ const InGameScreen = ({
             disabled={playerIsJoined}
             size="lg"
             className="mt-8">
-            Join Game
+            {playerIsJoined ? "Begin Game" : "Join Game"}
           </Button>
         ))}
       {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && (
