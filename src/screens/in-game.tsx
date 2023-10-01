@@ -18,8 +18,7 @@ import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
-import WaitingRoom from "./waiting-room";
-import Chat from "@/components/Chat";
+import SidePanel from '../components/SidePanel';
 
 export const CONTRACT_ADDRESS = "0x31238F667F86D0A1867D7c747bC74CD2F6dD6438";
 const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
@@ -224,6 +223,7 @@ const InGameScreen = ({
       {userRole && <div>{userRole}</div>}
       <Button onClick={viewCaught}>View Caught</Button>
       {isCaught && <div>{isCaught}</div>} */}
+      <SidePanel />
     </>
   );
 };
