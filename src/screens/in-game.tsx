@@ -19,7 +19,7 @@ import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/comp
 import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 
-export const CONTRACT_ADDRESS = "0x31238F667F86D0A1867D7c747bC74CD2F6dD6438";
+export const CONTRACT_ADDRESS = "0xe5ADEeFc9b1463c1666e2e7FA274751A280E1d88";
 const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
   useContractEvent({
     address: CONTRACT_ADDRESS,
@@ -51,6 +51,10 @@ const InGameScreen = ({
   const [players, setPlayers] = useState<string[] | null>(null);
   const [playerRole, setPlayerRole] = useState<PlayerRole>(PlayerRole.Unknown);
 
+  const doAction = async (i: number) => {
+    takeAction(i, embeddedWallet);
+  };
+
   // Contract Event Hooks
   useGameEvents("JoinGame", (log) => {
     console.log("JoinGame event from wagmi:", log);
@@ -73,7 +77,7 @@ const InGameScreen = ({
   // Effects
   useEffect(() => {
     const fetchData = async () => {
-      const p = await queryUsers();
+      const p = await queryUsers(embeddedWallet);
       const w = user.wallet.address;
       setLoading(false);
       setPlayers(p);
@@ -85,7 +89,7 @@ const InGameScreen = ({
   useEffect(() => {
     const fetchData = async () => {
       if (gamePhase !== GamePhase.Results) return;
-      const r = await isMafiaKilled();
+      const r = await isMafiaKilled(embeddedWallet);
       setResultsText(r === 0 ? "The mafia has won!" : "The players have won!");
     };
     fetchData();
@@ -162,7 +166,7 @@ const InGameScreen = ({
           {players &&
             gamePhase === GamePhase.Voting &&
             players.map((p, i) => (
-              <ClickablePlayerCard index={i} address={p} onClick={async () => await votePlayer(i)} />
+              <ClickablePlayerCard index={i} address={p} onClick={async () => await votePlayer(i, embeddedWallet)} />
             ))}
         </div>
       )}
@@ -171,8 +175,8 @@ const InGameScreen = ({
       {gamePhase === GamePhase.WaitingForPlayers &&
         (players && players.length >= 3 ? (
           <Button
-            onClick={() => {
-              initializeGame();
+            onClick={async () => {
+              initializeGame(embeddedWallet);
             }}
             size="lg"
             className="mt-8">
@@ -194,7 +198,7 @@ const InGameScreen = ({
         <Button
           className="mt-4"
           onClick={async () => {
-            const role = await viewRole();
+            const role = await viewRole(embeddedWallet);
             if (role === 0) {
               setPlayerRole(PlayerRole.Citizen);
             } else if (role === 1) {
@@ -226,7 +230,3 @@ const InGameScreen = ({
   );
 };
 export default InGameScreen;
-
-const doAction = async (i: number) => {
-  takeAction(i);
-};

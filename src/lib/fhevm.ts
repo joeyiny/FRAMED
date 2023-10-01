@@ -4,30 +4,27 @@ export const init = async () => {
   await initFhevm();
 };
 
-export const provider = new BrowserProvider(window.ethereum);
+// export const provider = new BrowserProvider(window.ethereum);
 
 let instance: any;
 
-export const createFhevmInstance = async () => {
-  const network = await provider.getNetwork();
-  const chainId = +network.chainId.toString();
-  const publicKey = await provider.call({
+export const createFhevmInstance = async (p: BrowserProvider) => {
+  // const network = await p.getNetwork();
+  // const chainId = +network.chainId.toString();
+  const publicKey = await p.call({
     from: null,
     to: "0x0000000000000000000000000000000000000044",
   });
-  instance = await createInstance({ chainId, publicKey });
+  instance = await createInstance({ chainId: 9090, publicKey });
 };
 
-export const getInstance = async () => {
+export const getInstance = async (p: BrowserProvider) => {
   await init();
-  await createFhevmInstance();
+  await createFhevmInstance(p);
   return instance;
 };
 
-export const getTokenSignature = async (
-  contractAddress: any,
-  userAddress: any
-) => {
+export const getTokenSignature = async (contractAddress: any, userAddress: any) => {
   // const instance = await createInstance({ chainId, publicKey });
   const { publicKey, token } = instance.generateToken({
     verifyingContract: contractAddress,
