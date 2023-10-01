@@ -52,7 +52,7 @@ export const viewCaught = async (w: ConnectedWallet) => {
     const signer = await p.getSigner();
     const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
     // setLoading("Decrypting if selected target is Mafia...");
-    const { publicKey, signature } = await getTokenSignature(CONTRACT_ADDRESS, signer.address);
+    const { publicKey, signature } = await getTokenSignature(CONTRACT_ADDRESS, signer.address, a);
     const ciphertext = await contract.viewCaught(publicKey, signature);
     // console.log(ciphertext);
     const userCreditScoreDecrypted = instance.decrypt(CONTRACT_ADDRESS, ciphertext);
@@ -157,7 +157,7 @@ export const viewRole = async (wallet: ConnectedWallet) => {
     const signer = await provider.getSigner();
     const contract = new Contract(CONTRACT_ADDRESS, mafiaABI, signer);
     // setLoading("Decrypting User Role...");
-    const { publicKey, signature } = await getTokenSignature(CONTRACT_ADDRESS, signer.address);
+    const { publicKey, signature } = await getTokenSignature(CONTRACT_ADDRESS, signer.address, a);
     const ciphertext = await contract.viewOwnRole(publicKey, signature);
     console.log(ciphertext);
     const userCreditScoreDecrypted = instance.decrypt(CONTRACT_ADDRESS, ciphertext);
