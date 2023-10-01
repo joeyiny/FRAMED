@@ -37,7 +37,7 @@ const Authenticated = () => {
         console.error(err);
       }
     };
-    fetchGameState();
+    if (embeddedWallet) fetchGameState();
   }, [embeddedWallet]);
   return (
     <div>
