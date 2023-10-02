@@ -96,6 +96,7 @@ contract Mafia is EIP712WithModifier {
             roles.length == playersList.length,
             "Number of roles don't match number of players"
         );
+        require(gameState == 0, "Game already initialized");
         for (uint8 i = 0; i < playersList.length; i++) {
             players[playersList[i]] = Player(
                 i,
@@ -118,6 +119,7 @@ contract Mafia is EIP712WithModifier {
 
     // join the game
     function joinGame() public {
+        require(gameState == 0, "Game already started, cannot join now");
         require(playersList.length < MAX_PLAYERS, "Room full.");
         require(!joinedGame[msg.sender], "You are already in this room.");
         playersList.push(msg.sender);
@@ -128,6 +130,7 @@ contract Mafia is EIP712WithModifier {
 
     // selectedPlayer is an uint8 ciphertext
     function action(bytes calldata selectedPlayer) public {
+        require(gameState == 1, "Not the action phase");
         require(!hasTakenAction[roundCount][msg.sender], "Already played turn");
 
         // check if player is mafia
@@ -166,6 +169,12 @@ contract Mafia is EIP712WithModifier {
     }
 
     function revealNextDay() public {
+        require(gameState == 1, "Not ready to reveal next day");
+        require(
+            actionCount == playersList.length - 1 - playerKillCount,
+            "Waiting on all players to take action."
+        );
+
         gameState = 2;
         emit NewState(gameState);
         ebool isVictimSaved = TFHE.eq(killedPlayerId, savedPlayerId);
@@ -266,6 +275,11 @@ contract Mafia is EIP712WithModifier {
     }
 
     function checkIfMafiaKilled() public {
+        require(gameState == 2, "Not ready to check Mafia");
+        require(
+            voteCount == playersList.length - 1 - playerKillCount,
+            "Not all players voted."
+        );
         gameState = 3;
         emit NewState(gameState);
         idToPlayer[playerIdWithLargestVoteCount].alive = false;
@@ -289,6 +303,10 @@ contract Mafia is EIP712WithModifier {
     }
 
     function _resetDay() public {
+        require(
+            gameState == 3 || (gameState == 2 && !tieExists),
+            "Not ready to reset day"
+        );
         killedPlayerId = TFHE.asEuint8(0);
         savedPlayerId = TFHE.asEuint8(0);
         investigatedPlayerId = TFHE.asEuint8(0);
