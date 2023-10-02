@@ -24,8 +24,7 @@ export function shortenEthAddress(address: string, frontLength = 4, backLength =
   return "0x" + shortenedAddress;
 }
 
-export const toHexString = (bytes: any) =>
-  bytes.reduce((str: any, byte: any) => str + byte.toString(16).padStart(2, "0"), "");
+export const toHexString = (bytes) => bytes.reduce((str: string, byte) => str + byte.toString(16).padStart(2, "0"), "");
 
 export const shuffleArray = <T>(arr: T[]): T[] => {
   const newArr = [...arr];

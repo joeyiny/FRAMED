@@ -15,8 +15,6 @@ export const initializeGame = async (w: ConnectedWallet) => {
   const shuffledArray = [...originalArray];
   // Shuffle the copied array
   shuffleArray(shuffledArray);
-  console.log(shuffledArray);
-  console.log(shuffledArray[0]);
   for (let i = 0; i < shuffledArray.length; i++) {
     shuffledArray[i] = instance.encrypt8(shuffledArray[i]);
   }
