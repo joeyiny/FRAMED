@@ -211,14 +211,6 @@ const InGameScreen = ({
           <Button className="mt-4">Play Again</Button>
         </div>
       )}
-      {/* <Button onClick={initializeGame}>Initialize Game</Button>
-      <Button onClick={takeAction}>Take Action</Button>
-      <Button onClick={votePlayer}>Vote Player</Button>
-      <Button onClick={viewRole}>View Role</Button>
-      <Button onClick={queryUsers}>Get users</Button>
-      {userRole && <div>{userRole}</div>}
-      <Button onClick={viewCaught}>View Caught</Button>
-      {isCaught && <div>{isCaught}</div>} */}
     </>
   );
 };
