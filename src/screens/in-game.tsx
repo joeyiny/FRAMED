@@ -20,6 +20,7 @@ import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 
 export const CONTRACT_ADDRESS = "0xBA2d7989637E769aad4695e36411D65250353170";
+
 const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
   useContractEvent({
     address: CONTRACT_ADDRESS,
@@ -99,45 +100,37 @@ const InGameScreen = ({
     <>
       {/* <p>{ensName}</p> */}
       <div className="my-16">
-        {/* {gamePhase} */}
-        {!loading && gamePhase === GamePhase.WaitingForPlayers && (
-          <Typography.TypographyLarge className="animate-pulse">
-            {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
-          </Typography.TypographyLarge>
-        )}
-        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && (
-          <Typography.TypographyLarge>Let's check to see what your role is!</Typography.TypographyLarge>
-        )}
-
-        {gamePhase === GamePhase.AwaitPlayerActions && playerRole !== PlayerRole.Unknown && (
-          <Typography.TypographyLarge>Your role is {playerRole}</Typography.TypographyLarge>
-        )}
-        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Citizen && (
-          <Typography.TypographyMuted>
-            <Typography.TypographySmall>Vote for who you think the thief is.</Typography.TypographySmall>
-          </Typography.TypographyMuted>
-        )}
-        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Thief && (
-          <Typography.TypographyMuted>
-            <Typography.TypographySmall>Choose the player you want to kill.</Typography.TypographySmall>
-          </Typography.TypographyMuted>
-        )}
-        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Cop && (
-          <Typography.TypographyMuted>
-            <Typography.TypographySmall>Choose the player you want to save.</Typography.TypographySmall>
-          </Typography.TypographyMuted>
-        )}
-        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Detective && (
-          <Typography.TypographyMuted>
-            <Typography.TypographySmall>Choose the player you want to examine.</Typography.TypographySmall>
-          </Typography.TypographyMuted>
-        )}
-        {gamePhase === GamePhase.Voting && (
-          <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
-        )}
-        {gamePhase === GamePhase.Results && (
-          <Typography.TypographyLarge>And the winner is...</Typography.TypographyLarge>
-        )}
+        {!loading &&
+          (gamePhase === GamePhase.WaitingForPlayers ? (
+            <Typography.TypographyLarge className="animate-pulse">
+              {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
+            </Typography.TypographyLarge>
+          ) : gamePhase === GamePhase.AwaitPlayerActions ? (
+            <div>
+              <Typography.TypographyLarge>
+                {playerRole === PlayerRole.Unknown
+                  ? "Let's check to see what your role is!"
+                  : `Your role is ${playerRole}`}
+              </Typography.TypographyLarge>
+              {playerRole !== PlayerRole.Unknown && (
+                <Typography.TypographyMuted>
+                  <Typography.TypographySmall>
+                    {playerRole === PlayerRole.Citizen
+                      ? "Vote for who you think the thief is."
+                      : playerRole === PlayerRole.Thief
+                      ? "Choose the player you want to kill."
+                      : playerRole === PlayerRole.Cop
+                      ? "Choose the player you want to save."
+                      : "Choose the player you want to examine."}
+                  </Typography.TypographySmall>
+                </Typography.TypographyMuted>
+              )}
+            </div>
+          ) : gamePhase === GamePhase.Voting ? (
+            <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
+          ) : (
+            <Typography.TypographyLarge>And the winner is...</Typography.TypographyLarge>
+          ))}
       </div>
       {loading ? (
         <div className="w-full">loading...</div>
