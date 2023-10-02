@@ -31,9 +31,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint8",
-        "name": "_actionCount",
-        "type": "uint8"
+        "internalType": "address[]",
+        "name": "playersTakenAction",
+        "type": "address[]"
       }
     ],
     "name": "Action",
@@ -114,9 +114,9 @@
       },
       {
         "indexed": false,
-        "internalType": "uint8",
-        "name": "_playerId",
-        "type": "uint8"
+        "internalType": "address[]",
+        "name": "playerAddresses",
+        "type": "address[]"
       }
     ],
     "name": "JoinGame",
@@ -133,6 +133,19 @@
       }
     ],
     "name": "Killed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint8",
+        "name": "roundCount",
+        "type": "uint8"
+      }
+    ],
+    "name": "NewRound",
     "type": "event"
   },
   {
@@ -185,6 +198,26 @@
     ],
     "name": "Voted",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "MAX_PLAYERS",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "_resetDay",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "inputs": [
@@ -304,6 +337,11 @@
   {
     "inputs": [
       {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      },
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -322,6 +360,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      },
       {
         "internalType": "address",
         "name": "",
@@ -459,19 +502,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes[]",
-        "name": "roles",
-        "type": "bytes[]"
-      }
-    ],
-    "name": "newGame",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "owner",
     "outputs": [
@@ -499,6 +529,19 @@
   },
   {
     "inputs": [],
+    "name": "playerKillCount",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "playerKilled",
     "outputs": [
       {
@@ -512,6 +555,11 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
+      },
       {
         "internalType": "uint8",
         "name": "",
@@ -583,6 +631,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "playersTakenActions",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "revealNextDay",
     "outputs": [],
@@ -592,25 +659,6 @@
   {
     "inputs": [],
     "name": "savedPlayerId",
-    "outputs": [
-      {
-        "internalType": "euint8",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "name": "target",
     "outputs": [
       {
         "internalType": "euint8",
