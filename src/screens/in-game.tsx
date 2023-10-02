@@ -19,7 +19,7 @@ import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/comp
 import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 
-export const CONTRACT_ADDRESS = "0xe5ADEeFc9b1463c1666e2e7FA274751A280E1d88";
+export const CONTRACT_ADDRESS = "0xBA2d7989637E769aad4695e36411D65250353170";
 const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
   useContractEvent({
     address: CONTRACT_ADDRESS,
@@ -148,7 +148,7 @@ const InGameScreen = ({
             gamePhase === GamePhase.WaitingForPlayers &&
             players.map((p: string, i) => <ActivePlayerCard address={p} index={i} />)}
 
-          {Array(3 - (players ? players.length : 0))
+          {Array(4 - (players ? players.length : 0))
             .fill(null)
             .map((_, i) => (
               <WaitingPlayerCard key={i} />
@@ -173,7 +173,7 @@ const InGameScreen = ({
       {dialog && <div>{dialog}</div>}
       {/* {loading && <div>{loading}</div>} */}
       {gamePhase === GamePhase.WaitingForPlayers &&
-        (players && players.length >= 3 ? (
+        (players && players.length >= 4 ? (
           <Button
             onClick={async () => {
               initializeGame(embeddedWallet);

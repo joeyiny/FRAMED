@@ -11,7 +11,7 @@ export const initializeGame = async (w: ConnectedWallet) => {
   const p = new BrowserProvider(a);
   const instance = await getInstance(p);
   // const originalArray = [1, 2, 3, 4, 4];
-  const originalArray = [1, 2, 3];
+  const originalArray = [1, 2, 3, 4];
   const shuffledArray = [...originalArray];
   // Shuffle the copied array
   shuffleArray(shuffledArray);
