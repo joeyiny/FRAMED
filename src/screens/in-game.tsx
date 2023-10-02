@@ -146,11 +146,6 @@ const InGameScreen = ({
             .map((_, i) => (
               <WaitingPlayerCard key={i} />
             ))}
-
-          {/* <WaitingPlayerCard />
-          <WaitingPlayerCard />
-          <WaitingPlayerCard />
-          <WaitingPlayerCard /> */}
           {players &&
             gamePhase === GamePhase.AwaitPlayerActions &&
             players.map((p, i) => (

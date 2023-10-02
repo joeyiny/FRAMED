@@ -11,11 +11,11 @@ export enum GamePhase {
 }
 
 export enum PlayerRole {
-  Unknown = "unknown",
-  Thief = "thief",
-  Detective = "detective",
-  Cop = "cop",
-  Citizen = "citizen",
+  Unknown = 0,
+  Thief = 1,
+  Detective = 2,
+  Cop = 3,
+  Citizen = 4,
 }
 
 // const [playerRole, setPlayerRole] = useState<"unknown" | "thief" | "detective" | "cop" | "citizen">("unknown");
