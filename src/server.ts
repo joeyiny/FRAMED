@@ -9,7 +9,7 @@ const server = createServer(app);
 
 const io: SocketIOServer = new SocketIOServer(server, {
   cors: {
-    origin: process.env.CORS_ORIGIN || "http://localhost:5173",
+    origin: process.env.CORS_ORIGIN || "https://framed-delta.vercel.app/",
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -37,7 +37,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = process.env.PORT || 3000;
-server.listen(PORT, () => {
+const PORT: number = Number(process.env.PORT) || 3000;
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server is running on port ${PORT}`);
 });
