@@ -1,19 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSocket } from '../../messaging/SocketContext';
 
 const Chat: React.FC = () => {
   const socket = useSocket();
   const [messages, setMessages] = useState<string[]>([]);
-  const [currentMessage, setCurrentMessage] = useState<string>(''); // Track the current message being typed
-
+  const [currentMessage, setCurrentMessage] = useState<string>('');
+  const inputRef = useRef<HTMLInputElement>(null); 
+  
   useEffect(() => {
     if (socket) {
       socket.on('newMessage', (message: string) => {
-        // When a new message is received, add it to the beginning of the messages array
-        setMessages((prevMessages) => [message, ...prevMessages]);
+        console.log("Received Message: ", message);
+        setMessages((prevMessages) => [...prevMessages, message]);
       });
     }
-
+    
     return () => {
       if (socket) {
         socket.off('newMessage');
@@ -23,30 +24,36 @@ const Chat: React.FC = () => {
 
   const handleSendMessage = () => {
     if (socket && currentMessage.trim() !== '') {
+      console.log("Sending Message: ", currentMessage);
       socket.emit('sendMessage', currentMessage, 'some-room-id');
-      setCurrentMessage(''); // Clear the input field after sending
+      setCurrentMessage('');
+      inputRef.current?.focus();
     }
   };
 
   return (
-    <div className="chat">
-      <div className="messages">
-        {messages.map((message, index) => (
-          <div key={index}>{message}</div>
-        ))}
-      </div>
+    <div className="chat flex flex-col p-5 overflow-y-auto max-h-screen">
+    <div className="messages flex-grow overflow-y-auto flex flex-col items-start space-y-2">
+      {messages.map((message, index) => (
+        <div key={index} className="text-right text-gray-800">
+          {message}
+        </div>
+      ))}
+    </div>
+    <div className="input-container flex-none flex items-center">
       <input
         type="text"
         value={currentMessage}
-        onChange={(e) => setCurrentMessage(e.target.value)} // Update current message as the user types
-        onKeyPress={(e) => {
-          if (e.key === 'Enter') {
-            handleSendMessage();
-          }
-        }}
+        onChange={(e) => setCurrentMessage(e.target.value)}
+        onKeyPress={(e) => { if (e.key === 'Enter') handleSendMessage(); }}
+        ref={inputRef}
+        className="flex-grow mr-2 p-2 rounded border"
       />
-      <button onClick={handleSendMessage}>Send</button>
+      <button onClick={handleSendMessage} className="p-2 rounded bg-blue-500 text-white cursor-pointer">
+        Send
+      </button>
     </div>
+  </div>
   );
 };
 

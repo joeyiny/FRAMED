@@ -27,7 +27,7 @@ function App() {
   if (!ready) return <p>loading...</p>;
 
   return (
-    <SocketProvider>
+    <SocketProvider>s
       <main>
         {!authenticated && <Login />}
         {authenticated && <Authenticated />}
