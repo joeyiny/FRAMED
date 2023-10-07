@@ -18,20 +18,17 @@ const Authenticated = () => {
     const fetchGameState = async () => {
       try {
         const r = await getGameStateFromContract(embeddedWallet);
-        if (!r) {
-          throw Error("There was an issue getting the game state from the contract.");
-        }
+        console.log("r in fGS:", r);
         if (r === 0) {
           setGamePhase(GamePhase.WaitingForPlayers);
-        }
-        if (r === 1) {
+        } else if (r === 1) {
           setGamePhase(GamePhase.AwaitPlayerActions);
-        }
-        if (r === 2) {
+        } else if (r === 2) {
           setGamePhase(GamePhase.Voting);
-        }
-        if (r === 3) {
+        } else if (r === 3) {
           setGamePhase(GamePhase.Results);
+        } else {
+          throw Error("There was an issue getting the game state from the contract.");
         }
       } catch (err) {
         console.error(err);
