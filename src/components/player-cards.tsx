@@ -13,7 +13,6 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
     const fetchData = async () => {
       // const p = await queryUsers();
       const w = user.wallet.address;
-      console.log(w, address);
       if (w === address) {
         setIsYou(true);
       } else {
