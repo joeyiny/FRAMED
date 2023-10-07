@@ -6,6 +6,14 @@ import * as Privy from "@privy-io/react-auth";
 import { Chain } from "@wagmi/chains";
 import { WagmiConfig, createConfig, configureChains } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
+import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
+import { GraphApolloLink } from "@graphprotocol/client-apollo";
+import * as GraphClient from "../.graphclient";
+
+const client = new ApolloClient({
+  link: new GraphApolloLink(GraphClient),
+  cache: new InMemoryCache(),
+});
 
 const incoChain: Chain = {
   id: 9090,
@@ -26,7 +34,10 @@ const incoChain: Chain = {
   },
 };
 
-const { publicClient, webSocketPublicClient } = configureChains([incoChain], [publicProvider()]);
+const { publicClient, webSocketPublicClient } = configureChains(
+  [incoChain],
+  [publicProvider()]
+);
 
 const config = createConfig({
   publicClient,
@@ -50,8 +61,11 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             accentColor: "#FF3D00",
             logo: "https://i.imgur.com/N9VR8K1.png",
           },
-        }}>
-        <App />
+        }}
+      >
+        <ApolloProvider client={client}>
+          <App />
+        </ApolloProvider>
       </Privy.PrivyProvider>
     </WagmiConfig>
   </>
