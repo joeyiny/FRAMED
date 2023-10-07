@@ -1,0 +1,8 @@
+sources:
+  - name: uniswapv2
+    handler:
+      graphql:
+        endpoint: http://51.20.67.199:8000/subgraphs/name/framed/subgraphtest
+plugins:
+  - pollingLive:
+      defaultInterval: 1000
