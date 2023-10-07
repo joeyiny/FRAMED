@@ -34,13 +34,13 @@ const config = createConfig({
 });
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  <>
     <WagmiConfig config={config}>
       <Privy.PrivyProvider
         appId={"clmweg8kd00qfl70fb48z6afs"}
         onSuccess={() => {}}
         config={{
-          loginMethods: ["wallet", "sms", "apple", "google"],
+          loginMethods: ["wallet", "sms", "google"],
           embeddedWallets: {
             createOnLogin: "users-without-wallets",
           },
@@ -54,5 +54,5 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <App />
       </Privy.PrivyProvider>
     </WagmiConfig>
-  </React.StrictMode>
+  </>
 );
