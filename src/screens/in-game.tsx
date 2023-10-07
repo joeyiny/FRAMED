@@ -47,95 +47,30 @@ const InGameScreen = ({
   const { wallets } = useWallets();
   const { user } = usePrivy();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
-  const [loading, setLoading] = useState(true);
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [playerIsJoined, setPlayerIsJoined] = useState(false);
-  const [players, setPlayers] = useState<string[] | null>(null);
+  // const [players, setPlayers] = useState<string[] | null>(null);
   const [playerRole, setPlayerRole] = useState<PlayerRole>(PlayerRole.Unknown);
 
-  const { data } = useQuery(game, {
-    onCompleted: (data) => {
-      if (data.players.length > 1) {
-        console.log("desgraçado mano");
-      }
-      console.log("completed", data.games.length);
-      console.log("data on complete", data);
-    },
-  });
-  console.log("game", data);
-
+  const { data, loading } = useQuery(game);
+  console.log("game data ", data);
+  let players = [];
+  if (!loading) players = data.players.map((p) => p.id);
   const doAction = async (i: number) => {
     takeAction(i, embeddedWallet);
   };
 
-  useContractEvent({
-    address: CONTRACT_ADDRESS,
-    abi: mafiaABI,
-    eventName: "JoinGame",
-    listener(log) {
-      console.log("JoinGame event from wagmi:", log);
-    },
-    chainId: 9090,
-  });
-
-  useContractEvent({
-    address: CONTRACT_ADDRESS,
-    abi: mafiaABI,
-    eventName: "InitGame",
-    listener(log) {
-      console.log("JoinGame event from wagmi:", log);
-    },
-    chainId: 9090,
-  });
-
-  useContractEvent({
-    address: CONTRACT_ADDRESS,
-    abi: mafiaABI,
-    eventName: "NewGame",
-    listener(log) {
-      const hexString = log[0].data;
-      const r = parseInt(hexString, 16);
-      console.log("NewGame event from wagmi:", log);
-      if (!r) {
-        throw Error("There was an issue getting the game state from the contract.");
-      } else {
-        setGamePhase(r);
-      }
-    },
-    chainId: 9090,
-  });
-
-  // Contract Event Hooks
-  // useGameEvents("JoinGame", (log) => {
-  //   console.log("JoinGame event from wagmi:", log);
-  // });
-
-  // useGameEvents("InitGame", (log) => {
-  //   console.log("InitGame event from wagmi:", log);
-  // });
-
-  // useGameEvents("NewState", (log) => {
-  //   const hexString = log[0].data;
-  //   const r = parseInt(hexString, 16);
-  //   if (!r) {
-  //     throw Error("There was an issue getting the game state from the contract.");
-  //   } else {
-  //     setGamePhase(r);
-  //   }
-  // });
-
-  // Effects
-  useEffect(() => {
-    const fetchData = async () => {
-      const p = await queryUsers(embeddedWallet);
-      const w = user.wallet.address;
-      setLoading(false);
-      setPlayers(p);
-      setPlayerIsJoined(Object.values(p).includes(w));
-    };
-    if (user.wallet?.address) fetchData();
-  }, [user, embeddedWallet]);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const p = await queryUsers(embeddedWallet);
+  //     const w = user.wallet.address;
+  //     setLoading(false);
+  //     // setPlayers(p);
+  //     setPlayerIsJoined(Object.values(p).includes(w));
+  //   };
+  //   if (user.wallet?.address) fetchData();
+  // }, [user, embeddedWallet]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -146,6 +81,7 @@ const InGameScreen = ({
     fetchData();
   }, [gamePhase]);
 
+  if (loading) return <p>loading</p>;
   return (
     <>
       {/* <p>{ensName}</p> */}
@@ -153,7 +89,7 @@ const InGameScreen = ({
         {!loading &&
           (gamePhase === GamePhase.WaitingForPlayers ? (
             <Typography.TypographyLarge className="animate-pulse">
-              {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
+              {players && length < 3 ? "Waiting for other players to join..." : "Room full!"}
             </Typography.TypographyLarge>
           ) : gamePhase === GamePhase.AwaitPlayerActions ? (
             <div>
@@ -187,7 +123,7 @@ const InGameScreen = ({
       ) : (
         <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
           {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}
-          {JSON.stringify(data.players)}
+          {/* {players && JSON.stringify(data.players)} */}
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
             players.map((p: string, i) => <ActivePlayerCard address={p} index={i} />)}
