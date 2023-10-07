@@ -61,16 +61,16 @@ const InGameScreen = ({
     takeAction(i, embeddedWallet);
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     const p = await queryUsers(embeddedWallet);
-  //     const w = user.wallet.address;
-  //     setLoading(false);
-  //     // setPlayers(p);
-  //     setPlayerIsJoined(Object.values(p).includes(w));
-  //   };
-  //   if (user.wallet?.address) fetchData();
-  // }, [user, embeddedWallet]);
+  useEffect(() => {
+    const fetchData = async () => {
+      const p = await queryUsers(embeddedWallet);
+      const w = user.wallet.address;
+      // setLoading(false);
+      // setPlayers(p);
+      setPlayerIsJoined(Object.values(p).includes(w));
+    };
+    if (user.wallet?.address) fetchData();
+  }, [user, embeddedWallet]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -85,6 +85,7 @@ const InGameScreen = ({
   return (
     <>
       {/* <p>{ensName}</p> */}
+      <p>{user.wallet.address}</p>
       <div className="my-16">
         {!loading &&
           (gamePhase === GamePhase.WaitingForPlayers ? (
