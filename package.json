@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@apollo/client": "^3.8.5",
     "@biconomy/account": "^3.1.0",
     "@biconomy/bundler": "^3.1.0",
     "@biconomy/common": "^3.1.0",
@@ -18,6 +19,8 @@
     "@biconomy/particle-auth": "^3.1.0",
     "@biconomy/paymaster": "^3.1.0",
     "@biconomy/web3-auth": "^3.1.0",
+    "@graphprotocol/client-apollo": "^2.0.0",
+    "@graphprotocol/client-cli": "^3.0.0",
     "@privy-io/react-auth": "^1.40.3",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
@@ -26,9 +29,11 @@
     "clsx": "^2.0.0",
     "ethers": "^6.6.4",
     "fhevmjs": "^0.2.1",
+    "graphql": "^16.8.1",
     "lucide-react": "^0.279.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-is": "^18.2.0",
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.7",
     "viem": "^1.12.1",
