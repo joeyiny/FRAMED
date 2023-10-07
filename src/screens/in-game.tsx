@@ -19,7 +19,7 @@ import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/comp
 import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 
-export const CONTRACT_ADDRESS = "0x090E3fA420dC68EB42e9b36De85D3B36a890f5F1";
+export const CONTRACT_ADDRESS = "0x2a8E4966a094ba9662B985875a433f1dfDCb2df1";
 
 const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
   useContractEvent({
