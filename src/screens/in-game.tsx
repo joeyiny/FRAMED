@@ -15,17 +15,13 @@ import {
   votePlayer,
 } from "@/lib/game-functions";
 import { GamePhase, PlayerRole } from "@/types";
-import {
-  ActivePlayerCard,
-  ClickablePlayerCard,
-  WaitingPlayerCard,
-} from "@/components/player-cards";
+import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { game } from "@/query";
 
-export const CONTRACT_ADDRESS = "0x4c7024837b029c8740638B6a888Fbb42dc960A3b";
+export const CONTRACT_ADDRESS = "0xd3cdd34c2E0521C8A80656548923300D988B5354";
 
 // const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
 //   useContractEvent({
@@ -50,9 +46,7 @@ const InGameScreen = ({
   // State and Variables
   const { wallets } = useWallets();
   const { user } = usePrivy();
-  const embeddedWallet = wallets.find(
-    (wallet) => wallet.walletClientType === "privy"
-  );
+  const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
   const [loading, setLoading] = useState(true);
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
@@ -104,9 +98,7 @@ const InGameScreen = ({
       const r = parseInt(hexString, 16);
       console.log("NewGame event from wagmi:", log);
       if (!r) {
-        throw Error(
-          "There was an issue getting the game state from the contract."
-        );
+        throw Error("There was an issue getting the game state from the contract.");
       } else {
         setGamePhase(r);
       }
@@ -161,9 +153,7 @@ const InGameScreen = ({
         {!loading &&
           (gamePhase === GamePhase.WaitingForPlayers ? (
             <Typography.TypographyLarge className="animate-pulse">
-              {players && players.length < 3
-                ? "Waiting for other players to join..."
-                : "Room full!"}
+              {players && players.length < 3 ? "Waiting for other players to join..." : "Room full!"}
             </Typography.TypographyLarge>
           ) : gamePhase === GamePhase.AwaitPlayerActions ? (
             <div>
@@ -187,29 +177,20 @@ const InGameScreen = ({
               )}
             </div>
           ) : gamePhase === GamePhase.Voting ? (
-            <Typography.TypographyLarge>
-              Let's vote for who we think the thief is.
-            </Typography.TypographyLarge>
+            <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
           ) : (
-            <Typography.TypographyLarge>
-              And the winner is...
-            </Typography.TypographyLarge>
+            <Typography.TypographyLarge>And the winner is...</Typography.TypographyLarge>
           ))}
       </div>
       {loading ? (
         <div className="w-full">loading...</div>
       ) : (
-        <div
-          id="waiting-cards"
-          className="flex flex-row gap-2 items-center justify-center"
-        >
+        <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
           {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}
           {JSON.stringify(data.players)}
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
-            players.map((p: string, i) => (
-              <ActivePlayerCard address={p} index={i} />
-            ))}
+            players.map((p: string, i) => <ActivePlayerCard address={p} index={i} />)}
 
           {Array(4 - (players ? players.length : 0))
             .fill(null)
@@ -219,20 +200,12 @@ const InGameScreen = ({
           {players &&
             gamePhase === GamePhase.AwaitPlayerActions &&
             players.map((p, i) => (
-              <ClickablePlayerCard
-                index={i}
-                address={p}
-                onClick={async () => await doAction(i)}
-              />
+              <ClickablePlayerCard index={i} address={p} onClick={async () => await doAction(i)} />
             ))}
           {players &&
             gamePhase === GamePhase.Voting &&
             players.map((p, i) => (
-              <ClickablePlayerCard
-                index={i}
-                address={p}
-                onClick={async () => await votePlayer(i, embeddedWallet)}
-              />
+              <ClickablePlayerCard index={i} address={p} onClick={async () => await votePlayer(i, embeddedWallet)} />
             ))}
         </div>
       )}
@@ -245,8 +218,7 @@ const InGameScreen = ({
               initializeGame(embeddedWallet);
             }}
             size="lg"
-            className="mt-8"
-          >
+            className="mt-8">
             Begin Game
           </Button>
         ) : (
@@ -257,31 +229,28 @@ const InGameScreen = ({
             }}
             disabled={playerIsJoined}
             size="lg"
-            className="mt-8"
-          >
+            className="mt-8">
             {playerIsJoined ? "Begin Game" : "Join Game"}
           </Button>
         ))}
-      {gamePhase === GamePhase.AwaitPlayerActions &&
-        playerRole === PlayerRole.Unknown && (
-          <Button
-            className="mt-4"
-            onClick={async () => {
-              const role = await viewRole(embeddedWallet);
-              if (role === 0) {
-                setPlayerRole(PlayerRole.Citizen);
-              } else if (role === 1) {
-                setPlayerRole(PlayerRole.Thief);
-              } else if (role === 2) {
-                setPlayerRole(PlayerRole.Detective);
-              } else if (role === 3) {
-                setPlayerRole(PlayerRole.Cop);
-              }
-            }}
-          >
-            View Role
-          </Button>
-        )}
+      {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && (
+        <Button
+          className="mt-4"
+          onClick={async () => {
+            const role = await viewRole(embeddedWallet);
+            if (role === 0) {
+              setPlayerRole(PlayerRole.Citizen);
+            } else if (role === 1) {
+              setPlayerRole(PlayerRole.Thief);
+            } else if (role === 2) {
+              setPlayerRole(PlayerRole.Detective);
+            } else if (role === 3) {
+              setPlayerRole(PlayerRole.Cop);
+            }
+          }}>
+          View Role
+        </Button>
+      )}
       {gamePhase === GamePhase.Results && (
         <div>
           <Typography.TypographyH3>{resultsText}</Typography.TypographyH3>
