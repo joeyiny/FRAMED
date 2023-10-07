@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 // import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import * as Typography from "@/components/ui/typography";
 import { useState, useEffect } from "react";
-import mafiaABI from "../abi/mafia.json";
-import { useContractEvent } from "wagmi";
+// import games from "../query";
+// import mafiaABI from "../abi/mafia.json";
+// import { useContractEvent } from "wagmi";
 import {
   initializeGame,
   isMafiaKilled,
   joinGame,
-  queryUsers,
+  // queryUsers,
   takeAction,
   viewRole,
   votePlayer,
@@ -21,56 +22,38 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { game } from "@/query";
 
-export const CONTRACT_ADDRESS = "0xd3cdd34c2E0521C8A80656548923300D988B5354";
-
-// const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
-//   useContractEvent({
-//     address: CONTRACT_ADDRESS,
-//     abi: mafiaABI,
-//     eventName,
-//     listener(log) {
-//       callback(log);
-//     },
-//     chainId: 9090,
-//   });
-// };
+export const CONTRACT_ADDRESS = "0xeb7f8b1ddcb7b2df870575dd64fcc3a420c6d907";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({
   gamePhase,
-  setGamePhase,
 }: {
   gamePhase: GamePhase;
   setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
 }) => {
-  // State and Variables
   const { wallets } = useWallets();
   const { user } = usePrivy();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
-  const [playerIsJoined, setPlayerIsJoined] = useState(false);
-  // const [players, setPlayers] = useState<string[] | null>(null);
+  // const [playerIsJoined, setPlayerIsJoined] = useState(false);
+
   const [playerRole, setPlayerRole] = useState<PlayerRole>(PlayerRole.Unknown);
 
-  const { data, loading } = useQuery(game);
-  console.log("game data ", data);
-  let players = [];
-  if (!loading) players = data.players.map((p) => p.id);
+  const { data, loading } = useQuery(game, { variables: { id: CONTRACT_ADDRESS } });
+
+  let players: string[] = [];
+  if (!loading) players = data.game.Players.map((p) => p.player.id);
+  const playerIsJoined = players.includes(user.wallet.address.toLowerCase());
+
   const doAction = async (i: number) => {
     takeAction(i, embeddedWallet);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const p = await queryUsers(embeddedWallet);
-      const w = user.wallet.address;
-      // setLoading(false);
-      // setPlayers(p);
-      setPlayerIsJoined(Object.values(p).includes(w));
-    };
-    if (user.wallet?.address) fetchData();
-  }, [user, embeddedWallet]);
+  // useEffect(() => {
+  //   if (user.wallet?.address && players.length > 1)
+  //     setPlayerIsJoined(Object.values(players).includes(user.wallet.address));
+  // }, [user, players]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,6 +69,7 @@ const InGameScreen = ({
     <>
       {/* <p>{ensName}</p> */}
       <p>{user.wallet.address}</p>
+      <p>{playerIsJoined ? "player joined" : "player hasnt joined"}</p>
       <div className="my-16">
         {!loading &&
           (gamePhase === GamePhase.WaitingForPlayers ? (
@@ -127,7 +111,7 @@ const InGameScreen = ({
           {/* {players && JSON.stringify(data.players)} */}
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
-            players.map((p: string, i) => <ActivePlayerCard address={p} index={i} />)}
+            players.map((p: string, i) => <ActivePlayerCard address={p} key={i} index={i} />)}
 
           {Array(4 - (players ? players.length : 0))
             .fill(null)
@@ -137,12 +121,17 @@ const InGameScreen = ({
           {players &&
             gamePhase === GamePhase.AwaitPlayerActions &&
             players.map((p, i) => (
-              <ClickablePlayerCard index={i} address={p} onClick={async () => await doAction(i)} />
+              <ClickablePlayerCard index={i} address={p} key={i} onClick={async () => await doAction(i)} />
             ))}
           {players &&
             gamePhase === GamePhase.Voting &&
             players.map((p, i) => (
-              <ClickablePlayerCard index={i} address={p} onClick={async () => await votePlayer(i, embeddedWallet)} />
+              <ClickablePlayerCard
+                index={i}
+                address={p}
+                key={i}
+                onClick={async () => await votePlayer(i, embeddedWallet)}
+              />
             ))}
         </div>
       )}
@@ -161,8 +150,8 @@ const InGameScreen = ({
         ) : (
           <Button
             onClick={async () => {
-              const r = await joinGame(embeddedWallet);
-              if (r) setPlayerIsJoined(true);
+              await joinGame(embeddedWallet);
+              // if (r) setPlayerIsJoined(true);
             }}
             disabled={playerIsJoined}
             size="lg"

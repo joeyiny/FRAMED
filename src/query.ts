@@ -17,7 +17,7 @@ export const games = gql`
 `;
 
 export const game = gql`
-  query Game($id: String!) {
+  query Game($id: String!) @live(interval: 1000) {
     game(id: $id) {
       id
       roomId
