@@ -19,19 +19,19 @@ import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/comp
 import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 
-export const CONTRACT_ADDRESS = "0x2a8E4966a094ba9662B985875a433f1dfDCb2df1";
+export const CONTRACT_ADDRESS = "0x5dE9f44AeFfAD9dBeEc1CFf5F93e2ae57E026600";
 
-const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
-  useContractEvent({
-    address: CONTRACT_ADDRESS,
-    abi: mafiaABI,
-    eventName,
-    listener(log) {
-      callback(log);
-    },
-    chainId: 9090,
-  });
-};
+// const useGameEvents = (eventName: string, callback: (log: unknown) => void) => {
+//   useContractEvent({
+//     address: CONTRACT_ADDRESS,
+//     abi: mafiaABI,
+//     eventName,
+//     listener(log) {
+//       callback(log);
+//     },
+//     chainId: 9090,
+//   });
+// };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({
@@ -56,24 +56,61 @@ const InGameScreen = ({
     takeAction(i, embeddedWallet);
   };
 
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName: "JoinGame",
+    listener(log) {
+      console.log("JoinGame event from wagmi:", log);
+    },
+    chainId: 9090,
+  });
+
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName: "InitGame",
+    listener(log) {
+      console.log("JoinGame event from wagmi:", log);
+    },
+    chainId: 9090,
+  });
+
+  useContractEvent({
+    address: CONTRACT_ADDRESS,
+    abi: mafiaABI,
+    eventName: "NewGame",
+    listener(log) {
+      const hexString = log[0].data;
+      const r = parseInt(hexString, 16);
+      console.log("NewGame event from wagmi:", log);
+      if (!r) {
+        throw Error("There was an issue getting the game state from the contract.");
+      } else {
+        setGamePhase(r);
+      }
+    },
+    chainId: 9090,
+  });
+
   // Contract Event Hooks
-  useGameEvents("JoinGame", (log) => {
-    console.log("JoinGame event from wagmi:", log);
-  });
+  // useGameEvents("JoinGame", (log) => {
+  //   console.log("JoinGame event from wagmi:", log);
+  // });
 
-  useGameEvents("InitGame", (log) => {
-    console.log("InitGame event from wagmi:", log);
-  });
+  // useGameEvents("InitGame", (log) => {
+  //   console.log("InitGame event from wagmi:", log);
+  // });
 
-  useGameEvents("NewState", (log) => {
-    const hexString = log[0].data;
-    const r = parseInt(hexString, 16);
-    if (!r) {
-      throw Error("There was an issue getting the game state from the contract.");
-    } else {
-      setGamePhase(r);
-    }
-  });
+  // useGameEvents("NewState", (log) => {
+  //   const hexString = log[0].data;
+  //   const r = parseInt(hexString, 16);
+  //   if (!r) {
+  //     throw Error("There was an issue getting the game state from the contract.");
+  //   } else {
+  //     setGamePhase(r);
+  //   }
+  // });
 
   // Effects
   useEffect(() => {
@@ -84,8 +121,8 @@ const InGameScreen = ({
       setPlayers(p);
       setPlayerIsJoined(Object.values(p).includes(w));
     };
-    fetchData();
-  }, [user.wallet.address]);
+    if (user.wallet?.address) fetchData();
+  }, [user, embeddedWallet]);
 
   useEffect(() => {
     const fetchData = async () => {
