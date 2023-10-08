@@ -1,20 +1,8 @@
-// import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import * as Typography from "@/components/ui/typography";
 import { useState, useEffect } from "react";
-// import games from "../query";
-// import mafiaABI from "../abi/mafia.json";
-// import { useContractEvent } from "wagmi";
-import {
-  initializeGame,
-  isMafiaKilled,
-  joinGame,
-  // queryUsers,
-  takeAction,
-  viewRole,
-  votePlayer,
-} from "@/lib/game-functions";
+
+import { initializeGame, isMafiaKilled, joinGame, takeAction, viewRole, votePlayer } from "@/lib/game-functions";
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 import { useWallets } from "@privy-io/react-auth";
@@ -67,14 +55,13 @@ const InGameScreen = ({
   if (loading) return <p>loading</p>;
   return (
     <>
-      {/* <p>{ensName}</p> */}
       <p>{user.wallet.address}</p>
       <p>{playerIsJoined ? "player joined" : "player hasnt joined"}</p>
       <div className="my-16">
         {!loading &&
           (gamePhase === GamePhase.WaitingForPlayers ? (
             <Typography.TypographyLarge className="animate-pulse">
-              {players && length < 3 ? "Waiting for other players to join..." : "Room full!"}
+              {players && length < 4 ? "Waiting for other players to join..." : "Room full!"}
             </Typography.TypographyLarge>
           ) : gamePhase === GamePhase.AwaitPlayerActions ? (
             <div>
@@ -107,8 +94,6 @@ const InGameScreen = ({
         <div className="w-full">loading...</div>
       ) : (
         <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
-          {/* <ActivePlayerCard address={user?.wallet?.address || ""} /> */}
-          {/* {players && JSON.stringify(data.players)} */}
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
             players.map((p: string, i) => <ActivePlayerCard address={p} key={i} index={i} />)}
