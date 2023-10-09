@@ -13,6 +13,7 @@ function App() {
   const { login, authenticated, ready, connectWallet } = usePrivy();
   const { wallets } = useWallets();
   const [isInitialized, setIsInitialized] = useState(false);
+  
 
   useEffect(() => {
     init()
@@ -27,7 +28,7 @@ function App() {
   if (!ready) return <p>loading...</p>;
 
   return (
-    <SocketProvider>
+    <SocketProvider>s
       <main>
         {!authenticated && <Login />}
         {authenticated && <Authenticated />}
