@@ -1,4 +1,13 @@
 import { gql } from "@apollo/client";
+export const newGame = gql`
+  query newGame($id: String!) @live(interval: 1000) {
+    games(orderBy: roomId, orderDirection: desc, first: 1, where: { creator: $id }) {
+      id
+      roomId
+      creator
+    }
+  }
+`;
 
 export const games = gql`
   query Games @live(interval: 1000) {
