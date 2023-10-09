@@ -1,6 +1,7 @@
 import { getInstance, getTokenSignature } from "../lib/fhevm";
 import { BrowserProvider, Contract } from "ethers";
 import mafiaABI from "../abi/mafia.json";
+import factoryABI from "../abi/factory.json";
 import { shuffleArray } from "./utils";
 import { ConnectedWallet } from "@privy-io/react-auth";
 
@@ -194,5 +195,35 @@ export const isMafiaKilled = async (w: ConnectedWallet, contractAddress: string)
   } catch (e) {
     console.log(e);
     console.log("Couldnt get game state from the contract.");
+  }
+};
+
+export const createGame = async (w: ConnectedWallet) => {
+  try {
+    w.switchChain(9090);
+    const a = await w.getEthereumProvider();
+    console.log(a);
+    const p = new BrowserProvider(a);
+    console.log(p);
+
+    const signer = await p.getSigner();
+    console.log(signer);
+
+    const contract = new Contract("0x2Cfa03ca98cda65aB803E676d97Aa22c156D03f3", factoryABI, signer);
+    console.log(contract);
+
+    const response = await contract.createGame();
+    const receipt = await p.getTransactionReceipt(response.hash);
+    const data = receipt.logs[0].data.replace("0x", "");
+    const address = "0x" + data.substring(24, 64);
+    console.log(address);
+    return address;
+    // return response.data;
+    // console.log(gameId);
+    // const address = await contract.getRoomAddress(gameId);
+    // return address;
+  } catch (e) {
+    console.log(e);
+    console.log("Couldnt create game.");
   }
 };
