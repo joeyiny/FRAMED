@@ -1,6 +1,9 @@
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "./ui/button";
+import { createGame } from "@/lib/game-functions";
+import { useQuery } from "@apollo/client";
+import { newGame } from "@/query";
 
 const RoomPicker = ({
   games,
@@ -9,10 +12,17 @@ const RoomPicker = ({
   games: any[];
   setGameContract: Dispatch<SetStateAction<string>>;
 }) => {
+  const { wallets } = useWallets();
+  const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
   const { user } = usePrivy();
+  const { data, loading } = useQuery(newGame, { variables: { creator: embeddedWallet } });
+  // console.log(data);
   return (
     <div>
       <p className="font-bold text-lg">Pick a game:</p>
+      <p>
+        {loading && "loading"} data: {JSON.stringify(data)}
+      </p>
       <div className="flex flex-col gap-4">
         {games.map((game, i) => {
           // Note that I'm assuming `game` and `user.wallet` objects are well-formed here.
@@ -32,7 +42,13 @@ const RoomPicker = ({
             </button>
           );
         })}
-        <Button>or, create a game</Button>
+        <Button
+          onClick={async () => {
+            const address = await createGame(embeddedWallet);
+            setGameContract(address);
+          }}>
+          or, create a game
+        </Button>
       </div>
     </div>
   );

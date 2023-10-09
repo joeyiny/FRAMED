@@ -2,7 +2,15 @@ import { Button } from "@/components/ui/button";
 import * as Typography from "@/components/ui/typography";
 import { useState, useEffect, SetStateAction, Dispatch } from "react";
 
-import { initializeGame, isMafiaKilled, joinGame, takeAction, viewRole, votePlayer } from "@/lib/game-functions";
+import {
+  getGameStateFromContract,
+  initializeGame,
+  isMafiaKilled,
+  joinGame,
+  takeAction,
+  viewRole,
+  votePlayer,
+} from "@/lib/game-functions";
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 import { useWallets } from "@privy-io/react-auth";
@@ -14,11 +22,9 @@ import { game } from "@/query";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({
-  gamePhase,
   gameContract,
   setGameContract,
 }: {
-  gamePhase: GamePhase;
   gameContract: string;
   setGameContract: Dispatch<SetStateAction<string>>;
 }) => {
@@ -27,6 +33,29 @@ const InGameScreen = ({
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
+  const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
+  useEffect(() => {
+    const fetchGameState = async () => {
+      try {
+        const r = await getGameStateFromContract(embeddedWallet, gameContract);
+        // console.log("r in fGS:", r);
+        if (r === 0) {
+          setGamePhase(GamePhase.WaitingForPlayers);
+        } else if (r === 1) {
+          setGamePhase(GamePhase.AwaitPlayerActions);
+        } else if (r === 2) {
+          setGamePhase(GamePhase.Voting);
+        } else if (r === 3) {
+          setGamePhase(GamePhase.Results);
+        } else {
+          throw Error("There was an issue getting the game state from the contract.");
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    if (embeddedWallet) fetchGameState();
+  }, [embeddedWallet]);
   // const [playerIsJoined, setPlayerIsJoined] = useState(false);
 
   const [playerRole, setPlayerRole] = useState<PlayerRole>(PlayerRole.Unknown);
