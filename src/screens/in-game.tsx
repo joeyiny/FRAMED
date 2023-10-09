@@ -223,7 +223,7 @@ const InGameScreen = ({
       {userRole && <div>{userRole}</div>}
       <Button onClick={viewCaught}>View Caught</Button>
       {isCaught && <div>{isCaught}</div>} */}
-      <SidePanel/>
+      <SidePanel />
     </>
   );
 };

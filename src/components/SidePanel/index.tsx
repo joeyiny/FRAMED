@@ -18,7 +18,7 @@ const SidePanel: React.FC= () => {
         </button>
       )}
     </div>
-    <Chat gameId={"1"}/>
+    <Chat roomId='999' username='Water Fren'/>
     {!isChatOpen && (
       <div className="absolute top-0 right-full h-full bg-gray-900 flex items-center">
         <button className="bg-gray-900 text-white py-1 px-2 m-2 rounded-md" onClick={toggleChat}>
