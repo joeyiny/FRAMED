@@ -1,10 +1,10 @@
 import Navbar from "@/components/navbar";
 
-import TutorialFlow from "./tutorial-flow";
+// import TutorialFlow from "./tutorial-flow";
 import { useEffect, useState } from "react";
 import InGameScreen from "./in-game";
 import { getGameStateFromContract } from "@/lib/game-functions";
-import { ClientState, GamePhase } from "@/types";
+import { GamePhase } from "@/types";
 import { useWallets } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { games } from "@/query";
@@ -13,7 +13,7 @@ import RoomPicker from "@/components/room-picker";
 export const FACTORY_ADDRESS = "0xeb7f8b1ddcb7b2df870575dd64fcc3a420c6d907";
 
 const Authenticated = () => {
-  const [clientState, setClientState] = useState<ClientState>(ClientState.Tutorial);
+  // const [clientState, setClientState] = useState<ClientState>(ClientState.Tutorial);
 
   const { wallets } = useWallets();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
@@ -25,7 +25,7 @@ const Authenticated = () => {
   useEffect(() => {
     const fetchGameState = async () => {
       try {
-        const r = await getGameStateFromContract(embeddedWallet);
+        const r = await getGameStateFromContract(embeddedWallet, gameContract);
         console.log("r in fGS:", r);
         if (r === 0) {
           setGamePhase(GamePhase.WaitingForPlayers);
@@ -48,12 +48,10 @@ const Authenticated = () => {
   return (
     <div>
       <Navbar />
-      {/* <p>{JSON.stringify(data.games)}</p> */}
-      {/* {<RoomPicker games={data.games} setGameContract={setGameContract}/>} */}
       {gameContract === null ? (
         <RoomPicker games={data.games} setGameContract={setGameContract} />
       ) : (
-        <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />
+        <InGameScreen gameContract={gameContract} setGameContract={setGameContract} gamePhase={gamePhase} />
       )}
       {/* {gameContract === null ? <TutorialFlow setClientState={setClientState} />: <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />} */}
     </div>

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import * as Typography from "@/components/ui/typography";
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction, Dispatch } from "react";
 
 import { initializeGame, isMafiaKilled, joinGame, takeAction, viewRole, votePlayer } from "@/lib/game-functions";
 import { GamePhase, PlayerRole } from "@/types";
@@ -10,14 +10,17 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { game } from "@/query";
 
-export const CONTRACT_ADDRESS = "0xeb7f8b1ddcb7b2df870575dd64fcc3a420c6d907";
+// export const CONTRACT_ADDRESS = "0xeb7f8b1ddcb7b2df870575dd64fcc3a420c6d907";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({
   gamePhase,
+  gameContract,
+  setGameContract,
 }: {
   gamePhase: GamePhase;
-  setGamePhase: React.Dispatch<React.SetStateAction<GamePhase>>;
+  gameContract: string;
+  setGameContract: Dispatch<SetStateAction<string>>;
 }) => {
   const { wallets } = useWallets();
   const { user } = usePrivy();
@@ -28,14 +31,14 @@ const InGameScreen = ({
 
   const [playerRole, setPlayerRole] = useState<PlayerRole>(PlayerRole.Unknown);
 
-  const { data, loading } = useQuery(game, { variables: { id: CONTRACT_ADDRESS } });
+  const { data, loading } = useQuery(game, { variables: { id: gameContract } });
 
   let players: string[] = [];
   if (!loading) players = data.game.Players.map((p) => p.player.id);
   const playerIsJoined = players.includes(user.wallet.address.toLowerCase());
 
   const doAction = async (i: number) => {
-    takeAction(i, embeddedWallet);
+    takeAction(i, embeddedWallet, gameContract);
   };
 
   // useEffect(() => {
@@ -46,7 +49,7 @@ const InGameScreen = ({
   useEffect(() => {
     const fetchData = async () => {
       if (gamePhase !== GamePhase.Results) return;
-      const r = await isMafiaKilled(embeddedWallet);
+      const r = await isMafiaKilled(embeddedWallet, gameContract);
       setResultsText(r === 0 ? "The mafia has won!" : "The players have won!");
     };
     fetchData();
@@ -57,6 +60,7 @@ const InGameScreen = ({
     <>
       <p>{user.wallet.address}</p>
       <p>{playerIsJoined ? "player joined" : "player hasnt joined"}</p>
+      <Button onClick={() => setGameContract(null)}>Exit room</Button>
       <div className="my-16">
         {!loading &&
           (gamePhase === GamePhase.WaitingForPlayers ? (
@@ -115,7 +119,7 @@ const InGameScreen = ({
                 index={i}
                 address={p}
                 key={i}
-                onClick={async () => await votePlayer(i, embeddedWallet)}
+                onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
               />
             ))}
         </div>
@@ -126,7 +130,7 @@ const InGameScreen = ({
         (players && players.length >= 4 ? (
           <Button
             onClick={async () => {
-              initializeGame(embeddedWallet);
+              initializeGame(embeddedWallet, gameContract);
             }}
             size="lg"
             className="mt-8">
@@ -135,7 +139,7 @@ const InGameScreen = ({
         ) : (
           <Button
             onClick={async () => {
-              await joinGame(embeddedWallet);
+              await joinGame(embeddedWallet, gameContract);
               // if (r) setPlayerIsJoined(true);
             }}
             disabled={playerIsJoined}
@@ -148,7 +152,7 @@ const InGameScreen = ({
         <Button
           className="mt-4"
           onClick={async () => {
-            const role = await viewRole(embeddedWallet);
+            const role = await viewRole(embeddedWallet, gameContract);
             if (role === 0) {
               setPlayerRole(PlayerRole.Citizen);
             } else if (role === 1) {
