@@ -10,6 +10,8 @@ import { useQuery } from "@apollo/client";
 import { games } from "@/query";
 import RoomPicker from "@/components/room-picker";
 
+export const FACTORY_ADDRESS = "0xeb7f8b1ddcb7b2df870575dd64fcc3a420c6d907";
+
 const Authenticated = () => {
   const [clientState, setClientState] = useState<ClientState>(ClientState.Tutorial);
 
@@ -17,8 +19,9 @@ const Authenticated = () => {
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
 
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
+  const [gameContract, setGameContract] = useState<string | null>(null);
 
-  const { data } = useQuery(games);
+  const { data, loading } = useQuery(games);
   useEffect(() => {
     const fetchGameState = async () => {
       try {
@@ -41,13 +44,18 @@ const Authenticated = () => {
     };
     if (embeddedWallet) fetchGameState();
   }, [embeddedWallet]);
+  if (loading || !data) return <p>loading</p>;
   return (
     <div>
       <Navbar />
       {/* <p>{JSON.stringify(data.games)}</p> */}
-      {data && <RoomPicker games={data.games} />}
-      {clientState === "tutorial" && <TutorialFlow setClientState={setClientState} />}
-      {clientState === "inGame" && <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />}
+      {/* {<RoomPicker games={data.games} setGameContract={setGameContract}/>} */}
+      {gameContract === null ? (
+        <RoomPicker games={data.games} setGameContract={setGameContract} />
+      ) : (
+        <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />
+      )}
+      {/* {gameContract === null ? <TutorialFlow setClientState={setClientState} />: <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />} */}
     </div>
   );
 };

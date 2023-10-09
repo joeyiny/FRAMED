@@ -1,6 +1,14 @@
 import { usePrivy } from "@privy-io/react-auth";
+import { Dispatch, SetStateAction } from "react";
+import { Button } from "./ui/button";
 
-const RoomPicker = ({ games }: { games: any[] }) => {
+const RoomPicker = ({
+  games,
+  setGameContract,
+}: {
+  games: any[];
+  setGameContract: Dispatch<SetStateAction<string>>;
+}) => {
   const { user } = usePrivy();
   return (
     <div>
@@ -13,7 +21,11 @@ const RoomPicker = ({ games }: { games: any[] }) => {
           const playerIsJoined = players.includes(user.wallet.address.toLowerCase());
           // Perform additional computations here if needed
           return (
-            <button disabled={game.Players.length >= 4 && !playerIsJoined} className="border border-zinc-600" key={i}>
+            <button
+              onClick={() => setGameContract(game.id)}
+              disabled={game.Players.length >= 4 && !playerIsJoined}
+              className="border border-zinc-600"
+              key={i}>
               <div>{game.id}</div>
               <div>{game.Players.length} players</div>
               {playerIsJoined && <div>You are in this game.</div>}
