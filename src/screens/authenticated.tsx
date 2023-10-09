@@ -6,6 +6,9 @@ import InGameScreen from "./in-game";
 import { getGameStateFromContract } from "@/lib/game-functions";
 import { ClientState, GamePhase } from "@/types";
 import { useWallets } from "@privy-io/react-auth";
+import { useQuery } from "@apollo/client";
+import { games } from "@/query";
+import RoomPicker from "@/components/room-picker";
 
 const Authenticated = () => {
   const [clientState, setClientState] = useState<ClientState>(ClientState.Tutorial);
@@ -14,6 +17,8 @@ const Authenticated = () => {
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
 
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
+
+  const { data } = useQuery(games);
   useEffect(() => {
     const fetchGameState = async () => {
       try {
@@ -39,6 +44,8 @@ const Authenticated = () => {
   return (
     <div>
       <Navbar />
+      {/* <p>{JSON.stringify(data.games)}</p> */}
+      {data && <RoomPicker games={data.games} />}
       {clientState === "tutorial" && <TutorialFlow setClientState={setClientState} />}
       {clientState === "inGame" && <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />}
     </div>
