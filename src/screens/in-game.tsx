@@ -75,9 +75,7 @@ const InGameScreen = ({
   if (loading) return <p>loading</p>;
   return (
     <>
-      <p>{user.wallet.address}</p>
-      {/* <p>{playerHasAction ? "u made action already" : "u didnt action yet"}</p> */}
-      <p>{playerIsJoined ? "player joined" : "player hasnt joined"}</p>
+      {/* <p>{user.wallet.address}</p> */}
       <Button onClick={() => setGameContract(null)}>Exit room</Button>
       <div className="my-16">
         {!loading &&
