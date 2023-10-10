@@ -25,7 +25,7 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
 
   return (
     <Card
-      className="w-[180px] p-4 text-left bg-white  "
+      className={`w-[180px] p-4 text-left ${isYou ? "border-zinc-400" : "0"}`}
       style={{
         boxShadow: "0px 8px 10px -3px rgba(0, 0, 0, 0.04), 0px 2px 4px -4px rgba(16, 24, 40, 0.02)",
       }}>
@@ -50,7 +50,7 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
 
 export const WaitingPlayerCard = () => {
   return (
-    <Card className="w-[115px]  text-left bg-none border-dashed text-slate-500 bg-slate-100 animate-pulse">
+    <Card className={`w-[115px]  text-left bg-none border-dashed text-slate-500 bg-slate-100 animate-pulse `}>
       <CardContent></CardContent>
       <CardFooter className="flex w-full flex-row items-center justify-center align-middle">
         <Typography.TypographySmall>Waiting for frens to join...</Typography.TypographySmall>
@@ -88,7 +88,7 @@ export const ClickablePlayerCard = ({
   return (
     <button onClick={onClick}>
       <Card
-        className="w-[180px] p-4 text-left bg-white  "
+        className={`w-[180px] p-4 text-left ${isYou ? "border-zinc-400" : "0"}`}
         style={{
           boxShadow: "0px 8px 10px -3px rgba(0, 0, 0, 0.04), 0px 2px 4px -4px rgba(16, 24, 40, 0.02)",
         }}>
