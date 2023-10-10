@@ -10,6 +10,7 @@ import { Button } from "./components/ui/button";
 // import WaitingRoom from "./screens/waiting-room";
 import { usePrivy } from "@privy-io/react-auth";
 import Login from "./screens/login";
+import { SocketProvider } from "./messaging/SocketContext";
 
 function App() {
   const { login, authenticated, ready } = usePrivy();
@@ -26,12 +27,14 @@ function App() {
   // if (!isInitialized) return null;
 
   if (!ready) return <p>loading...</p>;
+
   return (
-    <main>
-      {!authenticated && <Login />}
-      {/* {loading && <p>Loading Smart Account...</p>} */}
-      {authenticated && <Authenticated />}
-    </main>
+    <SocketProvider>
+      <main>
+        {!authenticated && <Login />}
+        {authenticated && <Authenticated />}
+      </main>
+    </SocketProvider>
   );
 }
 

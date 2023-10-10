@@ -9,6 +9,7 @@ import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { game } from "@/query";
+import SidePanel from "@/components/SidePanel";
 
 export interface Player {
   action: boolean;
