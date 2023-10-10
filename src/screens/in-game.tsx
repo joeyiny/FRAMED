@@ -37,11 +37,21 @@ const InGameScreen = ({
   const { data, loading } = useQuery(game, { variables: { id: gameContract } });
 
   let players: Player[] = [];
-  if (!loading) players = data.game.Players.map((p) => ({ action: p.action, id: p.player.id }));
+  let playerHasAction = false;
+
+  if (!loading) {
+    players = data.game.Players.map((p) => ({ action: p.action, id: p.player.id }));
+
+    // Find the current player's entry in the players array
+    const currentPlayer = players.find((player) => player.id === user.wallet.address.toLowerCase());
+
+    // Update playerHasAction based on the currentPlayer's action property
+    playerHasAction = currentPlayer ? Boolean(currentPlayer.action) : false;
+  }
   const playerIsJoined = players.some((player) => player.id === user.wallet.address.toLowerCase());
 
   const doAction = async (i: number) => {
-    takeAction(i, embeddedWallet, gameContract);
+    !playerHasAction && takeAction(i, embeddedWallet, gameContract);
   };
 
   // useEffect(() => {
@@ -66,6 +76,7 @@ const InGameScreen = ({
   return (
     <>
       <p>{user.wallet.address}</p>
+      {/* <p>{playerHasAction ? "u made action already" : "u didnt action yet"}</p> */}
       <p>{playerIsJoined ? "player joined" : "player hasnt joined"}</p>
       <Button onClick={() => setGameContract(null)}>Exit room</Button>
       <div className="my-16">
@@ -75,26 +86,30 @@ const InGameScreen = ({
               {players && length < 4 ? "Waiting for other players to join..." : "Room full!"}
             </Typography.TypographyLarge>
           ) : gamePhase === GamePhase.AwaitPlayerActions ? (
-            <div>
-              <Typography.TypographyLarge>
-                {playerRole === PlayerRole.Unknown
-                  ? "Let's check to see what your role is!"
-                  : `Your role is ${playerRole}`}
-              </Typography.TypographyLarge>
-              {playerRole !== PlayerRole.Unknown && (
-                <Typography.TypographyMuted>
-                  <Typography.TypographySmall>
-                    {playerRole === PlayerRole.Citizen
-                      ? "Vote for who you think the thief is."
-                      : playerRole === PlayerRole.Thief
-                      ? "Choose the player you want to kill."
-                      : playerRole === PlayerRole.Cop
-                      ? "Choose the player you want to save."
-                      : "Choose the player you want to examine."}
-                  </Typography.TypographySmall>
-                </Typography.TypographyMuted>
-              )}
-            </div>
+            playerHasAction ? (
+              <Typography.TypographyLarge>Waiting for others to take action...</Typography.TypographyLarge>
+            ) : (
+              <div>
+                <Typography.TypographyLarge>
+                  {playerRole === PlayerRole.Unknown
+                    ? "Let's check to see what your role is!"
+                    : `Your role is ${playerRole}`}
+                </Typography.TypographyLarge>
+                {playerRole !== PlayerRole.Unknown && (
+                  <Typography.TypographyMuted>
+                    <Typography.TypographySmall>
+                      {playerRole === PlayerRole.Citizen
+                        ? "Vote for who you think the thief is."
+                        : playerRole === PlayerRole.Thief
+                        ? "Choose the player you want to kill."
+                        : playerRole === PlayerRole.Cop
+                        ? "Choose the player you want to save."
+                        : "Choose the player you want to examine."}
+                    </Typography.TypographySmall>
+                  </Typography.TypographyMuted>
+                )}
+              </div>
+            )
           ) : gamePhase === GamePhase.Voting ? (
             <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
           ) : (
@@ -155,7 +170,7 @@ const InGameScreen = ({
             {playerIsJoined ? "Begin Game" : "Join Game"}
           </Button>
         ))}
-      {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && (
+      {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && !playerHasAction && (
         <Button
           className="mt-4"
           onClick={async () => {
