@@ -7,6 +7,7 @@ const RoomPicker = ({
   games,
   setGameContract,
 }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   games: any[];
   setGameContract: Dispatch<SetStateAction<string>>;
 }) => {

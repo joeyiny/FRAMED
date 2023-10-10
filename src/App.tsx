@@ -5,7 +5,7 @@ import PendingGame from "./screens/loading";
 
 // import InGameScreen from "./screens/in-game";
 import { useState, useEffect } from "react";
-import { init, getInstance } from "./lib/fhevm";
+// import { init, getInstance } from "./lib/fhevm";
 import { Button } from "./components/ui/button";
 // import WaitingRoom from "./screens/waiting-room";
 import { usePrivy } from "@privy-io/react-auth";
@@ -13,17 +13,17 @@ import Login from "./screens/login";
 
 function App() {
   const { login, authenticated, ready } = usePrivy();
-  const [isInitialized, setIsInitialized] = useState(false);
+  // const [isInitialized, setIsInitialized] = useState(false);
 
-  useEffect(() => {
-    init()
-      .then(() => {
-        setIsInitialized(true);
-      })
-      .catch(() => setIsInitialized(false));
-  }, []);
+  // useEffect(() => {
+  //   init()
+  //     .then(() => {
+  //       setIsInitialized(true);
+  //     })
+  //     .catch(() => setIsInitialized(false));
+  // }, []);
 
-  if (!isInitialized) return null;
+  // if (!isInitialized) return null;
 
   if (!ready) return <p>loading...</p>;
   return (

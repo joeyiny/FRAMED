@@ -1,10 +1,10 @@
 import { EIP1193Provider } from "@privy-io/react-auth";
 import { BrowserProvider } from "ethers";
-import { initFhevm, createInstance } from "fhevmjs";
+import { createInstance } from "fhevmjs";
 
-export const init = async () => {
-  await initFhevm();
-};
+// export const init = async () => {
+//   await initFhevm();
+// };
 
 // export const provider = new BrowserProvider(window.ethereum);
 
@@ -21,7 +21,7 @@ export const createFhevmInstance = async (p: BrowserProvider) => {
 };
 
 export const getInstance = async (p: BrowserProvider) => {
-  await init();
+  // await init();
   await createFhevmInstance(p);
   return instance;
 };
