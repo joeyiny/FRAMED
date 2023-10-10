@@ -12,18 +12,13 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
   useEffect(() => {
     const fetchData = async () => {
       // const p = await queryUsers();
-      const w = user.wallet.address;
-      if (w === address) {
+      const w = user.wallet.address.toLowerCase();
+      const a = address.toLowerCase();
+      if (w === a) {
         setIsYou(true);
       } else {
         setIsYou(false);
       }
-      // setLoading(false);
-      // setPlayers(p);
-      // const inGame = Object.values(p).includes(w);
-      // setPlayerIsJoined(inGame);
-      // if(p.includes)
-      // console.log(inGame);
     };
     fetchData();
   }, [address, user.wallet.address]);
@@ -74,6 +69,22 @@ export const ClickablePlayerCard = ({
   onClick: () => void;
 }) => {
   const { user } = usePrivy();
+  const [isYou, setIsYou] = useState<"loading" | true | false>("loading");
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // const p = await queryUsers();
+      const w = user.wallet.address.toLowerCase();
+      const a = address.toLowerCase();
+      if (w === a) {
+        setIsYou(true);
+      } else {
+        setIsYou(false);
+      }
+    };
+    fetchData();
+  }, [address, user.wallet.address]);
+
   return (
     <button onClick={onClick}>
       <Card
@@ -82,6 +93,7 @@ export const ClickablePlayerCard = ({
           boxShadow: "0px 8px 10px -3px rgba(0, 0, 0, 0.04), 0px 2px 4px -4px rgba(16, 24, 40, 0.02)",
         }}>
         <CardContent className="p-0">
+          {isYou && <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>}
           {user?.wallet?.address === address && (
             <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>
           )}
