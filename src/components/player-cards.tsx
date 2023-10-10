@@ -4,8 +4,9 @@ import { Badge } from "./ui/badge";
 import * as Typography from "./ui/typography";
 import { shortenEthAddress } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { Player } from "@/screens/in-game";
 
-export const ActivePlayerCard = ({ address, index }: { address: string; index: number }) => {
+export const ActivePlayerCard = ({ player, index }: { player: Player; index: number }) => {
   const { user } = usePrivy();
   const [isYou, setIsYou] = useState<"loading" | true | false>("loading");
 
@@ -13,7 +14,7 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
     const fetchData = async () => {
       // const p = await queryUsers();
       const w = user.wallet.address.toLowerCase();
-      const a = address.toLowerCase();
+      const a = player.id.toLowerCase();
       if (w === a) {
         setIsYou(true);
       } else {
@@ -21,7 +22,7 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
       }
     };
     fetchData();
-  }, [address, user.wallet.address]);
+  }, [player, user.wallet.address]);
 
   return (
     <Card
@@ -41,7 +42,7 @@ export const ActivePlayerCard = ({ address, index }: { address: string; index: n
       <CardFooter className="flex w-full flex-col text-left p-0">
         <Typography.TypographyP className="text-left w-full font-bold">Ice Spice</Typography.TypographyP>
         <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500">
-          {shortenEthAddress(address)}
+          {shortenEthAddress(player.id)}
         </Typography.TypographySmall>
       </CardFooter>
     </Card>
@@ -60,11 +61,11 @@ export const WaitingPlayerCard = () => {
 };
 
 export const ClickablePlayerCard = ({
-  address,
+  player,
   index,
   onClick,
 }: {
-  address: string;
+  player: Player;
   index: number;
   onClick: () => void;
 }) => {
@@ -75,7 +76,7 @@ export const ClickablePlayerCard = ({
     const fetchData = async () => {
       // const p = await queryUsers();
       const w = user.wallet.address.toLowerCase();
-      const a = address.toLowerCase();
+      const a = player.id.toLowerCase();
       if (w === a) {
         setIsYou(true);
       } else {
@@ -83,7 +84,7 @@ export const ClickablePlayerCard = ({
       }
     };
     fetchData();
-  }, [address, user.wallet.address]);
+  }, [player, user.wallet.address]);
 
   return (
     <button onClick={onClick}>
@@ -94,7 +95,7 @@ export const ClickablePlayerCard = ({
         }}>
         <CardContent className="p-0">
           {isYou && <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>}
-          {user?.wallet?.address === address && (
+          {user?.wallet?.address === player.id && (
             <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>
           )}
           <img
@@ -103,11 +104,12 @@ export const ClickablePlayerCard = ({
             height={200}
             // fill
           />
+          <Typography.TypographySmall>{!player.action && "(awaiting action)"}</Typography.TypographySmall>
         </CardContent>
         <CardFooter className="flex w-full flex-col text-left p-0">
           <Typography.TypographyP className="text-left w-full font-bold">Ice Spice</Typography.TypographyP>
           <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500">
-            {shortenEthAddress(address)}
+            {shortenEthAddress(player.id)}
           </Typography.TypographySmall>
         </CardFooter>
       </Card>

@@ -10,7 +10,10 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { game } from "@/query";
 
-// export const CONTRACT_ADDRESS = "0xeb7f8b1ddcb7b2df870575dd64fcc3a420c6d907";
+export interface Player {
+  action: boolean;
+  id: string;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const InGameScreen = ({
@@ -33,9 +36,9 @@ const InGameScreen = ({
 
   const { data, loading } = useQuery(game, { variables: { id: gameContract } });
 
-  let players: string[] = [];
-  if (!loading) players = data.game.Players.map((p) => p.player.id);
-  const playerIsJoined = players.includes(user.wallet.address.toLowerCase());
+  let players: Player[] = [];
+  if (!loading) players = data.game.Players.map((p) => ({ action: p.action, id: p.player.id }));
+  const playerIsJoined = players.some((player) => player.id === user.wallet.address.toLowerCase());
 
   const doAction = async (i: number) => {
     takeAction(i, embeddedWallet, gameContract);
@@ -47,6 +50,7 @@ const InGameScreen = ({
   // }, [user, players]);
   useEffect(() => {
     data && setGamePhase(data.game.phase);
+    console.log(data);
   }, [data]);
 
   useEffect(() => {
@@ -103,7 +107,7 @@ const InGameScreen = ({
         <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
-            players.map((p: string, i) => <ActivePlayerCard address={p} key={i} index={i} />)}
+            players.map((p, i) => <ActivePlayerCard player={p} key={i} index={i} />)}
 
           {Array(4 - (players ? players.length : 0))
             .fill(null)
@@ -113,14 +117,14 @@ const InGameScreen = ({
           {players &&
             gamePhase === GamePhase.AwaitPlayerActions &&
             players.map((p, i) => (
-              <ClickablePlayerCard index={i} address={p} key={i} onClick={async () => await doAction(i)} />
+              <ClickablePlayerCard index={i} player={p} key={i} onClick={async () => await doAction(i)} />
             ))}
           {players &&
             gamePhase === GamePhase.Voting &&
             players.map((p, i) => (
               <ClickablePlayerCard
                 index={i}
-                address={p}
+                player={p}
                 key={i}
                 onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
               />
