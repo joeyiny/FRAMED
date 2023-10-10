@@ -20,7 +20,7 @@ export const games = gql`
       }
       roomId
       creator
-      state
+      phase
     }
   }
 `;
@@ -31,7 +31,7 @@ export const game = gql`
       id
       roomId
       creator
-      state
+      phase
       Players {
         player {
           id
