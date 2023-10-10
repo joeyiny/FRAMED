@@ -180,6 +180,7 @@ const InGameScreen = ({
           <Button className="mt-4">Play Again</Button>
         </div>
       )}
+      <SidePanel />
     </>
   );
 };
