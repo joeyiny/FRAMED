@@ -14,6 +14,7 @@ export const games = gql`
     games {
       id
       Players {
+        action
         player {
           id
         }
@@ -33,6 +34,7 @@ export const game = gql`
       creator
       phase
       Players {
+        action
         player {
           id
         }
