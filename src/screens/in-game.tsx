@@ -173,7 +173,7 @@ const InGameScreen = ({
           className="mt-4"
           onClick={async () => {
             const role = await viewRole(embeddedWallet, gameContract);
-            if (role === 0) {
+            if (role === 4) {
               setPlayerRole(PlayerRole.Citizen);
             } else if (role === 1) {
               setPlayerRole(PlayerRole.Thief);
