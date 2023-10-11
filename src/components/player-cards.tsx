@@ -89,7 +89,9 @@ export const ClickablePlayerCard = ({
   return (
     <button onClick={onClick}>
       <Card
-        className={`w-[180px] p-4 text-left ${isYou ? "border-zinc-400" : "0"}`}
+        className={`w-[180px] p-4 text-left ${!player.alive && "bg-red-50 border-red-700"} ${
+          isYou ? "border-zinc-400" : "0"
+        }`}
         style={{
           boxShadow: "0px 8px 10px -3px rgba(0, 0, 0, 0.04), 0px 2px 4px -4px rgba(16, 24, 40, 0.02)",
         }}>
@@ -104,7 +106,11 @@ export const ClickablePlayerCard = ({
             height={200}
             // fill
           />
-          <Typography.TypographySmall>{!player.action && "(awaiting action)"}</Typography.TypographySmall>
+
+          <Typography.TypographySmall>
+            {!player.action && "(awaiting action)"}{" "}
+            <span className="text-red-500 font-bold">{!player.alive && "DEAD"}</span>
+          </Typography.TypographySmall>
         </CardContent>
         <CardFooter className="flex w-full flex-col text-left p-0">
           <Typography.TypographyP className="text-left w-full font-bold">Ice Spice</Typography.TypographyP>
