@@ -4,6 +4,7 @@ import mafiaABI from "../abi/mafia.json";
 import factoryABI from "../abi/factory.json";
 import { shuffleArray } from "./utils";
 import { ConnectedWallet } from "@privy-io/react-auth";
+import { FACTORY_ADDRESS } from "@/screens/authenticated";
 
 export const initializeGame = async (w: ConnectedWallet, contractAddress: string) => {
   w.switchChain(9090);
@@ -209,7 +210,7 @@ export const createGame = async (w: ConnectedWallet) => {
     const signer = await p.getSigner();
     console.log(signer);
 
-    const contract = new Contract("0x2Cfa03ca98cda65aB803E676d97Aa22c156D03f3", factoryABI, signer);
+    const contract = new Contract(FACTORY_ADDRESS, factoryABI, signer);
     console.log(contract);
 
     const response = await contract.createGame();
