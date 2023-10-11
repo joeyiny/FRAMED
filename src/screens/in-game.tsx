@@ -9,7 +9,7 @@ import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { game } from "@/query";
-import SidePanel from "@/components/SidePanel";
+import SidePanel from "@/components/side-panel";
 
 export interface Player {
   action: boolean;
@@ -31,15 +31,24 @@ const InGameScreen = ({
   const [resultsText, setResultsText] = useState("loading results...");
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
 
+
+
   // const [playerIsJoined, setPlayerIsJoined] = useState(false);
 
   const [playerRole, setPlayerRole] = useState<PlayerRole>(PlayerRole.Unknown);
 
   const { data, loading } = useQuery(game, { variables: { id: gameContract } });
 
+  let roomId = null;
+  if (data && data.game) {
+    roomId = data.game.roomId;
+  }
+
   let players: Player[] = [];
   if (!loading) players = data.game.Players.map((p) => ({ action: p.action, id: p.player.id }));
   const playerIsJoined = players.some((player) => player.id === user.wallet.address.toLowerCase());
+  console.log('Is player joined:', playerIsJoined);
+
 
   const doAction = async (i: number) => {
     takeAction(i, embeddedWallet, gameContract);
@@ -68,6 +77,7 @@ const InGameScreen = ({
     <>
       <p>{user.wallet.address}</p>
       <p>{playerIsJoined ? "player joined" : "player hasnt joined"}</p>
+      <h1>Room {roomId}</h1>
       <Button onClick={() => setGameContract(null)}>Exit room</Button>
       <div className="my-16">
         {!loading &&
@@ -180,7 +190,9 @@ const InGameScreen = ({
           <Button className="mt-4">Play Again</Button>
         </div>
       )}
-      <SidePanel />
+      {playerIsJoined && <SidePanel roomId={roomId} hasJoined={playerIsJoined} />}
+      
+
     </>
   );
 };

@@ -4,9 +4,10 @@ import { useSocket } from '../../messaging/SocketContext';
 type ChatProps = {
   roomId: string;
   username?: string;
+  hasJoined: boolean; 
 };
 
-const Chat: React.FC<ChatProps> = ({roomId, username}) => {
+const Chat: React.FC<ChatProps> = ({roomId, username, hasJoined}) => {
   const socket = useSocket();
   const [messages, setMessages] = useState<Array<{ sender: string, content: string, username?: string }>>([]);
   const [currentMessage, setCurrentMessage] = useState<string>('');
@@ -14,13 +15,21 @@ const Chat: React.FC<ChatProps> = ({roomId, username}) => {
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (hasJoined && socket) {
+      console.log("Trying to request room join");
+      socket.emit('joinRoom', { roomId: roomId, username: username });
+      socket.emit('requestInitialMessage', { roomId: roomId, username: username });
+      console.log("request done");      
+    }
+  }, [hasJoined, socket]);
+
+
+  useEffect(() => {
     if (socket) {
       socket.on('newMessage', (message: { sender: string; content: string, username?: string }) => {
         console.log("Received new message:", message);
         setMessages((prevMessages) => [...prevMessages, message]);
       });
-
-      socket.emit('joinRoom', {roomId: roomId, username: username});
 
       socket.emit('requestChatHistory', roomId, (chatHistory: Array<{username?: string, role: string, content: string }>) => {
         const formattedHistory = chatHistory.map(message => ({
@@ -34,6 +43,7 @@ const Chat: React.FC<ChatProps> = ({roomId, username}) => {
         chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
       }
     }
+
 
     return () => {
       if (socket) {
