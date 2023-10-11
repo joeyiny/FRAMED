@@ -76,7 +76,7 @@ export const ClickablePlayerCard = ({
     const fetchData = async () => {
       // const p = await queryUsers();
       const w = user.wallet.address.toLowerCase();
-      const a = player.id.toLowerCase();
+      const a = player.id?.toLowerCase() || "";
       if (w === a) {
         setIsYou(true);
       } else {
