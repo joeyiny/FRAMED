@@ -5,7 +5,7 @@ const InviteFriends = ({ roomId }) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
-    const inviteMessage = `A theft has occurred, and someone's been FRAMED! Join Room ${roomId}\nhttps://play.framed.gg`;
+    const inviteMessage = `A theft has occurred, and someone's being FRAMED! Join me in exhibit ${roomId} \nhttps://play.framed.gg`;
     navigator.clipboard.writeText(inviteMessage);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);  // Reset the copied state after 2 seconds
