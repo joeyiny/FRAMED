@@ -9,6 +9,7 @@ import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { game } from "@/query";
+import  InviteFriends from "@/components/invite-friends";
 
 export interface Player {
   action: boolean;
@@ -149,28 +150,33 @@ const InGameScreen = ({
       )}
       {dialog && <div>{dialog}</div>}
       {/* {loading && <div>{loading}</div>} */}
-      {gamePhase === GamePhase.WaitingForPlayers &&
-        (players && players.length >= 4 ? (
-          <Button
-            onClick={async () => {
-              initializeGame(embeddedWallet, gameContract);
-            }}
-            size="lg"
-            className="mt-8">
-            Begin Game
-          </Button>
-        ) : (
-          <Button
-            onClick={async () => {
-              await joinGame(embeddedWallet, gameContract);
-              // if (r) setPlayerIsJoined(true);
-            }}
-            disabled={playerIsJoined}
-            size="lg"
-            className="mt-8">
-            {playerIsJoined ? "Begin Game" : "Join Game"}
-          </Button>
-        ))}
+      {gamePhase === GamePhase.WaitingForPlayers && (
+    <>
+    {players && players.length >= 4 ? (
+      <Button
+        onClick={async () => {
+          initializeGame(embeddedWallet, gameContract);
+        }}
+        size="lg"
+        className="mt-8"
+      >
+        Begin Game
+      </Button>
+    ) : playerIsJoined ? (
+      <InviteFriends roomId={data.game.roomId} />
+    ) : (
+      <Button
+        onClick={async () => {
+          await joinGame(embeddedWallet, gameContract);
+        }}
+        size="lg"
+        className="mt-8"
+      >
+        Join Game
+      </Button>
+    )}
+  </>
+  )}
       {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && !playerHasAction && (
         <Button
           className="mt-4"
