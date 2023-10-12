@@ -7,7 +7,7 @@ import { useQuery } from "@apollo/client";
 import { games } from "@/query";
 import RoomPicker from "@/components/room-picker";
 
-export const FACTORY_ADDRESS = "0x7Df7364D2ee407374a6279b381cA9B93BDaDc07c";
+export const FACTORY_ADDRESS = "0xCAF8af4b32C12C4F85a88b33A38bf356C9943AD6";
 
 const Authenticated = () => {
   // const [clientState, setClientState] = useState<ClientState>(ClientState.Tutorial);
@@ -26,7 +26,10 @@ const Authenticated = () => {
       {gameContract === null ? (
         <RoomPicker games={data.games} setGameContract={setGameContract} />
       ) : (
-        <InGameScreen gameContract={gameContract} setGameContract={setGameContract} />
+        <InGameScreen
+          gameContract={gameContract}
+          setGameContract={setGameContract}
+        />
       )}
       {/* {gameContract === null ? <TutorialFlow setClientState={setClientState} />: <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />} */}
     </div>
