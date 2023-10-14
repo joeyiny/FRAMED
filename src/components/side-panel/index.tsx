@@ -4,10 +4,8 @@ import { ChatContext } from '../../context/ChatContext';
 import { BiArrowToRight, BiArrowToLeft } from 'react-icons/bi';
 
 const SidePanel: React.FC<{ roomId: string | null; hasJoined: boolean }> = ({ roomId, hasJoined }) => {
-  const { isChatOpen, setIsChatOpen } = React.useContext(ChatContext);
-  const toggleChat = () => {
-    setIsChatOpen(!isChatOpen);
-  };
+  const { chatsOpenState, toggleChat } = React.useContext(ChatContext);
+  const isChatOpen = chatsOpenState[roomId || ""];
 
   return (
     <div
@@ -17,14 +15,14 @@ const SidePanel: React.FC<{ roomId: string | null; hasJoined: boolean }> = ({ ro
       
       <div className="bg-gray-900 text-white py-2 px-4 rounded-t-lg flex justify-between items-center">
         {isChatOpen ? (
-          <div className="flex items-center cursor-pointer" onClick={toggleChat}>
+          <div className="flex items-center cursor-pointer" onClick={() => toggleChat(roomId ? roomId : "999")}>
             <div className="flex-grow"></div>
             Chat<BiArrowToRight size={24} className="text-white ml-4" />
           </div>
         ) : (
-          <div className="flex items-center cursor-pointer" onClick={toggleChat}>
+          <div className="flex items-center cursor-pointer" onClick={() => toggleChat(roomId ? roomId : "999")}>
             <div className="flex-grow"></div>
-            <BiArrowToLeft size={24} className="text-white ml-4" />
+            <BiArrowToLeft size={24} className="text-white " />
           </div>
         )}
       </div>

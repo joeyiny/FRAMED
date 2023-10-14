@@ -37,8 +37,7 @@ const InGameScreen = ({
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
   // const [deadPlayer, setDeadPlayer] = useState("");
 
-  const { isChatOpen } = React.useContext(ChatContext);
-  const gameStyle = isChatOpen ? "w-2/3 transition-all duration-300" : "w-full transition-all duration-300";
+  const { chatsOpenState } = React.useContext(ChatContext);
 
   // const [playerIsJoined, setPlayerIsJoined] = useState(false);
 
@@ -50,6 +49,9 @@ const InGameScreen = ({
   if (data && data.game) {
     roomId = data.game.roomId;
   }
+
+  const isChatOpen = chatsOpenState[roomId];
+  const gameStyle = isChatOpen ? "w-2/3 transition-all duration-300" : "w-full transition-all duration-300";
 
   let players: Player[] = [];
   let playerHasAction = false;

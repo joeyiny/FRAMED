@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
 
 export const ChatContext = React.createContext<{
-  isChatOpen: boolean;
-  setIsChatOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  chatsOpenState: { [roomId: string]: boolean };
+  toggleChat: (roomId: string) => void;
 } | undefined>(undefined);
 
 interface ChatProviderProps {
@@ -10,10 +10,17 @@ interface ChatProviderProps {
 }
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
-    const [isChatOpen, setIsChatOpen] = React.useState(true);
+    const [chatsOpenState, setChatsOpenState] = React.useState<{ [roomId: string]: boolean }>({});
+
+    const toggleChat = (roomId: string) => {
+      setChatsOpenState(prevState => ({
+        ...prevState,
+        [roomId]: !prevState[roomId]
+      }));
+    };
   
     return (
-      <ChatContext.Provider value={{ isChatOpen, setIsChatOpen }}>
+      <ChatContext.Provider value={{ chatsOpenState, toggleChat }}>
         {children}
       </ChatContext.Provider>
     );
