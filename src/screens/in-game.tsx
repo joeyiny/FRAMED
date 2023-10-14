@@ -3,6 +3,7 @@ import * as Typography from "@/components/ui/typography";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 
 import { initializeGame, isMafiaKilled, joinGame, takeAction, viewRole, votePlayer } from "@/lib/game-functions";
+import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 import { useWallets } from "@privy-io/react-auth";
@@ -11,10 +12,12 @@ import { useQuery } from "@apollo/client";
 import { game } from "@/query";
 import SidePanel from "@/components/side-panel";
 import { ChatContext } from "../context/ChatContext"
+import InviteFriends from "@/components/invite-friends";
 
 export interface Player {
   action: boolean;
   id: string;
+  alive: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -28,9 +31,11 @@ const InGameScreen = ({
   const { wallets } = useWallets();
   const { user } = usePrivy();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
+  const [balance, setBalance] = useState(null);
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
+  // const [deadPlayer, setDeadPlayer] = useState("");
 
   const { isChatOpen } = React.useContext(ChatContext);
   const gameStyle = isChatOpen ? "w-2/3 transition-all duration-300" : "w-full transition-all duration-300";
@@ -47,19 +52,77 @@ const InGameScreen = ({
   }
 
   let players: Player[] = [];
-  if (!loading) players = data.game.Players.map((p) => ({ action: p.action, id: p.player.id }));
+  let playerHasAction = false;
+
+  if (!loading) {
+    players = data.game.Players.map((p) => ({ action: p.action, alive: p.alive, id: p.player.id }));
+
+    // Find the current player's entry in the players array
+    const currentPlayer = players.find((player) => player.id === user.wallet.address.toLowerCase());
+
+    // Update playerHasAction based on the currentPlayer's action property
+    playerHasAction = currentPlayer ? Boolean(currentPlayer.action) : false;
+  }
   const playerIsJoined = players.some((player) => player.id === user.wallet.address.toLowerCase());
   console.log('Is player joined:', playerIsJoined);
 
 
   const doAction = async (i: number) => {
-    takeAction(i, embeddedWallet, gameContract);
+    !playerHasAction && takeAction(i, embeddedWallet, gameContract);
   };
 
   // useEffect(() => {
   //   if (user.wallet?.address && players.length > 1)
   //     setPlayerIsJoined(Object.values(players).includes(user.wallet.address));
   // }, [user, players]);
+  
+  // Keeping track of user's balance and a cache in storage for unnecessary balance checks
+  const updateLocalStorage = (balance) => {
+    localStorage.setItem('hasFunds', String(!balance.isZero()));
+  };
+
+  useEffect(() => {
+    const provideInitialFunds = async () => {
+      if (!embeddedWallet) return;
+      const ethereumProvider = await embeddedWallet.getEthersProvider();
+      const balance = await ethereumProvider.getBalance(embeddedWallet.address);
+      const hasFunds = localStorage.getItem('hasFunds') === 'true' || !balance.isZero();
+      if (!hasFunds && balance.isZero()) {
+        try {
+          // fetch funds for new users
+          const updatedBalance = await fetchFundsForNewUser(ethereumProvider, embeddedWallet.address);
+          setBalance(updatedBalance);  
+          updateLocalStorage(updatedBalance);
+        } catch (error) {
+          console.error('Error fetching funds:', error);
+        }
+      } else {
+        setBalance(balance);  
+        updateLocalStorage(balance); 
+      }
+    };
+    
+    provideInitialFunds();
+  }, [embeddedWallet]);
+
+  useEffect(() => {
+    const pollBalance = async () => {
+      if (!embeddedWallet) return;
+      const ethereumProvider = await embeddedWallet.getEthersProvider();
+      const balance = await ethereumProvider.getBalance(embeddedWallet.address);
+      if (!balance.isZero()) {
+        setBalance(balance); 
+        updateLocalStorage(balance);
+        clearInterval(pollingInterval); 
+      }
+    };
+    let pollingInterval;
+    if (balance === null || balance.isZero()) {
+      pollingInterval = setInterval(pollBalance, 5000); 
+    }
+    return () => clearInterval(pollingInterval);  
+  }, [embeddedWallet, balance]);
+  
   useEffect(() => {
     data && setGamePhase(data.game.phase);
     console.log(data);
@@ -75,42 +138,54 @@ const InGameScreen = ({
   }, [gamePhase]);
 
   if (loading) return <p>loading</p>;
+
   return (
     <>
     <div className={gameStyle}>
+      {/* <p>{user.wallet.address}</p> */}
       <Button onClick={() => setGameContract(null)}>Exit room</Button>
       <div className="my-16">
-        {!loading &&
-          (gamePhase === GamePhase.WaitingForPlayers ? (
-            <Typography.TypographyLarge className="animate-pulse">
-              {players && length < 4 ? "Waiting for other players to join..." : "Room full!"}
-            </Typography.TypographyLarge>
-          ) : gamePhase === GamePhase.AwaitPlayerActions ? (
-            <div>
-              <Typography.TypographyLarge>
-                {playerRole === PlayerRole.Unknown
-                  ? "Let's check to see what your role is!"
-                  : `Your role is ${playerRole}`}
+        {!loading ? (
+          gamePhase === GamePhase.WaitingForPlayers ? (
+            balance === null && !localStorage.getItem('hasFunds') ?  (
+              <Typography.TypographyLarge className="animate-pulse">
+                Providing funds, please wait...
               </Typography.TypographyLarge>
-              {playerRole !== PlayerRole.Unknown && (
-                <Typography.TypographyMuted>
-                  <Typography.TypographySmall>
-                    {playerRole === PlayerRole.Citizen
-                      ? "Vote for who you think the thief is."
-                      : playerRole === PlayerRole.Thief
-                      ? "Choose the player you want to kill."
-                      : playerRole === PlayerRole.Cop
-                      ? "Choose the player you want to save."
-                      : "Choose the player you want to examine."}
-                  </Typography.TypographySmall>
-                </Typography.TypographyMuted>
-              )}
-            </div>
+            ) : (
+              <Typography.TypographyLarge className="animate-pulse">
+                {players && players.length < 4 ? "Waiting for other players to join..." : "Room full!"}
+              </Typography.TypographyLarge>
+            )            
+          ) : gamePhase === GamePhase.AwaitPlayerActions ? (
+            playerHasAction ? (
+              <Typography.TypographyLarge>Waiting for others to take action...</Typography.TypographyLarge>
+            ) : (
+              <div>
+                <Typography.TypographyLarge>
+                  {playerRole === PlayerRole.Unknown
+                    ? "Let's check to see what your role is!"
+                    : `Your role is ${playerRole}`}
+                </Typography.TypographyLarge>
+                {playerRole !== PlayerRole.Unknown && (
+                  <Typography.TypographyMuted>
+                    <Typography.TypographySmall>
+                      {playerRole === PlayerRole.Citizen
+                        ? "Vote for who you think the thief is."
+                        : playerRole === PlayerRole.Thief
+                          ? "Choose the player you want to kill."
+                          : playerRole === PlayerRole.Cop
+                            ? "Choose the player you want to save."
+                            : "Choose the player you want to examine."}
+                    </Typography.TypographySmall>
+                  </Typography.TypographyMuted>
+                )}
+              </div>
+            )
           ) : gamePhase === GamePhase.Voting ? (
             <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
           ) : (
             <Typography.TypographyLarge>And the winner is...</Typography.TypographyLarge>
-          ))}
+          )) : null}
       </div>
       {loading ? (
         <div className="w-full">loading...</div>
@@ -144,34 +219,43 @@ const InGameScreen = ({
       )}
       {dialog && <div>{dialog}</div>}
       {/* {loading && <div>{loading}</div>} */}
-      {gamePhase === GamePhase.WaitingForPlayers &&
-        (players && players.length >= 4 ? (
-          <Button
-            onClick={async () => {
-              initializeGame(embeddedWallet, gameContract);
-            }}
-            size="lg"
-            className="mt-8">
-            Begin Game
-          </Button>
-        ) : (
-          <Button
-            onClick={async () => {
-              await joinGame(embeddedWallet, gameContract);
-              // if (r) setPlayerIsJoined(true);
-            }}
-            disabled={playerIsJoined}
-            size="lg"
-            className="mt-8">
-            {playerIsJoined ? "Begin Game" : "Join Game"}
-          </Button>
-        ))}
-      {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && (
+      {gamePhase === GamePhase.WaitingForPlayers && (
+        <>
+          {players && players.length >= 4 ? (
+            <Button
+              onClick={async () => {
+                initializeGame(embeddedWallet, gameContract);
+              }}
+              size="lg"
+              className="mt-8"
+            >
+              Begin Game
+            </Button>
+          ) : playerIsJoined ? (
+            <InviteFriends roomId={data.game.roomId} />
+          ) : (
+            <>
+              <Button
+                onClick={async () => {
+                  await joinGame(embeddedWallet, gameContract);
+                }}
+                disabled={localStorage.getItem('hasFunds') === null || localStorage.getItem('hasFunds') !== 'true'}
+                size="lg"
+                className="mt-8"
+              >
+                Join Game
+              </Button>
+          
+          </>
+          )}
+        </>
+      )}
+      {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && !playerHasAction && (
         <Button
           className="mt-4"
           onClick={async () => {
             const role = await viewRole(embeddedWallet, gameContract);
-            if (role === 0) {
+            if (role === 4) {
               setPlayerRole(PlayerRole.Citizen);
             } else if (role === 1) {
               setPlayerRole(PlayerRole.Thief);

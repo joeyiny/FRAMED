@@ -15,6 +15,7 @@ export const games = gql`
       id
       Players {
         action
+        alive
         player {
           id
         }
@@ -35,6 +36,8 @@ export const game = gql`
       phase
       Players {
         action
+        alive
+        vote
         player {
           id
         }
