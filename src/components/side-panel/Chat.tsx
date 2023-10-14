@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useSocket } from "../../messaging/SocketContext";
+import { useSocket } from "../../context/SocketContext";
 
 type ChatProps = {
   roomId: string;
@@ -93,10 +93,8 @@ const Chat: React.FC<ChatProps> = ({ roomId, username, hasJoined }) => {
           }}
           ref={inputRef}
           className="flex-grow mr-2 p-2 rounded border"
+          placeholder="Send a message... "
         />
-        <button onClick={handleSendMessage} className="p-2 rounded bg-blue-500 text-white cursor-pointer">
-          Send
-        </button>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import * as Typography from "@/components/ui/typography";
-import { useState, useEffect, SetStateAction, Dispatch } from "react";
+import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 
 import { initializeGame, isMafiaKilled, joinGame, takeAction, viewRole, votePlayer } from "@/lib/game-functions";
 import { GamePhase, PlayerRole } from "@/types";
@@ -10,6 +10,7 @@ import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { game } from "@/query";
 import SidePanel from "@/components/side-panel";
+import { ChatContext } from "../context/ChatContext"
 
 export interface Player {
   action: boolean;
@@ -31,7 +32,8 @@ const InGameScreen = ({
   const [resultsText, setResultsText] = useState("loading results...");
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
 
-
+  const { isChatOpen } = React.useContext(ChatContext);
+  const gameStyle = isChatOpen ? "w-2/3 transition-all duration-300" : "w-full transition-all duration-300";
 
   // const [playerIsJoined, setPlayerIsJoined] = useState(false);
 
@@ -75,9 +77,7 @@ const InGameScreen = ({
   if (loading) return <p>loading</p>;
   return (
     <>
-      <p>{user.wallet.address}</p>
-      <p>{playerIsJoined ? "player joined" : "player hasnt joined"}</p>
-      <h1>Room {roomId}</h1>
+    <div className={gameStyle}>
       <Button onClick={() => setGameContract(null)}>Exit room</Button>
       <div className="my-16">
         {!loading &&
@@ -191,8 +191,7 @@ const InGameScreen = ({
         </div>
       )}
       {playerIsJoined && <SidePanel roomId={roomId} hasJoined={playerIsJoined} />}
-      
-
+      </div>
     </>
   );
 };
