@@ -4,8 +4,12 @@ import mafiaABI from "../abi/mafia.json";
 import factoryABI from "../abi/factory.json";
 import { shuffleArray } from "./utils";
 import { ConnectedWallet } from "@privy-io/react-auth";
+import { FACTORY_ADDRESS } from "@/screens/authenticated";
 
-export const initializeGame = async (w: ConnectedWallet, contractAddress: string) => {
+export const initializeGame = async (
+  w: ConnectedWallet,
+  contractAddress: string
+) => {
   w.switchChain(9090);
   const a = await w.getEthereumProvider();
   const p = new BrowserProvider(a);
@@ -28,7 +32,10 @@ export const initializeGame = async (w: ConnectedWallet, contractAddress: string
   }
 };
 
-export const viewCaught = async (w: ConnectedWallet, contractAddress: string) => {
+export const viewCaught = async (
+  w: ConnectedWallet,
+  contractAddress: string
+) => {
   try {
     w.switchChain(9090);
     const a = await w.getEthereumProvider();
@@ -36,16 +43,26 @@ export const viewCaught = async (w: ConnectedWallet, contractAddress: string) =>
     const instance = await getInstance(p);
     const signer = await p.getSigner();
     const contract = new Contract(contractAddress, mafiaABI, signer);
-    const { publicKey, signature } = await getTokenSignature(contractAddress, signer.address, a);
+    const { publicKey, signature } = await getTokenSignature(
+      contractAddress,
+      signer.address,
+      a
+    );
     const ciphertext = await contract.viewCaught(publicKey, signature);
-    const userCreditScoreDecrypted = instance.decrypt(contractAddress, ciphertext);
+    const userCreditScoreDecrypted = instance.decrypt(
+      contractAddress,
+      ciphertext
+    );
     console.log(ciphertext, userCreditScoreDecrypted);
   } catch (e) {
     console.log(e);
   }
 };
 
-export const queryUsers = async (w: ConnectedWallet, contractAddress: string) => {
+export const queryUsers = async (
+  w: ConnectedWallet,
+  contractAddress: string
+) => {
   try {
     w.switchChain(9090);
     const a = await w.getEthereumProvider();
@@ -70,8 +87,9 @@ export const joinGame = async (w: ConnectedWallet, contractAddress: string) => {
     const p = new BrowserProvider(a);
     const signer = await p.getSigner();
     const contract = new Contract(contractAddress, mafiaABI, signer);
+    console.log(signer.address);
     // setLoading("Joining Game...");
-    const result = await contract.joinGame();
+    const result = await contract.joinGame(signer.address);
     return result;
     // setLoading("Success!");
   } catch (e) {
@@ -81,7 +99,11 @@ export const joinGame = async (w: ConnectedWallet, contractAddress: string) => {
   }
 };
 
-export const takeAction = async (playerId: number, w: ConnectedWallet, contractAddress: string) => {
+export const takeAction = async (
+  playerId: number,
+  w: ConnectedWallet,
+  contractAddress: string
+) => {
   // const playerId = 2;
   try {
     w.switchChain(9090);
@@ -106,7 +128,11 @@ export const takeAction = async (playerId: number, w: ConnectedWallet, contractA
   }
 };
 
-export const votePlayer = async (playerId: number, w: ConnectedWallet, contractAddress: string) => {
+export const votePlayer = async (
+  playerId: number,
+  w: ConnectedWallet,
+  contractAddress: string
+) => {
   try {
     w.switchChain(9090);
     const a = await w.getEthereumProvider();
@@ -126,7 +152,10 @@ export const votePlayer = async (playerId: number, w: ConnectedWallet, contractA
   }
 };
 
-export const viewRole = async (wallet: ConnectedWallet, contractAddress: string) => {
+export const viewRole = async (
+  wallet: ConnectedWallet,
+  contractAddress: string
+) => {
   try {
     wallet.switchChain(9090);
     const a = await wallet.getEthereumProvider();
@@ -136,10 +165,17 @@ export const viewRole = async (wallet: ConnectedWallet, contractAddress: string)
     const signer = await provider.getSigner();
     const contract = new Contract(contractAddress, mafiaABI, signer);
     // setLoading("Decrypting User Role...");
-    const { publicKey, signature } = await getTokenSignature(contractAddress, signer.address, a);
+    const { publicKey, signature } = await getTokenSignature(
+      contractAddress,
+      signer.address,
+      a
+    );
     const ciphertext = await contract.viewOwnRole(publicKey, signature);
     console.log(ciphertext);
-    const userCreditScoreDecrypted = instance.decrypt(contractAddress, ciphertext);
+    const userCreditScoreDecrypted = instance.decrypt(
+      contractAddress,
+      ciphertext
+    );
     console.log(ciphertext, userCreditScoreDecrypted);
     return userCreditScoreDecrypted;
     // setUserRole(userCreditScoreDecrypted);
@@ -151,7 +187,10 @@ export const viewRole = async (wallet: ConnectedWallet, contractAddress: string)
   }
 };
 
-export const getGameStateFromContract = async (w: ConnectedWallet, contractAddress: string) => {
+export const getGameStateFromContract = async (
+  w: ConnectedWallet,
+  contractAddress: string
+) => {
   try {
     // w.switchChain(9090);
     w.switchChain(9090);
@@ -168,7 +207,10 @@ export const getGameStateFromContract = async (w: ConnectedWallet, contractAddre
   }
 };
 
-export const getDeadPlayer = async (w: ConnectedWallet, contractAddress: string) => {
+export const getDeadPlayer = async (
+  w: ConnectedWallet,
+  contractAddress: string
+) => {
   try {
     w.switchChain(9090);
     const a = await w.getEthereumProvider();
@@ -183,7 +225,10 @@ export const getDeadPlayer = async (w: ConnectedWallet, contractAddress: string)
   }
 };
 
-export const isMafiaKilled = async (w: ConnectedWallet, contractAddress: string) => {
+export const isMafiaKilled = async (
+  w: ConnectedWallet,
+  contractAddress: string
+) => {
   try {
     w.switchChain(9090);
     const a = await w.getEthereumProvider();
@@ -209,7 +254,7 @@ export const createGame = async (w: ConnectedWallet) => {
     const signer = await p.getSigner();
     console.log(signer);
 
-    const contract = new Contract("0x2Cfa03ca98cda65aB803E676d97Aa22c156D03f3", factoryABI, signer);
+    const contract = new Contract(FACTORY_ADDRESS, factoryABI, signer);
     console.log(contract);
 
     const response = await contract.createGame();
