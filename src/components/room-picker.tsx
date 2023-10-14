@@ -33,6 +33,7 @@ const RoomPicker = ({
               className="border border-zinc-600"
               key={i}>
               <div>{game.id}</div>
+              <div>{"Room "+ game.roomId}</div>
               <div>{game.Players.length} players</div>
               {playerIsJoined && <div>You are in this game.</div>}
             </button>
