@@ -32,7 +32,7 @@ const InGameScreen = ({
   const { wallets } = useWallets();
   const { user } = usePrivy();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
-  const [balance, setBalance] = useState(null);
+  const [hasFunds, setHasFunds] = useState(localStorage.getItem('hasFunds') === 'true');
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
@@ -80,55 +80,20 @@ const InGameScreen = ({
   //   if (user.wallet?.address && players.length > 1)
   //     setPlayerIsJoined(Object.values(players).includes(user.wallet.address));
   // }, [user, players]);
-  
-  // Keeping track of user's balance and a cache in storage for unnecessary balance checks
-  const updateLocalStorage = (balance) => {
-    localStorage.setItem('hasFunds', String(!balance.isZero()));
-  };
 
-  // (FIX) Currently not waiting for a balance update before fetching funds causing unnecessary fundings 
   useEffect(() => {
     const provideInitialFunds = async () => {
-      if (!embeddedWallet) return;
-      const ethereumProvider = await embeddedWallet.getEthersProvider();
-      const balance = await ethereumProvider.getBalance(embeddedWallet.address);
-      const hasFunds = localStorage.getItem('hasFunds') === 'true' || !balance.isZero();
-      if (!hasFunds && balance.isZero()) {
-        try {
-          // fetch funds for new users
-          const updatedBalance = await fetchFundsForNewUser(ethereumProvider, embeddedWallet.address);
-          setBalance(updatedBalance);  
-          updateLocalStorage(updatedBalance);
-        } catch (error) {
-          console.error('Error fetching funds:', error);
-        }
+      const result = await fetchFundsForNewUser(embeddedWallet.getEthersProvider(), embeddedWallet.address);
+      if (result.status === 'success') {
+        setHasFunds(true);
+      } else if (result.status === 'error') {
+        console.error('Error fetching funds:', result.message);
       } else {
-        setBalance(balance);  
-        updateLocalStorage(balance); 
+        console.log(result.status === 'already_funded' ? "User is already funded" : 'Unexpected status:', result.status);
       }
     };
-    
-    provideInitialFunds();
+    provideInitialFunds().catch(error => console.error('Unexpected error:', error));
   }, [embeddedWallet]);
-
-  // (FIX) Not automatically updating state once funds are received 
-  useEffect(() => {
-    const pollBalance = async () => {
-      if (!embeddedWallet) return;
-      const ethereumProvider = await embeddedWallet.getEthersProvider();
-      const balance = await ethereumProvider.getBalance(embeddedWallet.address);
-      if (!balance.isZero()) {
-        setBalance(balance); 
-        updateLocalStorage(balance);
-        clearInterval(pollingInterval); 
-      }
-    };
-    let pollingInterval;
-    if (balance === null || balance.isZero()) {
-      pollingInterval = setInterval(pollBalance, 5000); 
-    }
-    return () => clearInterval(pollingInterval);  
-  }, [embeddedWallet, balance]);
 
   useEffect(() => {
     const name = ensureDisplayName();
@@ -159,15 +124,15 @@ const InGameScreen = ({
       <div className="my-16">
         {!loading ? (
           gamePhase === GamePhase.WaitingForPlayers ? (
-            balance === null && !localStorage.getItem('hasFunds') ?  (
-              <Typography.TypographyLarge className="animate-pulse">
-                Providing funds, please wait...
-              </Typography.TypographyLarge>
-            ) : (
+            hasFunds ? (
               <Typography.TypographyLarge className="animate-pulse">
                 {players && players.length < 4 ? "Waiting for other players to join..." : "Room full!"}
               </Typography.TypographyLarge>
-            )            
+            ) : (
+              <Typography.TypographyLarge className="animate-pulse">
+                Providing funds, please wait...
+              </Typography.TypographyLarge>
+            )         
           ) : gamePhase === GamePhase.AwaitPlayerActions ? (
             playerHasAction ? (
               <Typography.TypographyLarge>Waiting for others to take action...</Typography.TypographyLarge>
@@ -251,7 +216,7 @@ const InGameScreen = ({
                 onClick={async () => {
                   await joinGame(embeddedWallet, gameContract);
                 }}
-                disabled={localStorage.getItem('hasFunds') === null || localStorage.getItem('hasFunds') !== 'true'}
+                disabled={!hasFunds}
                 size="lg"
                 className="mt-8"
               >
