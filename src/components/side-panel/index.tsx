@@ -3,7 +3,7 @@ import Chat from "./Chat";
 import { ChatContext } from '../../context/ChatContext';
 import { BiArrowToRight, BiArrowToLeft } from 'react-icons/bi';
 
-const SidePanel: React.FC<{ roomId: string | null; hasJoined: boolean }> = ({ roomId, hasJoined }) => {
+const SidePanel: React.FC<{ roomId: string | null; username: string | null; hasJoined: boolean;  }> = ({ roomId, username ,hasJoined }) => {
   const { chatsOpenState, toggleChat } = React.useContext(ChatContext);
   const isChatOpen = chatsOpenState[roomId || ""];
 
@@ -27,7 +27,7 @@ const SidePanel: React.FC<{ roomId: string | null; hasJoined: boolean }> = ({ ro
         )}
       </div>
       
-      {isChatOpen && <Chat roomId={roomId ? roomId : "999"} username="Water Fren" hasJoined={hasJoined} />}
+      {isChatOpen && <Chat roomId={roomId ? roomId : "999"} username={username ? username : "Secret Menu"} hasJoined={hasJoined} />}
     </div>
   );
 };

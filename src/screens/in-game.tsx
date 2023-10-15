@@ -13,6 +13,7 @@ import { game } from "@/query";
 import SidePanel from "@/components/side-panel";
 import { ChatContext } from "../context/ChatContext"
 import InviteFriends from "@/components/invite-friends";
+import { ensureDisplayName } from "@/lib/display-name";
 
 export interface Player {
   action: boolean;
@@ -44,6 +45,8 @@ const InGameScreen = ({
   const [playerRole, setPlayerRole] = useState<PlayerRole>(PlayerRole.Unknown);
 
   const { data, loading } = useQuery(game, { variables: { id: gameContract } });
+
+  const [displayName, setDisplayName] = useState<string | null>(null);
 
   let roomId = null;
   if (data && data.game) {
@@ -83,6 +86,7 @@ const InGameScreen = ({
     localStorage.setItem('hasFunds', String(!balance.isZero()));
   };
 
+  // (FIX) Currently not waiting for a balance update before fetching funds causing unnecessary fundings 
   useEffect(() => {
     const provideInitialFunds = async () => {
       if (!embeddedWallet) return;
@@ -107,6 +111,7 @@ const InGameScreen = ({
     provideInitialFunds();
   }, [embeddedWallet]);
 
+  // (FIX) Not automatically updating state once funds are received 
   useEffect(() => {
     const pollBalance = async () => {
       if (!embeddedWallet) return;
@@ -124,6 +129,11 @@ const InGameScreen = ({
     }
     return () => clearInterval(pollingInterval);  
   }, [embeddedWallet, balance]);
+
+  useEffect(() => {
+    const name = ensureDisplayName();
+    setDisplayName(name);
+  }, []);
   
   useEffect(() => {
     data && setGamePhase(data.game.phase);
@@ -276,7 +286,7 @@ const InGameScreen = ({
           <Button className="mt-4">Play Again</Button>
         </div>
       )}
-      {playerIsJoined && <SidePanel roomId={roomId} hasJoined={playerIsJoined} />}
+      {playerIsJoined && <SidePanel roomId={roomId} username={displayName} hasJoined={playerIsJoined} />}
       </div>
     </>
   );
