@@ -81,10 +81,9 @@ const InGameScreen = ({
   }, [gamePhase]);
 
   if (loading) return <p>loading</p>;
-  console.log(players);
+
   return (
     <>
-      {/* <p>{user.wallet.address}</p> */}
       <Button onClick={() => setGameContract(null)}>Exit room</Button>
       <div className="my-16">
         {!loading &&
