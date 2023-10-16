@@ -271,7 +271,6 @@ const InGameScreen = ({
         )}
         {playerIsJoined && <SidePanel roomId={roomId} username={displayName} hasJoined={playerIsJoined} />}
       </div>
-      gameStyle{" "}
     </>
   );
 };
