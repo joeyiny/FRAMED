@@ -5,6 +5,7 @@ import * as Typography from "./ui/typography";
 import { shortenEthAddress } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Player } from "@/screens/in-game";
+import { PLAYER_NAMES } from "@/screens/in-game";
 
 export const ActivePlayerCard = ({ player, index }: { player: Player; index: number }) => {
   const { user } = usePrivy();
@@ -40,7 +41,7 @@ export const ActivePlayerCard = ({ player, index }: { player: Player; index: num
         />
       </CardContent>
       <CardFooter className="flex w-full flex-col text-left p-0">
-        <Typography.TypographyP className="text-left w-full font-bold">{index}</Typography.TypographyP>
+        <Typography.TypographyP className="text-left w-full font-bold">{PLAYER_NAMES[index]}</Typography.TypographyP>
         <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500">
           {shortenEthAddress(player.id)}
         </Typography.TypographySmall>
@@ -113,7 +114,7 @@ export const ClickablePlayerCard = ({
           </Typography.TypographySmall>
         </CardContent>
         <CardFooter className="flex w-full flex-col text-left p-0">
-          <Typography.TypographyP className="text-left w-full font-bold">{index}</Typography.TypographyP>
+          <Typography.TypographyP className="text-left w-full font-bold">{PLAYER_NAMES[index]}</Typography.TypographyP>
           <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500">
             {shortenEthAddress(player.id)}
           </Typography.TypographySmall>

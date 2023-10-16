@@ -16,6 +16,8 @@ import InviteFriends from "@/components/invite-friends";
 import SidePanel from "@/components/side-panel";
 // import { ensureDisplayName } from "@/lib/display-name";
 
+export const PLAYER_NAMES = ["Soup Enjoyer", "Pineapple Guy", "Zippy", "Dizzy Dan"];
+
 export interface Player {
   action: boolean;
   id: string;

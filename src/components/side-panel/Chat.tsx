@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSocket } from "../../context/SocketContext";
+import { PLAYER_NAMES } from "@/screens/in-game";
 
 type ChatProps = {
   roomId: string;
@@ -76,11 +77,12 @@ const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined }) => {
       <div ref={chatBoxRef} className="messages flex-grow overflow-y-auto flex flex-col items-start space-y-2">
         {messages.map(
           (message, index) =>
-            message.sender !== "assistant" && (
+            message.sender === "user" && (
               <div
                 key={index}
-                className={`text-right ${message.sender === "assistant" ? "text-gray-500" : "text-black"}`}>
-                {message.player_id && message.sender === "user" ? `${message.player_id}: ` : ""}
+                // className={`text-right ${message.sender === "assistant" ? "text-gray-500" : "text-black"}`}>
+                className={`text-right text-black`}>
+                <span className="font-bold">{`${PLAYER_NAMES[message.player_id]}: `}</span>
                 {message.content}
               </div>
             )
