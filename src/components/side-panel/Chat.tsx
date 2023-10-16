@@ -3,13 +3,13 @@ import { useSocket } from "../../context/SocketContext";
 
 type ChatProps = {
   roomId: string;
-  username?: string;
+  player_id?: string;
   hasJoined: boolean;
 };
 
-const Chat: React.FC<ChatProps> = ({ roomId, username, hasJoined }) => {
+const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined }) => {
   const socket = useSocket();
-  const [messages, setMessages] = useState<Array<{ sender: string; content: string; username?: string }>>([]);
+  const [messages, setMessages] = useState<Array<{ sender: string; content: string; player_id?: string }>>([]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   const chatBoxRef = useRef<HTMLDivElement>(null);
@@ -17,15 +17,15 @@ const Chat: React.FC<ChatProps> = ({ roomId, username, hasJoined }) => {
   useEffect(() => {
     if (hasJoined && socket) {
       console.log("Trying to request room join");
-      socket.emit("joinRoom", { roomId: roomId, username: username });
-      socket.emit("requestInitialMessage", { roomId: roomId, username: username });
+      socket.emit("joinRoom", { roomId: roomId, player_id: player_id });
+      socket.emit("requestInitialMessage", { roomId: roomId, player_id: player_id });
       console.log("request done");
     }
   }, [hasJoined, socket]);
 
   useEffect(() => {
     if (socket) {
-      socket.on("newMessage", (message: { sender: string; content: string; username?: string }) => {
+      socket.on("newMessage", (message: { sender: string; content: string; player_id?: string }) => {
         console.log("Received new message:", message);
         setMessages((prevMessages) => [...prevMessages, message]);
       });
@@ -33,7 +33,7 @@ const Chat: React.FC<ChatProps> = ({ roomId, username, hasJoined }) => {
       socket.emit(
         "requestChatHistory",
         roomId,
-        (chatHistory: Array<{ username?: string; role: string; content: string }>) => {
+        (chatHistory: Array<{ player_id?: string; role: string; content: string }>) => {
           const formattedHistory = chatHistory.map((message) => ({
             ...message,
             sender: message.role,
@@ -56,8 +56,11 @@ const Chat: React.FC<ChatProps> = ({ roomId, username, hasJoined }) => {
 
   const handleSendMessage = () => {
     if (socket && currentMessage.trim() !== "") {
-      setMessages((prevMessages) => [...prevMessages, { sender: "user", content: currentMessage, username: username }]);
-      socket.emit("sendMessage", roomId, { username: username, sender: "user", content: currentMessage });
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { sender: "user", content: currentMessage, player_id: player_id },
+      ]);
+      socket.emit("sendMessage", roomId, { player_id: "0", sender: "user", content: currentMessage });
       setCurrentMessage("");
       inputRef.current?.focus();
 
@@ -73,7 +76,7 @@ const Chat: React.FC<ChatProps> = ({ roomId, username, hasJoined }) => {
       <div ref={chatBoxRef} className="messages flex-grow overflow-y-auto flex flex-col items-start space-y-2">
         {messages.map((message, index) => (
           <div key={index} className={`text-right ${message.sender === "assistant" ? "text-gray-500" : "text-black"}`}>
-            {message.username && message.sender === "user" ? `${message.username}: ` : ""}
+            {message.player_id && message.sender === "user" ? `${message.player_id}: ` : ""}
             {message.content}
           </div>
         ))}

@@ -10,10 +10,11 @@ import { useWallets } from "@privy-io/react-auth";
 import { usePrivy } from "@privy-io/react-auth";
 import { useQuery } from "@apollo/client";
 import { game } from "@/query";
-import SidePanel from "@/components/side-panel";
+// import SidePanel from "@/components/side-panel";
 import { ChatContext } from "../context/ChatContext";
 import InviteFriends from "@/components/invite-friends";
-import { ensureDisplayName } from "@/lib/display-name";
+import SidePanel from "@/components/side-panel";
+// import { ensureDisplayName } from "@/lib/display-name";
 
 export interface Player {
   action: boolean;
@@ -47,7 +48,8 @@ const InGameScreen = ({
 
   const { data, loading } = useQuery(game, { variables: { id: gameContract } });
 
-  const [displayName, setDisplayName] = useState<string | null>(null);
+  // const [displayName, setDisplayName] = useState<string | null>(null);
+  // const [playerId, setPlayerId] = useState<string | null>(null);
 
   let roomId = null;
   if (data && data.game) {
@@ -59,6 +61,7 @@ const InGameScreen = ({
 
   let players: Player[] = [];
   let playerHasAction = false;
+  let playerId = null;
 
   if (!loading) {
     players = data.game.Players.map((p) => ({
@@ -70,7 +73,8 @@ const InGameScreen = ({
 
     // Find the current player's entry in the players array
     const currentPlayer = players.find((player) => player.id === user.wallet.address.toLowerCase());
-
+    playerId = currentPlayer.position;
+    // setPlayerId(currentPlayer.id);
     // Update playerHasAction based on the currentPlayer's action property
     playerHasAction = currentPlayer ? Boolean(currentPlayer.action) : false;
   }
@@ -103,10 +107,10 @@ const InGameScreen = ({
     provideInitialFunds().catch((error) => console.error("Unexpected error:", error));
   }, [embeddedWallet]);
 
-  useEffect(() => {
-    const name = ensureDisplayName();
-    setDisplayName(name);
-  }, []);
+  // useEffect(() => {
+  //   const name = ensureDisplayName();
+  //   setDisplayName(name);
+  // }, []);
 
   useEffect(() => {
     data && setGamePhase(data.game.phase);
@@ -182,7 +186,7 @@ const InGameScreen = ({
               players.map((p, i) => (
                 <div>
                   {p.position}
-                  <ActivePlayerCard player={p} key={i} index={i} username={displayName} />
+                  <ActivePlayerCard player={p} key={i} index={i} />
                 </div>
               ))}
 
@@ -194,13 +198,7 @@ const InGameScreen = ({
             {players &&
               gamePhase === GamePhase.AwaitPlayerActions &&
               players.map((p, i) => (
-                <ClickablePlayerCard
-                  index={i}
-                  player={p}
-                  key={i}
-                  onClick={async () => await doAction(i)}
-                  username={displayName}
-                />
+                <ClickablePlayerCard index={i} player={p} key={i} onClick={async () => await doAction(i)} />
               ))}
             {players &&
               gamePhase === GamePhase.Voting &&
@@ -210,7 +208,6 @@ const InGameScreen = ({
                   player={p}
                   key={i}
                   onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
-                  username={displayName}
                 />
               ))}
           </div>
@@ -269,7 +266,7 @@ const InGameScreen = ({
             <Button className="mt-4">Play Again</Button>
           </div>
         )}
-        {playerIsJoined && <SidePanel roomId={roomId} username={displayName} hasJoined={playerIsJoined} />}
+        {playerIsJoined && playerId && <SidePanel roomId={roomId} player_id={playerId} hasJoined={playerIsJoined} />}
       </div>
     </>
   );
