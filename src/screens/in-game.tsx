@@ -73,7 +73,7 @@ const InGameScreen = ({
 
     // Find the current player's entry in the players array
     const currentPlayer = players.find((player) => player.id === user.wallet.address.toLowerCase());
-    playerId = currentPlayer.position;
+    playerId = currentPlayer.position.toString();
     // setPlayerId(currentPlayer.id);
     // Update playerHasAction based on the currentPlayer's action property
     playerHasAction = currentPlayer ? Boolean(currentPlayer.action) : false;
