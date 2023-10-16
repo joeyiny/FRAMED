@@ -69,18 +69,14 @@ const Chat: React.FC<ChatProps> = ({ roomId, username, hasJoined }) => {
 
   return (
     <div className="chat flex flex-col p-5 overflow-y-auto max-h-screen">
+      <p className="font-bold bg-red-200 mb-4">Room id: {roomId}</p>
       <div ref={chatBoxRef} className="messages flex-grow overflow-y-auto flex flex-col items-start space-y-2">
-        {messages.map(
-          (message, index) =>
-            message.sender !== "assistant" && (
-              <div
-                key={index}
-                className={`text-right ${message.sender === "assistant" ? "text-gray-500" : "text-black"}`}>
-                {message.username && message.sender === "user" ? `${message.username}: ` : ""}
-                {message.content}
-              </div>
-            )
-        )}
+        {messages.map((message, index) => (
+          <div key={index} className={`text-right ${message.sender === "assistant" ? "text-gray-500" : "text-black"}`}>
+            {message.username && message.sender === "user" ? `${message.username}: ` : ""}
+            {message.content}
+          </div>
+        ))}
       </div>
 
       <div className="input-container flex-none flex items-center">
