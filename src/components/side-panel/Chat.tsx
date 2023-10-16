@@ -60,7 +60,7 @@ const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined }) => {
         ...prevMessages,
         { sender: "user", content: currentMessage, player_id: player_id },
       ]);
-      socket.emit("sendMessage", roomId, { player_id: "0", sender: "user", content: currentMessage });
+      socket.emit("sendMessage", roomId, { player_id: player_id, sender: "user", content: currentMessage });
       setCurrentMessage("");
       inputRef.current?.focus();
 
