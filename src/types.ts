@@ -7,7 +7,8 @@ export enum GamePhase {
   WaitingForPlayers = 0,
   AwaitPlayerActions = 1,
   Voting = 2,
-  Results = 3,
+  RoundComplete = 3,
+  GameComplete = 4,
 }
 
 export enum PlayerRole {

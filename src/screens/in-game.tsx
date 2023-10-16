@@ -73,7 +73,7 @@ const InGameScreen = ({
 
   useEffect(() => {
     const fetchData = async () => {
-      if (gamePhase !== GamePhase.Results) return;
+      if (gamePhase !== GamePhase.RoundComplete) return;
       const r = await isMafiaKilled(embeddedWallet, gameContract);
       setResultsText(r === 0 ? "The mafia has won!" : "The players have won!");
     };
@@ -200,7 +200,7 @@ const InGameScreen = ({
           View Role
         </Button>
       )}
-      {gamePhase === GamePhase.Results && (
+      {gamePhase === GamePhase.RoundComplete && (
         <div>
           <Typography.TypographyH3>{resultsText}</Typography.TypographyH3>
           <Button className="mt-4">Play Again</Button>
