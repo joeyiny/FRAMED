@@ -40,7 +40,7 @@ export const ActivePlayerCard = ({ player, index }: { player: Player; index: num
         />
       </CardContent>
       <CardFooter className="flex w-full flex-col text-left p-0">
-        <Typography.TypographyP className="text-left w-full font-bold">Ice Spice</Typography.TypographyP>
+        <Typography.TypographyP className="text-left w-full font-bold">Player {index}</Typography.TypographyP>
         <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500">
           {shortenEthAddress(player.id)}
         </Typography.TypographySmall>
@@ -113,7 +113,7 @@ export const ClickablePlayerCard = ({
           </Typography.TypographySmall>
         </CardContent>
         <CardFooter className="flex w-full flex-col text-left p-0">
-          <Typography.TypographyP className="text-left w-full font-bold">Ice Spice</Typography.TypographyP>
+          <Typography.TypographyP className="text-left w-full font-bold">Player {index}</Typography.TypographyP>
           <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500">
             {shortenEthAddress(player.id)}
           </Typography.TypographySmall>
