@@ -13,9 +13,10 @@ export const games = gql`
   query Games @live(interval: 1000) {
     games {
       id
-      Players {
+      Players(orderBy: position, orderDirection: asc) {
         action
         alive
+        position
         player {
           id
         }
@@ -34,10 +35,11 @@ export const game = gql`
       roomId
       creator
       phase
-      Players {
+      Players(orderBy: position, orderDirection: asc) {
         action
         alive
         vote
+        position
         player {
           id
         }
