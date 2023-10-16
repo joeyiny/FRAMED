@@ -3,10 +3,10 @@ const DISPLAY_NAME = 'displayName';
 // Generate random name 
 const generateDisplayName = () => {
     const adjectives = [
-      'Water', 'Saucy', 'Lil', 'Yummy', 'Spicy', 'Chilly', 'Silly', 'Cool'
+      'Water', 'Saucy', 'Lil', 'Yummy', 'Spicy', 'Chilly', 'Silly', 'Ice', 'Honey', 'Captain', 'Zesty', 'Toasty'
     ];
     const nouns = [
-      'Fren', 'Boi', 'Cake', 'Dude', 'Spice', 'Fella', 'Beast', 'Tomato'
+      'Fren', 'Boi', 'Cake', 'Dude', 'Spice', 'Fella', 'Beast', 'Tomato', 'Pickle', 'Bud', 'Bean', 'Muffin'
     ];
   
     const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];

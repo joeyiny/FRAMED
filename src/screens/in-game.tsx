@@ -170,7 +170,7 @@ const InGameScreen = ({
         <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
-            players.map((p, i) => <ActivePlayerCard player={p} key={i} index={i} />)}
+            players.map((p, i) => <ActivePlayerCard player={p} key={i} index={i} username={displayName}/>)}
 
           {Array(4 - (players ? players.length : 0))
             .fill(null)
@@ -180,7 +180,7 @@ const InGameScreen = ({
           {players &&
             gamePhase === GamePhase.AwaitPlayerActions &&
             players.map((p, i) => (
-              <ClickablePlayerCard index={i} player={p} key={i} onClick={async () => await doAction(i)} />
+              <ClickablePlayerCard index={i} player={p} key={i} onClick={async () => await doAction(i)} username={displayName}/>
             ))}
           {players &&
             gamePhase === GamePhase.Voting &&
@@ -190,6 +190,7 @@ const InGameScreen = ({
                 player={p}
                 key={i}
                 onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
+                username={displayName}
               />
             ))}
         </div>
