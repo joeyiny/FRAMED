@@ -14,6 +14,7 @@ export interface Player {
   action: boolean;
   id: string;
   alive: boolean;
+  position: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,7 +43,12 @@ const InGameScreen = ({
   let playerHasAction = false;
 
   if (!loading) {
-    players = data.game.Players.map((p) => ({ action: p.action, alive: p.alive, id: p.player.id }));
+    players = data.game.Players.map((p) => ({
+      action: p.action,
+      alive: p.alive,
+      id: p.player.id,
+      position: p.position,
+    }));
 
     // Find the current player's entry in the players array
     const currentPlayer = players.find((player) => player.id === user.wallet.address.toLowerCase());
@@ -75,7 +81,7 @@ const InGameScreen = ({
   }, [gamePhase]);
 
   if (loading) return <p>loading</p>;
-
+  console.log(players);
   return (
     <>
       {/* <p>{user.wallet.address}</p> */}
@@ -123,7 +129,12 @@ const InGameScreen = ({
         <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
           {players &&
             gamePhase === GamePhase.WaitingForPlayers &&
-            players.map((p, i) => <ActivePlayerCard player={p} key={i} index={i} />)}
+            players.map((p, i) => (
+              <div>
+                {p.position}
+                <ActivePlayerCard player={p} key={i} index={i} />
+              </div>
+            ))}
 
           {Array(4 - (players ? players.length : 0))
             .fill(null)
