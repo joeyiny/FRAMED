@@ -55,6 +55,13 @@ const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined }) => {
     };
   }, [socket]);
 
+  // Auto-scrolling behavior
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   const handleSendMessage = () => {
     if (socket && currentMessage.trim() !== "") {
       setMessages((prevMessages) => [
