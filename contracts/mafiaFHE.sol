@@ -10,14 +10,14 @@ import "hardhat/console.sol";
 contract MafiaFactory {
     mapping(uint => address) games;
     uint256 public roomId;
-    event InitGame(address creator, uint256 roomId);
+    event InitGame(address room, uint256 roomId);
 
     function createGame() public returns (address) {
-        Mafia newGame = new Mafia();
-        //Mafia newGame = new Mafia(msg.sender);
+        //Mafia newGame = new Mafia();
+        Mafia newGame = new Mafia(msg.sender);
         games[roomId] = address(newGame);
         roomId++;
-        emit InitGame(msg.sender, roomId);
+        emit InitGame(address(newGame), roomId);
         // TO DO: put room creator in room
         return address(newGame);
     }
@@ -35,7 +35,7 @@ contract Mafia is EIP712WithModifier {
     event NextDay(bool _killed);
     event CastVote(address _voter, uint8 _playerId);
     event CheckMafia(bool _mafiaKilled);
-    event Killed(uint8 _playerKilled);
+    event Killed(address _playerKilled);
     event Exiled(uint8 _playerExiled);
     event NewState(uint8 gameState);
     event NewRound(uint8 roundCount);
@@ -82,8 +82,11 @@ contract Mafia is EIP712WithModifier {
 
     event Voted(address voter, uint8 playerId, uint8 votes);
 
-    constructor() EIP712WithModifier("Authorization token", "1") {
-        owner = msg.sender;
+    constructor(
+        address _creator
+    ) EIP712WithModifier("Authorization token", "1") {
+        owner = _creator;
+        joinGame(_creator);
     }
 
     function getPlayersArray() public view returns (address[] memory) {
@@ -118,18 +121,19 @@ contract Mafia is EIP712WithModifier {
     }
 
     // join the game
-    function joinGame() public {
+    function joinGame(address _address) public {
         require(gameState == 0, "Game already started, cannot join now");
         require(playersList.length < MAX_PLAYERS, "Room full.");
-        require(!joinedGame[msg.sender], "You are already in this room.");
-        playersList.push(msg.sender);
-        joinedGame[msg.sender] = true;
+        require(!joinedGame[msg.sender], "You are alread this room.");
+        playersList.push(_address);
+        joinedGame[_address] = true;
         playerCount++;
-        emit JoinGame(msg.sender, playersList);
+        emit JoinGame(_address, playersList);
     }
 
     // selectedPlayer is an uint8 ciphertext
     function action(bytes calldata selectedPlayer) public {
+        require(players[msg.sender].alive);
         require(gameState == 1, "Not the action phase");
         require(!hasTakenAction[roundCount][msg.sender], "Already played turn");
 
@@ -161,11 +165,12 @@ contract Mafia is EIP712WithModifier {
         hasTakenAction[roundCount][msg.sender] = true;
         playersTakenActions.push(msg.sender);
         emit Action(msg.sender, playersTakenActions);
-        if (actionCount == playersList.length - 1 - playerKillCount) {
+        if (actionCount == playersList.length - playerKillCount) {
             revealNextDay();
             playersTakenActions = new address[](0);
+        } else {
+            actionCount++;
         }
-        actionCount++;
     }
 
     function revealNextDay() public {
@@ -189,7 +194,7 @@ contract Mafia is EIP712WithModifier {
             playerKillCount++;
             // Emit dead event
             emit NextDay(true);
-            emit Killed(playerKilled);
+            emit Killed(idToPlayer[playerKilled].playerAddress);
         } else {
             emit NextDay(false);
         }
@@ -241,6 +246,7 @@ contract Mafia is EIP712WithModifier {
     }
 
     function castVote(uint8 _playerId) public {
+        require(players[msg.sender].alive);
         require(idToPlayer[_playerId].alive, "This player isn't alive.");
         require(!hasVoted[roundCount][msg.sender], "You have already voted");
 
@@ -266,7 +272,7 @@ contract Mafia is EIP712WithModifier {
             playerVoteCount[roundCount][_playerId]
         );
         // TODO: playersList.length
-        if (voteCount == playersList.length - 1 - playerKillCount) {
+        if (voteCount == playersList.length - playerKillCount - 1) {
             checkIfMafiaKilled();
             // reset vote count back to 0
         } else {
@@ -277,7 +283,7 @@ contract Mafia is EIP712WithModifier {
     function checkIfMafiaKilled() public {
         require(gameState == 2, "Not ready to check Mafia");
         require(
-            voteCount == playersList.length - 1 - playerKillCount,
+            voteCount == playersList.length - playerKillCount,
             "Not all players voted."
         );
         gameState = 3;
@@ -289,9 +295,11 @@ contract Mafia is EIP712WithModifier {
             idToPlayer[playerIdWithLargestVoteCount].role
         );
         if (role == 1 && !tieExists) {
+            playerKillCount++;
             isMafiaKilled = 1; //true
             emit CheckMafia(true);
         } else {
+            playerKillCount;
             isMafiaKilled = 0; //false
             emit CheckMafia(false);
             if (playerCount > 2) {
