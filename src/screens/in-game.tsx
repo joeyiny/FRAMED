@@ -22,7 +22,7 @@ export interface Player {
   action: boolean;
   id: string;
   alive: boolean;
-  position: string;
+  position?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -75,7 +75,10 @@ const InGameScreen = ({
 
     // Find the current player's entry in the players array
     const currentPlayer = players.find((player) => player.id === user.wallet.address.toLowerCase());
-    playerId = currentPlayer.position.toString();
+    if (currentPlayer) {
+      playerId = currentPlayer.position.toString();
+    }
+    console.log("HERE: ", currentPlayer);
     // setPlayerId(currentPlayer.id);
     // Update playerHasAction based on the currentPlayer's action property
     playerHasAction = currentPlayer ? Boolean(currentPlayer.action) : false;
@@ -187,7 +190,6 @@ const InGameScreen = ({
               gamePhase === GamePhase.WaitingForPlayers &&
               players.map((p, i) => (
                 <div>
-                  {p.position}
                   <ActivePlayerCard player={p} key={i} index={i} />
                 </div>
               ))}
