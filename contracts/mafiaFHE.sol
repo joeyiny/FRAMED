@@ -165,11 +165,10 @@ contract Mafia is EIP712WithModifier {
         hasTakenAction[roundCount][msg.sender] = true;
         playersTakenActions.push(msg.sender);
         emit Action(msg.sender, playersTakenActions);
+        actionCount++;
         if (actionCount == playersList.length - playerKillCount) {
             revealNextDay();
             playersTakenActions = new address[](0);
-        } else {
-            actionCount++;
         }
     }
 
