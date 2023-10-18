@@ -57,9 +57,13 @@ const InGameScreen = ({
   if (data && data.game) {
     roomId = data.game.roomId;
   }
-
+  
   const isChatOpen = chatsOpenState[roomId];
-  const gameStyle = isChatOpen ? "w-2/3 transition-all duration-300" : "w-full transition-all duration-300";
+  const gameStyle = isChatOpen 
+    ? "w-11/12 h-11/12 sm:w-full sm:h-auto lg:w-2/3 transition-all duration-300" 
+    : "w-11/12 h-11/12 sm:w-full sm:h-auto  mt-20 sm:mt-0 transition-all duration-300";
+
+
 
   let players: Player[] = [];
   let playerHasAction = false;
@@ -185,6 +189,7 @@ const InGameScreen = ({
         {loading ? (
           <div className="w-full">loading...</div>
         ) : (
+          <div id="player-cards-container" className="flex flex-row items-center justify-center w-full px-2 m-2 p-4 sm:px-0">
           <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
             {players &&
               gamePhase === GamePhase.WaitingForPlayers &&
@@ -214,6 +219,7 @@ const InGameScreen = ({
                   onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
                 />
               ))}
+          </div>
           </div>
         )}
         {dialog && <div>{dialog}</div>}

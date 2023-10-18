@@ -1,7 +1,7 @@
 import React from "react";
 import Chat from "./Chat";
 import { ChatContext } from "../../context/ChatContext";
-import { BiArrowToRight, BiArrowToLeft } from "react-icons/bi";
+import { BiArrowToRight, BiArrowToLeft, BiArrowToTop, BiArrowToBottom } from "react-icons/bi";
 
 const SidePanel: React.FC<{ roomId: string | null; player_id: string | null; hasJoined: boolean }> = ({
   roomId,
@@ -11,24 +11,34 @@ const SidePanel: React.FC<{ roomId: string | null; player_id: string | null; has
   const { chatsOpenState, toggleChat } = React.useContext(ChatContext);
   const isChatOpen = chatsOpenState[roomId || ""];
 
+  const desktopWidth = isChatOpen ? "lg:w-1/3" : "lg:w-20";
+  const desktopTranslateX = isChatOpen ? "sm:translate-x-0" : "sm:translate-x-[calc(100%-40px)]";
+
   return (
     <div
-      className={`fixed top-12 right-4 bottom-4 h-auto w-1/3 bg-white text-black rounded-lg shadow-xl flex flex-col justify-between transform ${
-        isChatOpen ? "translate-x-0" : "translate-x-[calc(100%-40px)]"
-      } transition-transform ease-in-out duration-300`}>
-      <div className="bg-gray-900 text-white py-2 px-4 rounded-t-lg flex justify-between items-center">
-        {isChatOpen ? (
-          <div className="flex items-center cursor-pointer" onClick={() => toggleChat(roomId ? roomId : "999")}>
-            <div className="flex-grow"></div>
-            Chat
-            <BiArrowToRight size={24} className="text-white ml-4" />
-          </div>
-        ) : (
-          <div className="flex items-center cursor-pointer" onClick={() => toggleChat(roomId ? roomId : "999")}>
-            <div className="flex-grow"></div>
-            <BiArrowToLeft size={24} className="text-white " />
-          </div>
-        )}
+      className={`fixed bottom-0 right-0 sm:top-12 sm:bottom-4 w-full sm:w-20 ${desktopWidth} h-2/5 sm:h-auto bg-white text-black rounded-t-lg sm:rounded-lg shadow-xl flex flex-col justify-between transform ${
+        isChatOpen ? "translate-y-0" : "translate-y-[calc(90%-60px)]"
+      } ${desktopTranslateX} sm:translate-y-0 transition-transform ease-in-out duration-300`}
+    >
+      <div className="bg-gray-900 text-white py-2 px-4 rounded-t-lg sm:rounded-t-none sm:rounded-l-lg flex justify-between items-center">
+        <div className="flex items-center cursor-pointer" onClick={() => toggleChat(roomId ? roomId : "999")}>
+          {isChatOpen && <span>Chat</span>}
+          {isChatOpen ? (
+            <>
+              {/* Mobile */}
+              <BiArrowToBottom size={24} className="text-white ml-4 block sm:hidden" />
+              {/* Desktop */}
+              <BiArrowToRight size={24} className="text-white ml-4 hidden sm:block" />
+            </>
+          ) : (
+            <>
+              {/* Mobile */}
+              <BiArrowToTop size={24} className="text-white block sm:hidden" />
+              {/* Desktop */}
+              <BiArrowToLeft size={24} className="text-white hidden sm:block" />
+            </>
+          )}
+        </div>
       </div>
 
       {player_id && isChatOpen && <Chat roomId={roomId ? roomId : "999"} player_id={player_id} hasJoined={hasJoined} />}
