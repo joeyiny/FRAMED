@@ -1,6 +1,12 @@
 [
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_creator",
+        "type": "address"
+      }
+    ],
     "stateMutability": "nonpayable",
     "type": "constructor"
   },
@@ -127,9 +133,9 @@
     "inputs": [
       {
         "indexed": false,
-        "internalType": "uint8",
+        "internalType": "address",
         "name": "_playerKilled",
-        "type": "uint8"
+        "type": "address"
       }
     ],
     "name": "Killed",
@@ -469,7 +475,13 @@
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_address",
+        "type": "address"
+      }
+    ],
     "name": "joinGame",
     "outputs": [],
     "stateMutability": "nonpayable",
