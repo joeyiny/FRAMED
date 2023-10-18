@@ -7,7 +7,7 @@ import { useQuery } from "@apollo/client";
 import { games } from "@/query";
 import RoomPicker from "@/components/room-picker";
 
-export const FACTORY_ADDRESS = "0x2642A57215F7f5108f780Cf9c186FB421a1E533b";
+export const FACTORY_ADDRESS = "0x4Ef9bd127303441deC5d2dDfB3e670e09c458e99";
 
 const Authenticated = () => {
   // const [clientState, setClientState] = useState<ClientState>(ClientState.Tutorial);
