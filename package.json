@@ -17,6 +17,7 @@
     "@graphprotocol/client-cli": "^3.0.0",
     "@privy-io/react-auth": "^1.40.3",
     "@radix-ui/react-aspect-ratio": "^1.0.3",
+    "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-slot": "^1.0.2",
     "@types/socket.io": "^3.0.2",
     "@wagmi/chains": "^1.8.0",

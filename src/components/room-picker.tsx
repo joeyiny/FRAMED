@@ -2,6 +2,9 @@ import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { Dispatch, SetStateAction } from "react";
 import { Button } from "./ui/button";
 import { createGame } from "@/lib/game-functions";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { TypographyH2, TypographyLarge } from "./ui/typography";
 
 const RoomPicker = ({
   games,
@@ -17,10 +20,10 @@ const RoomPicker = ({
   // const { data, loading } = useQuery(newGame, { variables: { creator: embeddedWallet } });
   // console.log(data);
   return (
-    <div>
-      <p className="font-bold text-lg">Pick a game:</p>
+    <div className="max-w-xs  m-auto mt-6">
+      <TypographyH2 className="font-bold mb-6 border-b-0 ">Choose a game</TypographyH2>
       <div className="flex flex-col gap-4">
-        {games.map((game, i) => {
+        {/* {games.map((game, i) => {
           // Note that I'm assuming `game` and `user.wallet` objects are well-formed here.
           // In a production setting, there should be validations.
           const players = game.Players.map((p) => p.player.id);
@@ -38,13 +41,20 @@ const RoomPicker = ({
               {playerIsJoined && <div>You are in this game.</div>}
             </button>
           );
-        })}
+        })} */}
+        {/* <p>Enter a room ID:</p> */}
+        <div className=" m-auto flex flex-row gap-2">
+          {/* <Label>Enter a room ID:</Label> */}
+          <Input className=" w-full" type="number" min="0" placeholder="Enter Room ID"></Input>
+          <Button>Submit</Button>
+        </div>
+        <span>-- or --</span>
         <Button
           onClick={async () => {
             const address = await createGame(embeddedWallet);
             setGameContract(address);
           }}>
-          or, create a game
+          Create game
         </Button>
       </div>
     </div>
