@@ -27,22 +27,15 @@ export const ActivePlayerCard = ({ player, index }: { player: Player; index: num
 
   return (
     <Card
-    className={` p-4 w-[150px] sm:w-[180px] text-left ${isYou ? "border-zinc-400" : "0"}`}
-      style={{
-        boxShadow: "0px 8px 10px -3px rgba(0, 0, 0, 0.04), 0px 2px 4px -4px rgba(16, 24, 40, 0.02)",
-      }}>
+      className={`p-4 w-full max-w-[140px] md:max-w-[150px] lg:max-w-[180px] text-left ${isYou ? "border-zinc-400" : "0"}`}
+      style={{ boxShadow: "0px 8px 10px -3px rgba(0, 0, 0, 0.04), 0px 2px 4px -4px rgba(16, 24, 40, 0.02)" }}>
       <CardContent className="p-0">
         {isYou && <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>}
-        <img
-          src={`assets/avatars/${index}.jpeg`}
-          width={200}
-          height={200}
-          // fill
-        />
+        <img src={`assets/avatars/${index}.jpeg`} width={200} height={200} />
       </CardContent>
-      <CardFooter className="flex w-full flex-col text-left p-0">
-        <Typography.TypographyP className="text-left w-full font-bold">{PLAYER_NAMES[index]}</Typography.TypographyP>
-        <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500">
+      <CardFooter className="flex flex-col w-full text-left p-0">
+        <Typography.TypographyP className="text-left w-full font-bold text-xs md:text-sm">{PLAYER_NAMES[index]}</Typography.TypographyP>
+        <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500 text-xs md:text-sm">
           {shortenEthAddress(player.id)}
         </Typography.TypographySmall>
       </CardFooter>
@@ -52,12 +45,12 @@ export const ActivePlayerCard = ({ player, index }: { player: Player; index: num
 
 export const WaitingPlayerCard = () => {
   return (
-    <Card className={`w-[100%] sm:w-[115px] text-left bg-none border-dashed text-slate-500 bg-slate-100 animate-pulse`}>
-      <CardContent></CardContent>
-      <CardFooter className="flex w-full flex-row items-center justify-center align-middle">
-        <Typography.TypographySmall>Waiting for frens to join...</Typography.TypographySmall>
-      </CardFooter>
-    </Card>
+    <Card className={`w-full max-w-[100px] md:max-w-[100px] lg:max-w-[115px] text-xs md:text-sm text-left bg-none border-dashed text-slate-500 bg-slate-100 animate-pulse`}>
+    <CardContent/>
+    <CardFooter className="flex items-center justify-center w-full">
+      <Typography.TypographyXSmall>Waiting for frens to join...</Typography.TypographyXSmall>
+    </CardFooter>
+  </Card>
   );
 };
 
@@ -89,37 +82,31 @@ export const ClickablePlayerCard = ({
 
   return (
     <button onClick={onClick}>
-      <Card
-      className={`p-4 w-[150px] sm:w-[180px] text-left ${!player.alive && "bg-red-50 border-red-700"} ${
-        isYou ? "border-zinc-400" : "0"
-    }`}
-        style={{
-          boxShadow: "0px 8px 10px -3px rgba(0, 0, 0, 0.04), 0px 2px 4px -4px rgba(16, 24, 40, 0.02)",
-        }}>
-        <CardContent className="p-0">
-          {isYou && <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>}
-          {user?.wallet?.address === player.id && (
-            <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>
-          )}
-          <img
-            src={`assets/avatars/${index}.jpeg`}
-            width={200}
-            height={200}
-            // fill
-          />
+    <Card
+      className={`p-4 w-full max-w-[140px] md:max-w-[150px] lg:max-w-[180px] text-left ${isYou ? "border-zinc-400" : "0"}`}
+      style={{
+        boxShadow: "0px 8px 10px -3px rgba(0, 0, 0, 0.04), 0px 2px 4px -4px rgba(16, 24, 40, 0.02)",
+      }}>
+      <CardContent className="p-0">
+        {isYou && <Badge className="absolute translate-x-1 translate-y-1 opacity-85 animate-pulse">You</Badge>}
+        <img
+          src={`assets/avatars/${index}.jpeg`}
+          width={200}
+          height={200}
+        />
 
-          <Typography.TypographySmall>
-            {!player.action && "(awaiting action)"}{" "}
-            <span className="text-red-500 font-bold">{!player.alive && "DEAD"}</span>
-          </Typography.TypographySmall>
-        </CardContent>
-        <CardFooter className="flex w-full flex-col text-left p-0">
-          <Typography.TypographyP className="text-left w-full font-bold">{PLAYER_NAMES[index]}</Typography.TypographyP>
-          <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500">
-            {shortenEthAddress(player.id)}
-          </Typography.TypographySmall>
-        </CardFooter>
-      </Card>
-    </button>
+        <Typography.TypographySmall>
+          {!player.action && "(awaiting action)"}{" "}
+          <span className="text-red-500 font-bold">{!player.alive && "DEAD"}</span>
+        </Typography.TypographySmall>
+      </CardContent>
+      <CardFooter className="flex w-full flex-col text-left p-0">
+        <Typography.TypographyP className="text-left w-full font-bold">{PLAYER_NAMES[index]}</Typography.TypographyP>
+        <Typography.TypographySmall className="text-left w-full font-normal text-zinc-500">
+          {shortenEthAddress(player.id)}
+        </Typography.TypographySmall>
+      </CardFooter>
+    </Card>
+  </button>
   );
 };

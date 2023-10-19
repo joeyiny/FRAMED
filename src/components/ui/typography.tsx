@@ -27,6 +27,10 @@ export function TypographySmall({ children, className }: { children: React.React
   return <small className={`text-sm font-medium leading-none ${className}`}>{children}</small>;
 }
 
+export function TypographyXSmall({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <small className={`text-xs md:text-sm font-medium leading-none ${className}`}>{children}</small>;
+}
+
 export function TypographyMuted({ children, className }: { children: React.ReactNode; className?: string }) {
   return <p className={`text-sm text-muted-foreground ${className}`}>{children}</p>;
 }

@@ -16,7 +16,7 @@ import InviteFriends from "@/components/invite-friends";
 import SidePanel from "@/components/side-panel";
 // import { ensureDisplayName } from "@/lib/display-name";
 
-export const PLAYER_NAMES = ["Soup Enjoyer", "Pineapple Guy", "Zippy", "Dizzy Dan"];
+export const PLAYER_NAMES = ["Soup Enjoyer", "Jerry", "Zippy", "Dizzy Dan"];
 
 export interface Player {
   action: boolean;
@@ -142,7 +142,7 @@ const InGameScreen = ({
       <div className={gameStyle}>
         {/* <p>{user.wallet.address}</p> */}
         <Button onClick={() => setGameContract(null)}>Exit room</Button>
-        <div className="my-16">
+        <div className="my-4 sm:my-16">
           {!loading ? (
             gamePhase === GamePhase.WaitingForPlayers ? (
               hasFunds ? (
@@ -189,7 +189,7 @@ const InGameScreen = ({
         {loading ? (
           <div className="w-full">loading...</div>
         ) : (
-          <div id="player-cards-container" className="flex flex-row items-center justify-center w-full px-2 m-2 p-4 sm:px-0">
+          <div id="player-cards-container" className="flex flex-row items-center justify-center w-full  m-2 pt-4 sm:px-0">
           <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
             {players &&
               gamePhase === GamePhase.WaitingForPlayers &&
