@@ -1,14 +1,33 @@
-import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { useState } from "react";
+import { useState, useEffect } from "react"; 
+import { useWallets } from "@privy-io/react-auth";
 import { Button } from "./ui/button";
 import { createGame } from "@/lib/game-functions";
+import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 
 const GameSelection = ({ games, setGameContract }) => {
   const [joinCode, setJoinCode] = useState("");
   const [isJoining, setIsJoining] = useState(false);
   const [isJoinEnabled, setIsJoinEnabled] = useState(false);
+  const [hasFunds, setHasFunds] = useState(localStorage.getItem("hasFunds") === "true"); 
   const { wallets } = useWallets();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
+
+  useEffect(() => { 
+    const provideInitialFunds = async () => {
+      const result = await fetchFundsForNewUser(embeddedWallet.getEthersProvider(), embeddedWallet.address);
+      if (result.status === "success") {
+        setHasFunds(true);
+      } else if (result.status === "error") {
+        console.error("Error fetching funds:", result.message);
+      } else {
+        console.log(
+          result.status === "already_funded" ? "User is already funded" : "Unexpected status:",
+          result.status
+        );
+      }
+    };
+    provideInitialFunds().catch((error) => console.error("Unexpected error:", error));
+  }, [embeddedWallet]);
 
   const handleCodeChange = (e) => {
     const enteredCode = e.target.value;
@@ -58,6 +77,7 @@ const GameSelection = ({ games, setGameContract }) => {
             const address = await createGame(embeddedWallet);
             setGameContract(address);
           }}
+          disabled={!hasFunds}
           className="w-[40%] sm:w-[25%] bg-black text-white border border-black">
           Create a room
         </Button>

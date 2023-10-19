@@ -3,7 +3,6 @@ import * as Typography from "@/components/ui/typography";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 
 import { initializeGame, isMafiaKilled, joinGame, takeAction, viewRole, votePlayer } from "@/lib/game-functions";
-import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
 import { useWallets } from "@privy-io/react-auth";
@@ -36,7 +35,6 @@ const InGameScreen = ({
   const { wallets } = useWallets();
   const { user } = usePrivy();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
-  const [hasFunds, setHasFunds] = useState(localStorage.getItem("hasFunds") === "true");
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
@@ -99,23 +97,6 @@ const InGameScreen = ({
   //     setPlayerIsJoined(Object.values(players).includes(user.wallet.address));
   // }, [user, players]);
 
-  useEffect(() => {
-    const provideInitialFunds = async () => {
-      const result = await fetchFundsForNewUser(embeddedWallet.getEthersProvider(), embeddedWallet.address);
-      if (result.status === "success") {
-        setHasFunds(true);
-      } else if (result.status === "error") {
-        console.error("Error fetching funds:", result.message);
-      } else {
-        console.log(
-          result.status === "already_funded" ? "User is already funded" : "Unexpected status:",
-          result.status
-        );
-      }
-    };
-    provideInitialFunds().catch((error) => console.error("Unexpected error:", error));
-  }, [embeddedWallet]);
-
   // useEffect(() => {
   //   const name = ensureDisplayName();
   //   setDisplayName(name);
@@ -145,15 +126,11 @@ const InGameScreen = ({
         <div className="my-4 sm:my-16">
           {!loading ? (
             gamePhase === GamePhase.WaitingForPlayers ? (
-              hasFunds ? (
+                (
                 <Typography.TypographyLarge className="animate-pulse">
                   {players && players.length < 4 ? "Waiting for other players to join..." : "Room full!"}
                 </Typography.TypographyLarge>
-              ) : (
-                <Typography.TypographyLarge className="animate-pulse">
-                  Providing funds, please wait...
-                </Typography.TypographyLarge>
-              )
+              ) 
             ) : gamePhase === GamePhase.AwaitPlayerActions ? (
               playerHasAction ? (
                 <Typography.TypographyLarge>Waiting for others to take action...</Typography.TypographyLarge>
@@ -243,7 +220,6 @@ const InGameScreen = ({
                   onClick={async () => {
                     await joinGame(embeddedWallet, gameContract);
                   }}
-                  disabled={!hasFunds}
                   size="lg"
                   className="mt-8">
                   Join Game
