@@ -1,13 +1,14 @@
 import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 import { Button } from "./ui/button";
 import { createGame } from "@/lib/game-functions";
 import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { TypographyH2, TypographyLarge } from "./ui/typography";
+import { TypographyH2 } from "./ui/typography";
+import { useQuery } from "@apollo/client";
+import { games } from "@/query";
 
 const RoomPicker = ({
-  games,
+  // games,
   setGameContract,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,7 +17,40 @@ const RoomPicker = ({
 }) => {
   const { wallets } = useWallets();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
-  const { user } = usePrivy();
+  // const { user } = usePrivy();
+  const { data, loading } = useQuery(games);
+  const [roomIdInput, setRoomIdInput] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const handleJoin = (roomId: string) => {
+    // Change this to string to match the input
+    // Convert the roomId from string to number
+    const parsedRoomId = parseInt(roomId, 10);
+
+    // Check if roomId is a valid number
+    if (isNaN(parsedRoomId)) {
+      console.error("Invalid room ID");
+      // Here, you can set some state to display the error in your UI if you want
+      return;
+    }
+
+    // Find the game with the corresponding roomId
+    const gameToJoin = data.games.find((game) => game.roomId === parsedRoomId);
+
+    if (!gameToJoin) {
+      console.error(`Game ${roomId} not found`);
+      setErrorMessage(`Game ${roomId} not found`);
+      // Set state or handle the error as you wish here, possibly show a message to the user
+      return;
+    }
+
+    // If we find a game, we can extract the address and proceed
+    const gameAddress = gameToJoin.id;
+
+    // Proceed with the game address, such as updating state or redirecting to the game room
+    setGameContract(gameAddress);
+  };
+
   // const { data, loading } = useQuery(newGame, { variables: { creator: embeddedWallet } });
   // console.log(data);
   return (
@@ -43,10 +77,19 @@ const RoomPicker = ({
           );
         })} */}
         {/* <p>Enter a room ID:</p> */}
+        {errorMessage && <p className="text-red-700">{errorMessage}</p>}
         <div className=" m-auto flex flex-row gap-2">
           {/* <Label>Enter a room ID:</Label> */}
-          <Input className=" w-full" type="number" min="0" placeholder="Enter Room ID"></Input>
-          <Button>Submit</Button>
+          <Input
+            value={roomIdInput}
+            onChange={(e) => setRoomIdInput(e.target.value)}
+            className=" border-zinc-300 w-full"
+            type="number"
+            min="0"
+            placeholder="Enter Room ID"></Input>
+          <Button disabled={loading} onClick={() => handleJoin(roomIdInput)}>
+            {loading ? "loading..." : "Submit"}
+          </Button>
         </div>
         <span>-- or --</span>
         <Button
