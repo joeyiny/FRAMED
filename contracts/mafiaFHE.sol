@@ -10,13 +10,13 @@ import "hardhat/console.sol";
 contract MafiaFactory {
     mapping(uint => address) games;
     uint256 public roomId;
-    event InitGame(address creator, uint256 roomId);
+    event InitGame(address creator, address mafiaGame, uint256 roomId);
 
     function createGame() public returns (address) {
         Mafia newGame = new Mafia(msg.sender);
         games[roomId] = address(newGame);
+        emit InitGame(msg.sender, address(newGame), roomId);
         roomId++;
-        emit InitGame(msg.sender, roomId);
         return address(newGame);
     }
 
@@ -90,6 +90,7 @@ contract Mafia is EIP712WithModifier {
 
     function initializeGame() public {
         require(playersList.length == MAX_PLAYERS, "Not enough players");
+        require(roles.length == MAX_PLAYERS, "Not enough roles");
         require(
             roles.length == playersList.length,
             "Number of roles don't match number of players"
@@ -122,21 +123,25 @@ contract Mafia is EIP712WithModifier {
         playersList.push(_address);
         joinedGame[_address] = true;
         playerCount++;
-        euint8 role = generateUniqueRole();
-        roles.push(role);
         emit JoinGame(_address, playersList);
     }
 
-    function generateUniqueRole() internal returns (euint8) {
-        while (true) {
+    function viewRole(uint8 position) public view returns (uint8) {
+        return TFHE.decrypt(roles[position]);
+    }
+
+    function generateUniqueRole() public {
+        require(roles.length < MAX_PLAYERS, "Roles generated");
+        for (uint8 i = 0; i < 10; i++) {
             euint8 matching = TFHE.asEuint8(0);
             euint8 role = TFHE.rem(TFHE.randEuint8(), 4);
-            for (uint8 i = 0; i < roles.length; i++) {
-                ebool isMatching = TFHE.eq(role, roles[i]);
+            for (uint8 j = 0; j < roles.length; j++) {
+                ebool isMatching = TFHE.eq(role, roles[j]);
                 matching = TFHE.add(matching, TFHE.asEuint8(isMatching));
             }
             if (TFHE.decrypt(matching) == 0) {
-                return role;
+                roles.push(role);
+                break;
             }
         }
     }

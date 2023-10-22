@@ -328,6 +328,13 @@
   },
   {
     "inputs": [],
+    "name": "generateUniqueRole",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "getPlayersArray",
     "outputs": [
       {
@@ -787,6 +794,25 @@
         "internalType": "bytes",
         "name": "",
         "type": "bytes"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "position",
+        "type": "uint8"
+      }
+    ],
+    "name": "viewRole",
+    "outputs": [
+      {
+        "internalType": "uint8",
+        "name": "",
+        "type": "uint8"
       }
     ],
     "stateMutability": "view",

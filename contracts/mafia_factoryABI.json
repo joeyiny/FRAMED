@@ -10,6 +10,12 @@
       },
       {
         "indexed": false,
+        "internalType": "address",
+        "name": "mafiaGame",
+        "type": "address"
+      },
+      {
+        "indexed": false,
         "internalType": "uint256",
         "name": "roomId",
         "type": "uint256"
