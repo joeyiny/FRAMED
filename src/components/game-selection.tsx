@@ -73,27 +73,27 @@ const GameSelection = ({ games, setGameContract }) => {
   };
   
 
-const handleCreateGame = async () => {
-  try {
-    const address = await createGame(embeddedWallet);
-    console.log("Created address:", address);
-    setGameAddress(address);
-  } catch (error) {
-    console.error("Error during handleCreateGame:", error);
-  }
+  const handleCreateGame = async () => {
+    try {
+      const address = await createGame(embeddedWallet);
+      console.log("Created address:", address);
+      if (address.toLowerCase() === embeddedWallet.address.toLowerCase()) {
+        throw new Error("create game is returning the wallet address smh");
+      }
+      setGameAddress(address);
+      handleJoinNewGame(address);
+    } catch (error) {
+      console.error("Error during game creation or joining:", error);
+    }
+  };
+  
+
+// passes in the game address (once fixed)
+const handleJoinNewGame = (gameAddress) => {
+  console.log('Joining new game with address:', gameAddress);
+  setGameContract(gameAddress);
 };
 
-// currently relies on subgraph for roomId of new game
-// would be best to pass in the id directly
-const handleJoinNewGame = (roomId) => {
-  console.log('Joining new game with roomId:', roomId);
-  const gameToJoin = games.find(game => game.roomId === roomId);
-  if (gameToJoin) {
-    setGameContract(gameToJoin.id);
-  } else {
-    console.error('Could not find the game to join');
-  }
-};
 
 
   
