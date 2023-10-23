@@ -35,6 +35,7 @@ export const game = gql`
       roomId
       creator
       phase
+      winner
       Players(orderBy: position, orderDirection: asc) {
         action
         alive

@@ -91,7 +91,7 @@ const InGameScreen = ({
     if (currentPlayer) {
       playerId = currentPlayer.position.toString();
     }
-    console.log("HERE: ", currentPlayer);
+    // console.log("HERE: ", currentPlayer);
     // setPlayerId(currentPlayer.id);
     // Update playerHasAction based on the currentPlayer's action property
     playerHasAction = currentPlayer ? Boolean(currentPlayer.action) : false;
@@ -191,7 +191,13 @@ const InGameScreen = ({
             ) : gamePhase === GamePhase.Voting ? (
               <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
             ) : (
-              <Typography.TypographyLarge>And the winner is...</Typography.TypographyLarge>
+              gamePhase === GamePhase.GameComplete && (
+                <Typography.TypographyLarge>
+                  {data.game.winner === 0
+                    ? "Congrats to the players for defeating the Thief!"
+                    : "The Thief has escaped! The players have lost."}
+                </Typography.TypographyLarge>
+              )
             )
           ) : null}
         </div>
@@ -294,7 +300,7 @@ const InGameScreen = ({
             )}
           </>
         )}
-        {gamePhase !== GamePhase.WaitingForPlayers && playerRole === PlayerRole.Unknown && (
+        {gamePhase !== (GamePhase.GameComplete || GamePhase.WaitingForPlayers) && playerRole === PlayerRole.Unknown && (
           <Button
             className="mt-4"
             onClick={async () => {
