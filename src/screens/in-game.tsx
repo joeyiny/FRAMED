@@ -14,6 +14,7 @@ import { game } from "@/query";
 import { ChatContext } from "../context/ChatContext";
 import InviteFriends from "@/components/invite-friends";
 import SidePanel from "@/components/side-panel";
+// import { formatEther } from "ethers";
 // import { ensureDisplayName } from "@/lib/display-name";
 
 export const PLAYER_NAMES = ["Soup Enjoyer", "Pineapple Guy", "Zippy", "Dizzy Dan"];
@@ -100,8 +101,8 @@ const InGameScreen = ({
 
   useEffect(() => {
     const provideInitialFunds = async () => {
-      const balance = (await embeddedWallet.getEthersProvider()).getBalance(embeddedWallet.address);
-      if ((await balance).gte(0.2)) {
+      const balance = await (await embeddedWallet.getEthersProvider()).getBalance(embeddedWallet.address);
+      if (balance.gte("200000000000000000")) {
         setHasFunds(true);
       } else {
         const result = await fetchFundsForNewUser(embeddedWallet.getEthersProvider(), embeddedWallet.address);
