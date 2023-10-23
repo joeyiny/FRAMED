@@ -1,8 +1,7 @@
 import { getInstance, getTokenSignature } from "../lib/fhevm";
-import { BrowserProvider, Contract, ethers, parseUnits } from "ethers";
+import { BrowserProvider, Contract, Interface, ethers, parseUnits } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import factoryABI from "../abi/factory.json";
-import { shuffleArray } from "./utils";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import { FACTORY_ADDRESS } from "@/screens/authenticated";
 
@@ -10,18 +9,11 @@ export const initializeGame = async (w: ConnectedWallet, contractAddress: string
   w.switchChain(9090);
   const a = await w.getEthereumProvider();
   const p = new BrowserProvider(a);
-  const instance = await getInstance(p);
-  const originalArray = [1, 2, 3, 4];
-  const shuffledArray = [...originalArray];
-  shuffleArray(shuffledArray);
-  for (let i = 0; i < shuffledArray.length; i++) {
-    shuffledArray[i] = instance.encrypt8(shuffledArray[i]);
-  }
 
   try {
     const signer = await p.getSigner();
     const contract = new Contract(contractAddress, mafiaABI, signer);
-    const transaction = await contract.initializeGame(shuffledArray);
+    const transaction = await contract.initializeGame();
     await p.waitForTransaction(transaction.hash);
     return transaction;
   } catch (e) {
@@ -41,6 +33,7 @@ export const viewCaught = async (w: ConnectedWallet, contractAddress: string) =>
     const ciphertext = await contract.viewCaught(publicKey, signature);
     const userCreditScoreDecrypted = instance.decrypt(contractAddress, ciphertext);
     console.log(ciphertext, userCreditScoreDecrypted);
+    return userCreditScoreDecrypted;
   } catch (e) {
     console.log(e);
   }
@@ -246,15 +239,41 @@ export const createGame = async (w: ConnectedWallet) => {
       maxPriorityFeePerGas,
       maxFeePerGas,
     });
+    const iface = new Interface(factoryABI);
     console.log(response);
     await p.waitForTransaction(response.hash);
     const receipt = await p.getTransactionReceipt(response.hash);
     console.log(receipt);
-    const data = receipt.logs[0].data.replace("0x", "");
+    let address; // const data = decodeBytes32String(receipt.logs[0].data);
+    // let address;
+    // const logToParse = {
+    //   topics: [...receipt.logs[0].topics], // Spread to a new array to make it mutable
+    //   data: receipt.logs[0].data,
+    // };
+    // console.log(logToParse);
+    // const q = iface.parseLog(logToParse);
+    // console.log(q);
+    for (const log of receipt.logs) {
+      if (log.address.toLowerCase() === FACTORY_ADDRESS.toLowerCase()) {
+        // ensure log is from expected address
+        const logToParse = {
+          topics: [...log.topics], // Spread to a new array to make it mutable
+          data: log.data,
+        };
+        console.log(logToParse);
+        // const parsedLog = iface.parseLog(logToParse);
+        const parsedLog = iface.parseLog(logToParse);
+        console.log(parsedLog); // check your parsed log
 
-    console.log(data);
-    const address = "0x" + data.substring(24, 64);
-    console.log(address);
+        // If this is the correct event, you can access the values directly.
+        if (parsedLog.name === "InitGame") {
+          // replace with your event's name
+          address = parsedLog.args[1];
+          console.log(address); // replace with your parameter's name
+        }
+      }
+    }
+    // console.log(address);
     return address;
   } catch (e) {
     console.log(e);
