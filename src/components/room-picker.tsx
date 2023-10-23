@@ -1,5 +1,5 @@
-import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
+import { useWallets } from "@privy-io/react-auth";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "./ui/button";
 import { createGame } from "@/lib/game-functions";
 import { Input } from "./ui/input";
@@ -95,6 +95,7 @@ const RoomPicker = ({
         <Button
           onClick={async () => {
             const address = await createGame(embeddedWallet);
+
             setGameContract(address);
           }}>
           Create game

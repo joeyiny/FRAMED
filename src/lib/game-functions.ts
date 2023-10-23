@@ -264,10 +264,8 @@ export const createGame = async (w: ConnectedWallet) => {
           topics: [...log.topics], // Spread to a new array to make it mutable
           data: log.data,
         };
-        console.log(logToParse);
         // const parsedLog = iface.parseLog(logToParse);
         const parsedLog = iface.parseLog(logToParse);
-        console.log(parsedLog); // check your parsed log
 
         // If this is the correct event, you can access the values directly.
         if (parsedLog.name === "InitGame") {
