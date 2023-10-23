@@ -300,24 +300,26 @@ const InGameScreen = ({
             )}
           </>
         )}
-        {gamePhase !== (GamePhase.GameComplete || GamePhase.WaitingForPlayers) && playerRole === PlayerRole.Unknown && (
-          <Button
-            className="mt-4"
-            onClick={async () => {
-              const role = await viewRole(embeddedWallet, gameContract);
-              if (role === 4) {
-                setPlayerRole(PlayerRole.Citizen);
-              } else if (role === 1) {
-                setPlayerRole(PlayerRole.Thief);
-              } else if (role === 2) {
-                setPlayerRole(PlayerRole.Detective);
-              } else if (role === 3) {
-                setPlayerRole(PlayerRole.Cop);
-              }
-            }}>
-            View Role
-          </Button>
-        )}
+        {gamePhase !== GamePhase.WaitingForPlayers &&
+          gamePhase !== GamePhase.GameComplete &&
+          playerRole === PlayerRole.Unknown && (
+            <Button
+              className="mt-4"
+              onClick={async () => {
+                const role = await viewRole(embeddedWallet, gameContract);
+                if (role === 4) {
+                  setPlayerRole(PlayerRole.Citizen);
+                } else if (role === 1) {
+                  setPlayerRole(PlayerRole.Thief);
+                } else if (role === 2) {
+                  setPlayerRole(PlayerRole.Detective);
+                } else if (role === 3) {
+                  setPlayerRole(PlayerRole.Cop);
+                }
+              }}>
+              View Role
+            </Button>
+          )}
         {gamePhase === GamePhase.RoundComplete && (
           <div>
             <Typography.TypographyH3>{resultsText}</Typography.TypographyH3>
