@@ -71,12 +71,14 @@ export const generateUniqueRole = async (w: ConnectedWallet, contractAddress: st
     const p = new BrowserProvider(a);
     const wallet = new ethers.Wallet("fd91ecab6677d5ab362027ee04b3bbf00f373e6129fdf3fd3662a6695da65e47", p);
     const contract = new Contract(contractAddress, mafiaABI, wallet);
+    let numRoles = await contract.rolesCount();
     let result;
 
     console.log("about to start generating roles...");
-    while ((await contract.rolesCount()) < 4) {
+    while (numRoles < 4) {
       console.log("generating roles...");
       result = await contract.generateUniqueRole({ gasLimit: 7920027 });
+      numRoles = await contract.rolesCount();
     }
     console.log("finished generating roles...");
     return result;
