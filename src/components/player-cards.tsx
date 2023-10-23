@@ -6,6 +6,7 @@ import { shortenEthAddress } from "@/lib/utils";
 import { useEffect, useState } from "react";
 import { Player } from "@/screens/in-game";
 import { PLAYER_NAMES } from "@/screens/in-game";
+import { GamePhase } from "@/types";
 
 export const ActivePlayerCard = ({ player, index }: { player: Player; index: number }) => {
   const { user } = usePrivy();
@@ -62,11 +63,13 @@ export const WaitingPlayerCard = () => {
 export const ClickablePlayerCard = ({
   player,
   index,
+  gamePhase,
   onClick,
 }: {
   player: Player;
   index: number;
   onClick: () => void;
+  gamePhase: GamePhase;
 }) => {
   const { user } = usePrivy();
   const [isYou, setIsYou] = useState<"loading" | true | false>("loading");
@@ -99,7 +102,8 @@ export const ClickablePlayerCard = ({
           <img src={`assets/avatars/${index}.jpeg`} width={200} height={200} />
 
           <Typography.TypographySmall>
-            {!player.action && player.alive && "(awaiting action)"}{" "}
+            {gamePhase === GamePhase.AwaitPlayerActions && !player.action && player.alive && "(awaiting action)"}
+            {gamePhase === GamePhase.Voting && !player.vote && player.alive && "(awaiting vote)"}
             <span className="text-red-500 font-bold">{!player.alive && "DEAD"}</span>
           </Typography.TypographySmall>
         </CardContent>

@@ -32,6 +32,7 @@ export interface Player {
   id: string;
   alive: boolean;
   position?: string;
+  vote: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -84,6 +85,7 @@ const InGameScreen = ({
       alive: p.alive,
       id: p.player.id,
       position: p.position,
+      vote: p.vote,
     }));
 
     // Find the current player's entry in the players array
@@ -262,13 +264,20 @@ const InGameScreen = ({
               {players &&
                 gamePhase === GamePhase.AwaitPlayerActions &&
                 players.map((p, i) => (
-                  <ClickablePlayerCard index={i} player={p} key={i} onClick={async () => await doAction(i)} />
+                  <ClickablePlayerCard
+                    gamePhase={gamePhase}
+                    index={i}
+                    player={p}
+                    key={i}
+                    onClick={async () => await doAction(i)}
+                  />
                 ))}
               {players &&
                 gamePhase === GamePhase.Voting &&
                 players.map((p, i) => (
                   <ClickablePlayerCard
                     index={i}
+                    gamePhase={gamePhase}
                     player={p}
                     key={i}
                     onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
