@@ -5,7 +5,13 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "room",
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "mafiaGame",
         "type": "address"
       },
       {

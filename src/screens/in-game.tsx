@@ -15,7 +15,7 @@ import InviteFriends from "@/components/invite-friends";
 import SidePanel from "@/components/side-panel";
 // import { ensureDisplayName } from "@/lib/display-name";
 
-export const PLAYER_NAMES = ["Soup Enjoyer", "Jerry", "Zippy", "Dizzy Dan"];
+export const PLAYER_NAMES = ["Soup Enjoyer", "Pineapple Guy", "Zippy", "Dizzy Dan"];
 
 export interface Player {
   action: boolean;
@@ -55,19 +55,18 @@ const InGameScreen = ({
   if (data && data.game) {
     roomId = data.game.roomId;
   }
-  
+
   const isChatOpen = chatsOpenState[roomId];
-  const gameStyle = isChatOpen 
-    ? "w-11/12 h-11/12 sm:w-full sm:h-auto lg:w-2/3 transition-all duration-300" 
+  const gameStyle = isChatOpen
+    ? "w-11/12 h-11/12 sm:w-full sm:h-auto lg:w-2/3 transition-all duration-300"
     : "w-11/12 h-11/12 sm:w-full sm:h-auto  mt-20 sm:mt-0 transition-all duration-300";
-
-
 
   let players: Player[] = [];
   let playerHasAction = false;
   let playerId = null;
 
   if (!loading) {
+    console.log(data.game);
     players = data.game.Players.map((p) => ({
       action: p.action,
       alive: p.alive,
@@ -166,37 +165,39 @@ const InGameScreen = ({
         {loading ? (
           <div className="w-full">loading...</div>
         ) : (
-          <div id="player-cards-container" className="flex flex-row items-center justify-center w-full  m-2 pt-4 sm:px-0">
-          <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
-            {players &&
-              gamePhase === GamePhase.WaitingForPlayers &&
-              players.map((p, i) => (
-                <div>
-                  <ActivePlayerCard player={p} key={i} index={i} />
-                </div>
-              ))}
+          <div
+            id="player-cards-container"
+            className="flex flex-row items-center justify-center w-full  m-2 pt-4 sm:px-0">
+            <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
+              {players &&
+                gamePhase === GamePhase.WaitingForPlayers &&
+                players.map((p, i) => (
+                  <div>
+                    <ActivePlayerCard player={p} key={i} index={i} />
+                  </div>
+                ))}
 
-            {Array(4 - (players ? players.length : 0))
-              .fill(null)
-              .map((_, i) => (
-                <WaitingPlayerCard key={i} />
-              ))}
-            {players &&
-              gamePhase === GamePhase.AwaitPlayerActions &&
-              players.map((p, i) => (
-                <ClickablePlayerCard index={i} player={p} key={i} onClick={async () => await doAction(i)} />
-              ))}
-            {players &&
-              gamePhase === GamePhase.Voting &&
-              players.map((p, i) => (
-                <ClickablePlayerCard
-                  index={i}
-                  player={p}
-                  key={i}
-                  onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
-                />
-              ))}
-          </div>
+              {Array(4 - (players ? players.length : 0))
+                .fill(null)
+                .map((_, i) => (
+                  <WaitingPlayerCard key={i} />
+                ))}
+              {players &&
+                gamePhase === GamePhase.AwaitPlayerActions &&
+                players.map((p, i) => (
+                  <ClickablePlayerCard index={i} player={p} key={i} onClick={async () => await doAction(i)} />
+                ))}
+              {players &&
+                gamePhase === GamePhase.Voting &&
+                players.map((p, i) => (
+                  <ClickablePlayerCard
+                    index={i}
+                    player={p}
+                    key={i}
+                    onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
+                  />
+                ))}
+            </div>
           </div>
         )}
         {dialog && <div>{dialog}</div>}
