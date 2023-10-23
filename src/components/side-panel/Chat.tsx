@@ -1,25 +1,43 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { PLAYER_NAMES } from "@/screens/in-game";
+import KilledPlayerEvent from "./events"
 
 type ChatProps = {
   roomId: string;
   player_id?: string;
   hasJoined: boolean;
+  gameId: string;
 };
 
-const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined }) => {
+const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined, gameId }) => {
   const socket = useSocket();
   const [messages, setMessages] = useState<Array<{ sender: string; content: string; player_id?: string }>>([]);
   const [currentMessage, setCurrentMessage] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
   const chatBoxRef = useRef<HTMLDivElement>(null);
 
+
+  // const handleTestDeath = () => {
+  //   if (roomId && socket) {
+  //     socket.emit("playerDeath", roomId, "3");
+  //   }
+  // };
+  
+
+  const handlePlayerDeath = (playerId: string) => {
+    if (roomId && socket) {
+      socket.emit("playerDeath", roomId, playerId);
+    }
+  };
+  
+  
+
   useEffect(() => {
     if (hasJoined && socket) {
-      console.log("Trying to request room join");
+      // console.log("Trying to request room join");
       socket.emit("joinRoom", { roomId: roomId, player_id: player_id });
-      socket.emit("requestInitialMessage", { roomId: roomId, player_id: player_id });
+      // socket.emit("requestInitialMessage", { roomId: roomId, player_id: player_id });
       console.log("request done");
     }
   }, [hasJoined, socket]);
@@ -55,6 +73,23 @@ const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined }) => {
     };
   }, [socket]);
 
+  useEffect(() => {
+    if (socket) {
+      const handlePlayerDeathNarrative = ({ player_id, deathNarrative }) => {
+        const deathMessage = deathNarrative;
+        setMessages((prevMessages) => [...prevMessages, { sender: "assistant", content: deathMessage }]);
+      };
+  
+      socket.on("playerDeathNarrative", handlePlayerDeathNarrative);
+  
+      return () => {
+        socket.off("playerDeathNarrative", handlePlayerDeathNarrative);
+      };
+    }
+  }, [socket]);
+  
+  
+
   // Auto-scrolling behavior
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -82,18 +117,17 @@ const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined }) => {
     <div className="chat flex flex-col p-5 overflow-y-auto max-h-screen">
       <p className="font-bold bg-red-200 mb-4">Room id: {roomId}</p>
       <div ref={chatBoxRef} className="messages flex-grow overflow-y-auto flex flex-col items-start space-y-2">
-        {messages.map(
-          (message, index) =>
-            message.sender === "user" && (
-              <div
-                key={index}
-                // className={`text-right ${message.sender === "assistant" ? "text-gray-500" : "text-black"}`}>
-                className={`text-right text-black`}>
-                <span className="font-bold">{`${PLAYER_NAMES[message.player_id]}: `}</span>
-                {message.content}
-              </div>
-            )
-        )}
+      {messages.map((message, index) => (
+    <div
+      key={index}
+      className={`text-right ${message.sender === "assistant" ? "text-black-500 font-bold" : "text-black"}`}>
+      {message.sender !== "system" && message.player_id && PLAYER_NAMES[message.player_id] && (
+        <span className="font-bold">{`${PLAYER_NAMES[message.player_id]}: `}</span>
+      )}
+      {message.content}
+    </div>
+  ))}
+
       </div>
 
       <div className="input-container flex-none flex items-center">
@@ -108,6 +142,7 @@ const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined }) => {
           className="flex-grow mr-2 p-2 rounded border"
           placeholder="Send a message... "
         />
+        {/* <button onClick={handleTestDeath} className="bg-blue-500 text-white m-6 rounded">Test Player Death</button> */}
       </div>
     </div>
   );
