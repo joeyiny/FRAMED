@@ -216,7 +216,10 @@ const InGameScreen = ({
               🔍 Check investigation results
             </Button>
           ) : investigationResults === "correct" ? (
-            <p>Your investigation was correct! You found the Thief.</p>
+            <div className="flex flex-col">
+              <span className="font-bold">Your investigation was correct! You found the Thief.</span>
+              <span>Now, try to convince the other players that you know who the thief is.</span>
+            </div>
           ) : investigationResults === "incorrect" ? (
             <p>Your investigation was incorrect. You did not find the thief.</p>
           ) : (
