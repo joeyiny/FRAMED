@@ -10,18 +10,11 @@ export const initializeGame = async (w: ConnectedWallet, contractAddress: string
   w.switchChain(9090);
   const a = await w.getEthereumProvider();
   const p = new BrowserProvider(a);
-  const instance = await getInstance(p);
-  const originalArray = [1, 2, 3, 4];
-  const shuffledArray = [...originalArray];
-  shuffleArray(shuffledArray);
-  for (let i = 0; i < shuffledArray.length; i++) {
-    shuffledArray[i] = instance.encrypt8(shuffledArray[i]);
-  }
 
   try {
     const signer = await p.getSigner();
     const contract = new Contract(contractAddress, mafiaABI, signer);
-    const transaction = await contract.initializeGame(shuffledArray);
+    const transaction = await contract.initializeGame();
     await p.waitForTransaction(transaction.hash);
     return transaction;
   } catch (e) {
