@@ -2,7 +2,6 @@ import { getInstance, getTokenSignature } from "../lib/fhevm";
 import { BrowserProvider, Contract, ethers, parseUnits } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import factoryABI from "../abi/factory.json";
-import { shuffleArray } from "./utils";
 import { ConnectedWallet } from "@privy-io/react-auth";
 import { FACTORY_ADDRESS } from "@/screens/authenticated";
 
