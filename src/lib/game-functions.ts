@@ -268,7 +268,7 @@ export const createGame = async (w: ConnectedWallet) => {
         // If this is the correct event, you can access the values directly.
         if (parsedLog.name === "InitGame") {
           // replace with your event's name
-          address = parsedLog.args[1];
+          address = parsedLog.args[1].toLowerCase();
           console.log(address); // replace with your parameter's name
         }
       }
