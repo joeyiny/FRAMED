@@ -176,7 +176,7 @@ const InGameScreen = ({
                       : playerRole === 2
                       ? "You are the Detective. 🕵🏻‍♂️"
                       : playerRole === 3
-                      ? "You are the Cop. 👮🏻‍♂️"
+                      ? "You are the Doctor. 👨🏻‍⚕️"
                       : playerRole === 4
                       ? "You are a Citizen. 👦🏻"
                       : "There was an error finding your role."}
@@ -188,7 +188,7 @@ const InGameScreen = ({
                           ? "Vote for who you think the thief is."
                           : playerRole === PlayerRole.Thief
                           ? "Choose the player you want to kill."
-                          : playerRole === PlayerRole.Cop
+                          : playerRole === PlayerRole.Doctor
                           ? "Choose the player you want to save."
                           : "Choose the player you want to examine."}
                       </Typography.TypographySmall>
@@ -322,7 +322,7 @@ const InGameScreen = ({
                 } else if (role === 2) {
                   setPlayerRole(PlayerRole.Detective);
                 } else if (role === 3) {
-                  setPlayerRole(PlayerRole.Cop);
+                  setPlayerRole(PlayerRole.Doctor);
                 }
               }}>
               View Role
