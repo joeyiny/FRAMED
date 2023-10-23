@@ -1,5 +1,5 @@
 import { getInstance, getTokenSignature } from "../lib/fhevm";
-import { BrowserProvider, Contract, ethers, parseUnits } from "ethers";
+import { BrowserProvider, Contract, Interface, ethers, parseUnits } from "ethers";
 import mafiaABI from "../abi/mafia.json";
 import factoryABI from "../abi/factory.json";
 import { ConnectedWallet } from "@privy-io/react-auth";
@@ -243,15 +243,41 @@ export const createGame = async (w: ConnectedWallet) => {
       maxPriorityFeePerGas,
       maxFeePerGas,
     });
+    const iface = new Interface(factoryABI);
     console.log(response);
     await p.waitForTransaction(response.hash);
     const receipt = await p.getTransactionReceipt(response.hash);
     console.log(receipt);
-    const data = receipt.logs[0].data.replace("0x", "");
+    let address; // const data = decodeBytes32String(receipt.logs[0].data);
+    // let address;
+    // const logToParse = {
+    //   topics: [...receipt.logs[0].topics], // Spread to a new array to make it mutable
+    //   data: receipt.logs[0].data,
+    // };
+    // console.log(logToParse);
+    // const q = iface.parseLog(logToParse);
+    // console.log(q);
+    for (const log of receipt.logs) {
+      if (log.address.toLowerCase() === FACTORY_ADDRESS.toLowerCase()) {
+        // ensure log is from expected address
+        const logToParse = {
+          topics: [...log.topics], // Spread to a new array to make it mutable
+          data: log.data,
+        };
+        console.log(logToParse);
+        // const parsedLog = iface.parseLog(logToParse);
+        const parsedLog = iface.parseLog(logToParse);
+        console.log(parsedLog); // check your parsed log
 
-    console.log(data);
-    const address = "0x" + data.substring(24, 64);
-    console.log(address);
+        // If this is the correct event, you can access the values directly.
+        if (parsedLog.name === "InitGame") {
+          // replace with your event's name
+          address = parsedLog.args[1];
+          console.log(address); // replace with your parameter's name
+        }
+      }
+    }
+    // console.log(address);
     return address;
   } catch (e) {
     console.log(e);
