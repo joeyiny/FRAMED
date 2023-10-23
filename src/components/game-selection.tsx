@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react"; 
 import { useWallets } from "@privy-io/react-auth";
 import { Button } from "./ui/button";
-import { createGame, createGameForce } from "@/lib/game-functions";
+import { createGame } from "@/lib/game-functions";
 import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 import { useQuery, useApolloClient } from "@apollo/client";
-import { game, newGame } from "@/query";
+import { newGame } from "@/query";
 
 const GameSelection = ({ games, setGameContract }) => {
   const [joinCode, setJoinCode] = useState("");
@@ -13,8 +13,11 @@ const GameSelection = ({ games, setGameContract }) => {
   const [hasFunds, setHasFunds] = useState(localStorage.getItem("hasFunds") === "true"); 
   const { wallets } = useWallets();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
-  const client = useApolloClient();
-  
+  const [gameAddress, setGameAddress] = useState(null);
+
+  const { data, loading, error } = useQuery(newGame, {
+    variables: { id: gameAddress },
+  });
 
   useEffect(() => { 
     const provideInitialFunds = async () => {
@@ -33,74 +36,69 @@ const GameSelection = ({ games, setGameContract }) => {
     provideInitialFunds().catch((error) => console.error("Unexpected error:", error));
   }, [embeddedWallet]);
 
+
+  useEffect(() => {
+    if (data && data.games && data.games.length > 0) {
+      const game = data.games[0];
+      const roomId = game.roomId;
+      console.log('Room ID from live query:', roomId);
+      setJoinCode(roomId.toString());
+      setIsJoining(true);
+      const isGameValid = games.some(game => game.roomId === roomId);
+      console.log("handeling joining the game");
+      if(isGameValid) {
+        handleJoinNewGame(roomId); // Automatically join the game
+      }
+    }
+  }, [data]);
+  
+
   const handleCodeChange = (e) => {
     const enteredCode = e.target.value;
     setJoinCode(enteredCode);
-
+  
     // Check if the entered code is a valid roomId
-    setIsJoinEnabled(games.some(game => game.roomId === parseInt(enteredCode, 10)));
+    setIsJoinEnabled(games.some(game => {
+      console.log('Comparing with game:', game);
+      return game.roomId === parseInt(enteredCode, 10);
+    }));
+    handleJoinGame
   };
 
   const handleJoinGame = () => {
     if (isJoinEnabled) {
-      const gameToJoin = games.find(game => game.roomId === parseInt(joinCode, 20));
+      const gameToJoin = games.find(game => game.roomId === parseInt(joinCode, 10));
       setGameContract(gameToJoin.id);
     }
   };
+  
 
-  const handleCreateGame = async () => {
-
-   
-  
-      // Create game 
-      const address = await createGameForce(embeddedWallet);
-      console.log("created address ", address);
-    //   console.log(address, "address");
-    //   console.log(embeddedWallet, "embededWallet");
-  
-    //   console.log("about to query");
-    //   // Query for game data
-    //   const {data} = await client.query({
-    //     query: newGame,
-    //     variables: {id: address}, 
-    //     fetchPolicy: 'no-cache'
-    //   })
-    //   console.log("queried yuh");
-  
-    //   // Log full response
-    //   console.log('Query data:', data);
-  
-    //   // Handle null data
-    //   if(!data) {
-    //     console.log('No data returned from query');
-    //     return;
-    //   }
-    //   // Handle null games
-    //   const games = data.games; 
-    //   if(!games) {
-    //     console.log('No games found');
-    //     return; 
-    //   }
-  
-    //   // Get roomId
-    //   const roomId = games[0].roomId;
-    //   console.log('Room ID:', roomId);
-  
-    //   // Set state with roomId
-    //   setJoinCode(roomId.toString());
-    //   setIsJoining(true);
-  
-    // } catch(error) {
-    //   console.error("Error during handleCreateGame:", error.message);
-    //   console.error(error);
-    // }
-  
+const handleCreateGame = async () => {
+  try {
+    const address = await createGame(embeddedWallet);
+    console.log("Created address:", address);
+    setGameAddress(address);
+  } catch (error) {
+    console.error("Error during handleCreateGame:", error);
   }
-  
+};
 
+// currently relies on subgraph for roomId of new game
+// would be best to pass in the id directly
+const handleJoinNewGame = (roomId) => {
+  console.log('Joining new game with roomId:', roomId);
+  const gameToJoin = games.find(game => game.roomId === roomId);
+  if (gameToJoin) {
+    setGameContract(gameToJoin.id);
+  } else {
+    console.error('Could not find the game to join');
+  }
+};
+
+
+  
   if (isJoining) {
     return (
-      
       <div className="overflow-y-hidden flex flex-col gap-2 items-center justify-center h-[calc(100vh-4rem)]">
         <a className="mb-4 text-gray-500 cursor-pointer" onClick={() => setIsJoining(false)}>← Go back</a>
         <div className="bg-white p-6 rounded shadow-md w-96">

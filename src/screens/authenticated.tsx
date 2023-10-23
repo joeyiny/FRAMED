@@ -5,7 +5,7 @@ import { useQuery } from "@apollo/client";
 import { games } from "@/query";
 import GameSelection from "@/components/game-selection";
 
-export const FACTORY_ADDRESS = "0x004cb0A9fbB32468aF5a76e85F0F97101f294093";
+export const FACTORY_ADDRESS = "0x85F136F800130aDf5f58E15D76f671F588c623B2";
 
 const Authenticated = () => {
   const [gameContract, setGameContract] = useState<string | null>(null);
