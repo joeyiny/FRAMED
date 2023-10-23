@@ -2,7 +2,16 @@ import { Button } from "@/components/ui/button";
 import * as Typography from "@/components/ui/typography";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 
-import { initializeGame, isMafiaKilled, joinGame, takeAction, viewRole, votePlayer } from "@/lib/game-functions";
+import {
+  generateUniqueRole,
+  initializeGame,
+  isMafiaKilled,
+  joinGame,
+  sponsoredJoinGame,
+  takeAction,
+  viewRole,
+  votePlayer,
+} from "@/lib/game-functions";
 import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
@@ -68,6 +77,7 @@ const InGameScreen = ({
   let playerId = null;
 
   if (!loading) {
+    console.log(data.game);
     players = data.game.Players.map((p) => ({
       action: p.action,
       alive: p.alive,
