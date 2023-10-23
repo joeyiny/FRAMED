@@ -1,12 +1,14 @@
 import React from "react";
 import Chat from "./Chat";
+import KilledPlayerEvent from "./events"
 import { ChatContext } from "../../context/ChatContext";
 import { BiArrowToRight, BiArrowToLeft, BiArrowToTop, BiArrowToBottom } from "react-icons/bi";
 
-const SidePanel: React.FC<{ roomId: string | null; player_id: string | null; hasJoined: boolean }> = ({
+const SidePanel: React.FC<{ roomId: string | null; player_id: string | null; hasJoined: boolean; gameId: string }> = ({
   roomId,
   player_id,
   hasJoined,
+  gameId
 }) => {
   const { chatsOpenState, toggleChat } = React.useContext(ChatContext);
   const isChatOpen = chatsOpenState[roomId || ""];
@@ -40,8 +42,12 @@ const SidePanel: React.FC<{ roomId: string | null; player_id: string | null; has
           )}
         </div>
       </div>
-
-      {player_id && isChatOpen && <Chat roomId={roomId ? roomId : "999"} player_id={player_id} hasJoined={hasJoined} />}
+      {player_id && isChatOpen && (
+        <>
+          <Chat roomId={roomId ? roomId : "999"} player_id={player_id} hasJoined={hasJoined} />
+          <KilledPlayerEvent gameId={gameId} roomId={roomId ? roomId : "999"} />
+        </>
+      )}
     </div>
   );
 };

@@ -334,7 +334,7 @@ const InGameScreen = ({
             <Button className="mt-4">Play Again</Button>
           </div>
         )}
-        {playerIsJoined && playerId && <SidePanel roomId={roomId} player_id={playerId} hasJoined={playerIsJoined} />}
+        {playerIsJoined && playerId && <SidePanel roomId={roomId} player_id={playerId} hasJoined={playerIsJoined} gameId={gameContract}/>}
       </div>
     </>
   );
