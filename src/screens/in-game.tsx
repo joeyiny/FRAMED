@@ -171,7 +171,15 @@ const InGameScreen = ({
                   <Typography.TypographyLarge>
                     {playerRole === PlayerRole.Unknown
                       ? "Let's check to see what your role is!"
-                      : `Your role is ${playerRole}`}
+                      : playerRole === 1
+                      ? "You are the Thief. 🥷🏼 Try to blend in."
+                      : playerRole === 2
+                      ? "You are the Detective. 🕵🏻‍♂️"
+                      : playerRole === 3
+                      ? "You are the Cop. 👮🏻‍♂️"
+                      : playerRole === 4
+                      ? "You are a Citizen. 👦🏻"
+                      : "There was an error finding your role."}
                   </Typography.TypographyLarge>
                   {playerRole !== PlayerRole.Unknown && (
                     <Typography.TypographyMuted>
