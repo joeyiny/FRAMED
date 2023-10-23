@@ -224,12 +224,8 @@ export const createGame = async (w: ConnectedWallet) => {
   try {
     w.switchChain(9090);
     const a = await w.getEthereumProvider();
-    console.log(a);
     const p = new BrowserProvider(a);
-    console.log(p);
-
     const signer = await p.getSigner();
-    console.log(signer);
 
     const contract = new Contract(FACTORY_ADDRESS, factoryABI, signer);
     console.log(contract);
