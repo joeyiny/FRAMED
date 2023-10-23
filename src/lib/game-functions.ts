@@ -34,6 +34,7 @@ export const viewCaught = async (w: ConnectedWallet, contractAddress: string) =>
     const ciphertext = await contract.viewCaught(publicKey, signature);
     const userCreditScoreDecrypted = instance.decrypt(contractAddress, ciphertext);
     console.log(ciphertext, userCreditScoreDecrypted);
+    return userCreditScoreDecrypted;
   } catch (e) {
     console.log(e);
   }

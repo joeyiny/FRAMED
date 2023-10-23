@@ -2,7 +2,15 @@ import { Button } from "@/components/ui/button";
 import * as Typography from "@/components/ui/typography";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 
-import { initializeGame, isMafiaKilled, joinGame, takeAction, viewRole, votePlayer } from "@/lib/game-functions";
+import {
+  initializeGame,
+  isMafiaKilled,
+  joinGame,
+  takeAction,
+  viewCaught,
+  viewRole,
+  votePlayer,
+} from "@/lib/game-functions";
 // import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 import { GamePhase, PlayerRole } from "@/types";
 import { ActivePlayerCard, ClickablePlayerCard, WaitingPlayerCard } from "@/components/player-cards";
@@ -44,6 +52,7 @@ const InGameScreen = ({
   // const [deadPlayer, setDeadPlayer] = useState("");
 
   const { chatsOpenState } = React.useContext(ChatContext);
+  const [investigationResults, setInvestigationResults] = useState<"correct" | "incorrect" | "error" | null>(null);
 
   // const [playerIsJoined, setPlayerIsJoined] = useState(false);
 
@@ -186,6 +195,33 @@ const InGameScreen = ({
             )
           ) : null}
         </div>
+        {gamePhase === GamePhase.Voting &&
+          playerRole === PlayerRole.Detective &&
+          (investigationResults === null ? (
+            <Button
+              onClick={async () => {
+                const result = await viewCaught(embeddedWallet, gameContract);
+
+                switch (result) {
+                  case 0:
+                    setInvestigationResults("incorrect");
+                    break;
+                  case 1:
+                    setInvestigationResults("correct");
+                    break;
+                  default:
+                    setInvestigationResults("error");
+                }
+              }}>
+              🔍 Check investigation results
+            </Button>
+          ) : investigationResults === "correct" ? (
+            <p>Your investigation was correct! You found the Thief.</p>
+          ) : investigationResults === "incorrect" ? (
+            <p>Your investigation was incorrect. You did not find the thief.</p>
+          ) : (
+            <p>An error occurred during the investigation.</p>
+          ))}
         {loading ? (
           <div className="w-full">loading...</div>
         ) : (
@@ -225,6 +261,7 @@ const InGameScreen = ({
           </div>
         )}
         {dialog && <div>{dialog}</div>}
+
         {/* {loading && <div>{loading}</div>} */}
         {gamePhase === GamePhase.WaitingForPlayers && (
           <>
@@ -254,7 +291,7 @@ const InGameScreen = ({
             )}
           </>
         )}
-        {gamePhase === GamePhase.AwaitPlayerActions && playerRole === PlayerRole.Unknown && !playerHasAction && (
+        {gamePhase !== GamePhase.WaitingForPlayers && playerRole === PlayerRole.Unknown && (
           <Button
             className="mt-4"
             onClick={async () => {
