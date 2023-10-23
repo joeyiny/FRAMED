@@ -36,7 +36,7 @@ const InGameScreen = ({
   const { wallets } = useWallets();
   const { user } = usePrivy();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
-  const [hasFunds, setHasFunds] = useState(localStorage.getItem("hasFunds") === "true");
+  const [hasFunds, setHasFunds] = useState(false);
   const [dialog] = useState("");
   const [resultsText, setResultsText] = useState("loading results...");
   const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.WaitingForPlayers);
@@ -100,16 +100,22 @@ const InGameScreen = ({
 
   useEffect(() => {
     const provideInitialFunds = async () => {
-      const result = await fetchFundsForNewUser(embeddedWallet.getEthersProvider(), embeddedWallet.address);
-      if (result.status === "success") {
+      const balance = (await embeddedWallet.getEthersProvider()).getBalance(embeddedWallet.address);
+      if ((await balance).gte(0.2)) {
         setHasFunds(true);
-      } else if (result.status === "error") {
-        console.error("Error fetching funds:", result.message);
       } else {
-        console.log(
-          result.status === "already_funded" ? "User is already funded" : "Unexpected status:",
-          result.status
-        );
+        const result = await fetchFundsForNewUser(embeddedWallet.getEthersProvider(), embeddedWallet.address);
+        // if(await )
+        if (result.status === "success") {
+          setHasFunds(true);
+        } else if (result.status === "error") {
+          console.error("Error fetching funds:", result.message);
+        } else {
+          console.log(
+            result.status === "already_funded" ? "User is already funded" : "Unexpected status:",
+            result.status
+          );
+        }
       }
     };
     provideInitialFunds().catch((error) => console.error("Unexpected error:", error));
@@ -150,7 +156,7 @@ const InGameScreen = ({
                 </Typography.TypographyLarge>
               ) : (
                 <Typography.TypographyLarge className="animate-pulse">
-                  Providing funds, please wait...
+                  You have insufficient INCO. We are attempting to send you INCO.
                 </Typography.TypographyLarge>
               )
             ) : gamePhase === GamePhase.AwaitPlayerActions ? (
