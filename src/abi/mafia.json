@@ -161,11 +161,24 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "_playerKilled",
+				"name": "_playerAddress",
 				"type": "address"
 			}
 		],
 		"name": "Killed",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "mafiaWin",
+				"type": "bool"
+			}
+		],
+		"name": "MafiaWin",
 		"type": "event"
 	},
 	{
@@ -246,13 +259,6 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "_resetDay",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "bytes",
@@ -287,13 +293,6 @@
 			}
 		],
 		"name": "castVote",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "checkIfMafiaKilled",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -450,13 +449,7 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "bytes[]",
-				"name": "roles",
-				"type": "bytes[]"
-			}
-		],
+		"inputs": [],
 		"name": "initializeGame",
 		"outputs": [],
 		"stateMutability": "nonpayable",
@@ -515,6 +508,25 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "joinedGame",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "killedPlayerId",
 		"outputs": [
@@ -548,6 +560,19 @@
 				"internalType": "address",
 				"name": "",
 				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "playerCount",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
 			}
 		],
 		"stateMutability": "view",
@@ -689,10 +714,35 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "roles",
+		"outputs": [
+			{
+				"internalType": "euint8",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
-		"name": "revealNextDay",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "roundCount",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{

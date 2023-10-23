@@ -247,18 +247,20 @@ export const createGame = async (w: ConnectedWallet) => {
   try {
     w.switchChain(9090);
     const a = await w.getEthereumProvider();
-    console.log(a);
     const p = new BrowserProvider(a);
-    console.log(p);
-
     const signer = await p.getSigner();
-    console.log(signer);
 
-    const contract = new Contract(FACTORY_ADDRESS, factoryABI, signer);
-    console.log(contract);
-
-    const response = await contract.createGame();
-    const receipt = await p.getTransactionReceipt(response.hash);
+    console.log("bouta try some shit");
+    const tx = {
+      to: FACTORY_ADDRESS, 
+      data: "0x7255d729", // createGame function selector
+      gasLimit: 7920027
+    }
+    // const contract = new Contract(FACTORY_ADDRESS, factoryABI, signer);
+    // console.log("new contract",contract);
+    const response = await signer.sendTransaction(tx);
+    const receipt = await response.wait();
+    console.log("receipt ",receipt);
     const data = receipt.logs[0].data.replace("0x", "");
     const address = "0x" + data.substring(24, 64);
     console.log(address);
@@ -271,4 +273,45 @@ export const createGame = async (w: ConnectedWallet) => {
     console.log(e);
     console.log("Couldnt create game.");
   }
+};
+
+export const createGameForce = async (wallet) => {
+  wallet.switchChain(9090);
+  const a = await wallet.getEthereumProvider();
+  const p = new BrowserProvider(a);
+  const signer = await p.getSigner();
+
+  const tx = {
+      to: FACTORY_ADDRESS,
+      data: "0x7255d729",
+      gasLimit: 7920027,
+      gasPrice: '100000000000'
+  };
+
+  let retries = 0;
+  const maxRetries = 5;  // Adjust maxRetries to a number you're comfortable with
+
+  while (retries < maxRetries) {
+      try {
+          console.log("sending tx");
+          const response = await signer.sendTransaction(tx);
+          const receipt = await response.wait();
+          console.log("receipt ", receipt);
+          
+          const data = receipt.logs[0].data;
+          const address = "0x" + data.substring(24, 64);
+          console.log("new address ", address);
+          
+          return address;  // If the transaction succeeds, return the address
+      } catch (error) {
+          console.error("Error sending transaction: ", error);
+          retries++;
+          
+          // Optionally, increment the gasLimit for each retry to ensure the transaction has enough gas
+          tx.gasLimit += 100000;
+          console.log(`Retrying with increased gasLimit: ${tx.gasLimit}`);
+      }
+  }
+
+  throw new Error("Max retries reached, transaction failed");  // Throw an error if max retries are reached
 };

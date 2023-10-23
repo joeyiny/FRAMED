@@ -5,7 +5,7 @@
 			{
 				"indexed": false,
 				"internalType": "address",
-				"name": "room",
+				"name": "creator",
 				"type": "address"
 			},
 			{

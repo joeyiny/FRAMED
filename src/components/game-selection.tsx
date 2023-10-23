@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react"; 
 import { useWallets } from "@privy-io/react-auth";
 import { Button } from "./ui/button";
-import { createGame } from "@/lib/game-functions";
+import { createGame, createGameForce } from "@/lib/game-functions";
 import { fetchFundsForNewUser } from "@/lib/faucet-functions";
+import { useQuery, useApolloClient } from "@apollo/client";
+import { game, newGame } from "@/query";
 
 const GameSelection = ({ games, setGameContract }) => {
   const [joinCode, setJoinCode] = useState("");
@@ -11,6 +13,8 @@ const GameSelection = ({ games, setGameContract }) => {
   const [hasFunds, setHasFunds] = useState(localStorage.getItem("hasFunds") === "true"); 
   const { wallets } = useWallets();
   const embeddedWallet = wallets.find((wallet) => wallet.walletClientType === "privy");
+  const client = useApolloClient();
+  
 
   useEffect(() => { 
     const provideInitialFunds = async () => {
@@ -39,10 +43,60 @@ const GameSelection = ({ games, setGameContract }) => {
 
   const handleJoinGame = () => {
     if (isJoinEnabled) {
-      const gameToJoin = games.find(game => game.roomId === parseInt(joinCode, 10));
+      const gameToJoin = games.find(game => game.roomId === parseInt(joinCode, 20));
       setGameContract(gameToJoin.id);
     }
   };
+
+  const handleCreateGame = async () => {
+
+   
+  
+      // Create game 
+      const address = await createGameForce(embeddedWallet);
+      console.log("created address ", address);
+    //   console.log(address, "address");
+    //   console.log(embeddedWallet, "embededWallet");
+  
+    //   console.log("about to query");
+    //   // Query for game data
+    //   const {data} = await client.query({
+    //     query: newGame,
+    //     variables: {id: address}, 
+    //     fetchPolicy: 'no-cache'
+    //   })
+    //   console.log("queried yuh");
+  
+    //   // Log full response
+    //   console.log('Query data:', data);
+  
+    //   // Handle null data
+    //   if(!data) {
+    //     console.log('No data returned from query');
+    //     return;
+    //   }
+    //   // Handle null games
+    //   const games = data.games; 
+    //   if(!games) {
+    //     console.log('No games found');
+    //     return; 
+    //   }
+  
+    //   // Get roomId
+    //   const roomId = games[0].roomId;
+    //   console.log('Room ID:', roomId);
+  
+    //   // Set state with roomId
+    //   setJoinCode(roomId.toString());
+    //   setIsJoining(true);
+  
+    // } catch(error) {
+    //   console.error("Error during handleCreateGame:", error.message);
+    //   console.error(error);
+    // }
+  
+  }
+  
 
   if (isJoining) {
     return (
@@ -66,17 +120,14 @@ const GameSelection = ({ games, setGameContract }) => {
     );
   } else {
     return (
-      <div className="overflow-y-hidden flex flex-col gap-2 items-center justify-center h-[calc(100vh-4rem)]">
+      <div className="overflow-y-hidden flex flex-col gap-2 pb-24 items-center justify-center h-[calc(100vh-4rem)]">
         <Button 
           onClick={() => setIsJoining(true)} 
           className="w-[40%] mb-2 sm:w-[25%] bg-white text-black hover:bg-gray-200">
           Join a room
         </Button>
         <Button 
-          onClick={async () => {
-            const address = await createGame(embeddedWallet);
-            setGameContract(address);
-          }}
+          onClick={handleCreateGame}
           disabled={!hasFunds}
           className="w-[40%] sm:w-[25%] bg-black text-white border border-black">
           Create a room
