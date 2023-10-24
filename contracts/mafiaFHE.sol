@@ -33,7 +33,6 @@ contract Mafia is EIP712WithModifier {
     event CastVote(address _voter, uint8 _playerId);
     event CheckMafia(bool _mafiaKilled);
     event Killed(address _playerAddress);
-    event Exiled(uint8 _playerExiled);
     event NewState(uint8 gameState);
     event NewRound(uint8 roundCount);
     event MafiaWin(bool mafiaWin);
@@ -68,6 +67,7 @@ contract Mafia is EIP712WithModifier {
 
     uint8 public playerKilled = 255;
     uint8 public largestVoteCount;
+    uint8 public rolesCount;
     uint8 public playerIdWithLargestVoteCount;
     uint8 public actionCount;
     uint8 public voteCount;
@@ -140,6 +140,7 @@ contract Mafia is EIP712WithModifier {
                 matching = TFHE.add(matching, TFHE.asEuint8(isMatching));
             }
             if (TFHE.decrypt(matching) == 0) {
+                rolesCount++;
                 roles.push(role);
                 break;
             }
@@ -310,6 +311,9 @@ contract Mafia is EIP712WithModifier {
                 playerKillCount++;
                 playerCount--;
                 isMafiaKilled = 0; //false
+                emit Killed(
+                    idToPlayer[playerIdWithLargestVoteCount].playerAddress
+                );
                 if (playerCount > 2) {
                     emit CheckMafia(false);
                     _resetDay();
