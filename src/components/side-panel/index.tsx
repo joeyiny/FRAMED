@@ -11,7 +11,7 @@ const SidePanel: React.FC<{ roomId: string | null; player_id: string | null; has
   const { chatsOpenState, toggleChat } = React.useContext(ChatContext);
   const isChatOpen = chatsOpenState[roomId || ""];
 
-  const desktopWidth = isChatOpen ? "lg:w-1/3" : "lg:w-20";
+  const desktopWidth = isChatOpen ? "sm:w-1/3" : "lg:w-20";
   const desktopTranslateX = isChatOpen ? "sm:translate-x-0" : "sm:translate-x-[calc(100%-40px)]";
 
   return (
