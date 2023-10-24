@@ -9,6 +9,7 @@ import RoomPicker from "@/components/room-picker";
 import { useWallets } from "@privy-io/react-auth";
 import { parseEther } from "ethers";
 import { fetchFundsForNewUser } from "@/lib/faucet-functions";
+import BottomBar from "@/components/bottom-bar";
 // import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 
 export const FACTORY_ADDRESS = "0x85F136F800130aDf5f58E15D76f671F588c623B2";
@@ -58,7 +59,7 @@ const Authenticated = () => {
       ) : (
         <InGameScreen gameContract={gameContract} setGameContract={setGameContract} />
       )}
-      {/* {gameContract === null ? <TutorialFlow setClientState={setClientState} />: <InGameScreen gamePhase={gamePhase} setGamePhase={setGamePhase} />} */}
+      <BottomBar />
     </div>
   );
 };
