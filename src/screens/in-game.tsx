@@ -23,6 +23,7 @@ import { game } from "@/query";
 import { ChatContext } from "../context/ChatContext";
 import InviteFriends from "@/components/invite-friends";
 import SidePanel from "@/components/side-panel";
+import { Spinner } from "@/components/spinner";
 // import { formatEther } from "ethers";
 // import { ensureDisplayName } from "@/lib/display-name";
 
@@ -131,7 +132,12 @@ const InGameScreen = ({
     fetchData();
   }, [gamePhase]);
 
-  if (loading) return <p>loading</p>;
+  if (loading)
+    return (
+      <div className="w-full flex-col flex h-40 items-center justify-center">
+        <Spinner />
+      </div>
+    );
 
   return (
     <>
@@ -259,7 +265,9 @@ const InGameScreen = ({
               <p>An error occurred during the investigation.</p>
             ))}
           {loading ? (
-            <div className="w-full">loading...</div>
+            <div className="w-full flex-col flex h-40 items-center justify-center">
+              <Spinner />
+            </div>
           ) : (
             <div
               id="player-cards-container"
