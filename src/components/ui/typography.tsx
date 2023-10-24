@@ -16,7 +16,7 @@ export function TypographyH4({ children, className }: { children: React.ReactNod
 }
 
 export function TypographyP({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <p className={`leading-7 [&:not(:first-child)]:mt-6 ${className}`}>{children}</p>;
+  return <p className={`leading-6 [&:not(:first-child)]:mt-6 ${className}`}>{children}</p>;
 }
 
 export function TypographyLarge({ children, className }: { children: React.ReactNode; className?: string }) {

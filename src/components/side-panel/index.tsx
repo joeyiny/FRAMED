@@ -17,7 +17,7 @@ const SidePanel: React.FC<{ roomId: string | null; player_id: string | null; has
 
   return (
     <div
-      className={`fixed bottom-0 right-0 sm:top-12 sm:bottom-4 w-full sm:w-20 ${desktopWidth} h-[45%] sm:h-auto bg-white text-black rounded-t-lg sm:rounded-lg shadow-xl flex flex-col justify-between transform ${
+      className={`fixed bottom-0 right-0 sm:top-12 sm:bottom-4 w-full sm:w-20 ${desktopWidth} h-[40%] sm:h-auto bg-white text-black rounded-t-lg sm:rounded-lg shadow-xl flex flex-col justify-between transform ${
         isChatOpen ? "translate-y-0" : "translate-y-[calc(90%-14px)]"
       } ${desktopTranslateX} sm:translate-y-0 transition-transform ease-in-out duration-300`}
     >

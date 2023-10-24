@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSocket } from "../../context/SocketContext";
 import { PLAYER_NAMES } from "@/screens/in-game";
-import KilledPlayerEvent from "./events"
+import KilledPlayerEvent from "./Events";
 
 type ChatProps = {
   roomId: string;
@@ -31,7 +31,14 @@ const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined, gameId }) => 
     }
   };
   
-  
+  useEffect(() => {
+    if (hasJoined && socket) {
+      // console.log("Trying to request room join");
+      socket.emit("joinRoom", { roomId: roomId, player_id: player_id });
+      // socket.emit("requestInitialMessage", { roomId: roomId, player_id: player_id });
+      console.log("request done");
+    }
+  }, [hasJoined, socket]);
 
   useEffect(() => {
     if (hasJoined && socket) {
@@ -144,6 +151,11 @@ const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined, gameId }) => 
         />
         {/* <button onClick={handleTestDeath} className="bg-blue-500 text-white m-6 rounded">Test Player Death</button> */}
       </div>
+      <KilledPlayerEvent
+      gameId={gameId}
+      roomId={roomId}
+      onPlayerDeath={handlePlayerDeath}
+    />
     </div>
   );
 };
