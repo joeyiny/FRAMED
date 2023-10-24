@@ -13,7 +13,9 @@ export const initializeGame = async (w: ConnectedWallet, contractAddress: string
   try {
     const signer = await p.getSigner();
     const contract = new Contract(contractAddress, mafiaABI, signer);
-    const transaction = await contract.initializeGame();
+    const transaction = await contract.initializeGame({
+      gasLimit: 7920027,
+    });
     await p.waitForTransaction(transaction.hash);
     return transaction;
   } catch (e) {
@@ -89,7 +91,9 @@ export const joinGame = async (w: ConnectedWallet, contractAddress: string) => {
     const contract = new Contract(contractAddress, mafiaABI, signer);
     console.log(signer.address);
     // setLoading("Joining Game...");
-    const result = await contract.joinGame(signer.address);
+    const result = await contract.joinGame(signer.address, {
+      gasLimit: 7920027,
+    });
     const numRoles = await contract.rolesCount();
     if (numRoles < 4) {
       generateUniqueRole(w, contractAddress);
@@ -115,7 +119,9 @@ export const takeAction = async (playerId: number, w: ConnectedWallet, contractA
     const signer = await p.getSigner();
     const contract = new Contract(contractAddress, mafiaABI, signer);
     // setLoading("Taking Action on selected player...");
-    const transaction = await contract.action(encryptedData);
+    const transaction = await contract.action(encryptedData, {
+      gasLimit: 7920027,
+    });
     console.log(encryptedData);
     // setLoading("Waiting for transaction validation...");
     await p.waitForTransaction(transaction.hash);
@@ -136,7 +142,10 @@ export const votePlayer = async (playerId: number, w: ConnectedWallet, contractA
     const signer = await p.getSigner();
     const contract = new Contract(contractAddress, mafiaABI, signer);
     // setLoading("Casting vote on selected player...");
-    const transaction = await contract.castVote(playerId);
+    const transaction = await contract.castVote(playerId, {
+      gasLimit: 7920027,
+    });
+
     // setLoading("Waiting for transaction validation...");
     await p.waitForTransaction(transaction.hash);
     // setLoading("");
