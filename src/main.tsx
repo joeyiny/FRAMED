@@ -34,10 +34,7 @@ const incoChain: Chain = {
   },
 };
 
-const { publicClient, webSocketPublicClient } = configureChains(
-  [incoChain],
-  [publicProvider()]
-);
+const { publicClient, webSocketPublicClient } = configureChains([incoChain], [publicProvider()]);
 
 const config = createConfig({
   publicClient,
@@ -51,7 +48,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         appId={"clmweg8kd00qfl70fb48z6afs"}
         onSuccess={() => {}}
         config={{
-          loginMethods: ["wallet", "sms", "google"],
+          loginMethods: ["sms", "google"],
           embeddedWallets: {
             createOnLogin: "users-without-wallets",
           },
@@ -61,8 +58,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             accentColor: "#FF3D00",
             logo: "https://i.imgur.com/N9VR8K1.png",
           },
-        }}
-      >
+        }}>
         <ApolloProvider client={client}>
           <App />
         </ApolloProvider>
