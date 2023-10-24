@@ -2,6 +2,7 @@
 import "./App.css";
 import Authenticated from "./screens/authenticated";
 import PendingGame from "./screens/loading";
+import { ErrorBoundary } from "react-error-boundary";
 
 // import InGameScreen from "./screens/in-game";
 import { useState, useEffect } from "react";
@@ -32,10 +33,12 @@ function App() {
   return (
     <ChatProvider>
       <SocketProvider>
-        <main>
-          {!authenticated && <Login />}
-          {authenticated && <Authenticated />}
-        </main>
+        <ErrorBoundary fallback={<p>there was an error. please refresh.</p>}>
+          <main>
+            {!authenticated && <Login />}
+            {authenticated && <Authenticated />}
+          </main>
+        </ErrorBoundary>
       </SocketProvider>
     </ChatProvider>
   );

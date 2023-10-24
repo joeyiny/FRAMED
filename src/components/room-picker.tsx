@@ -7,6 +7,8 @@ import { TypographyH2 } from "./ui/typography";
 import { useQuery } from "@apollo/client";
 import { games } from "@/query";
 
+import { ErrorBoundary } from "react-error-boundary";
+
 const RoomPicker = ({
   // games,
   setGameContract,
@@ -57,8 +59,9 @@ const RoomPicker = ({
   return (
     <div className="max-w-xs  m-auto mt-6">
       <TypographyH2 className="font-bold mb-6 border-b-0 ">Choose a game</TypographyH2>
-      <div className="flex flex-col gap-4">
-        {/* {games.map((game, i) => {
+      <ErrorBoundary fallback={<p>something went wrong. please refresh.</p>}>
+        <div className="flex flex-col gap-4">
+          {/* {games.map((game, i) => {
           // Note that I'm assuming `game` and `user.wallet` objects are well-formed here.
           // In a production setting, there should be validations.
           const players = game.Players.map((p) => p.player.id);
@@ -77,33 +80,34 @@ const RoomPicker = ({
             </button>
           );
         })} */}
-        {/* <p>Enter a room ID:</p> */}
-        {errorMessage && <p className="text-red-700">{errorMessage}</p>}
-        <div className=" m-auto flex flex-row gap-2">
-          {/* <Label>Enter a room ID:</Label> */}
-          <Input
-            value={roomIdInput}
-            onChange={(e) => setRoomIdInput(e.target.value)}
-            className=" border-zinc-300 w-full"
-            type="number"
-            min="0"
-            placeholder="Enter Room ID"></Input>
-          <Button disabled={loading || loadingCreatingGame} onClick={() => handleJoin(roomIdInput)}>
-            {loading ? "loading..." : "Submit"}
+          {/* <p>Enter a room ID:</p> */}
+          {errorMessage && <p className="text-red-700">{errorMessage}</p>}
+          <div className=" m-auto flex flex-row gap-2">
+            {/* <Label>Enter a room ID:</Label> */}
+            <Input
+              value={roomIdInput}
+              onChange={(e) => setRoomIdInput(e.target.value)}
+              className=" border-zinc-300 w-full"
+              type="number"
+              min="0"
+              placeholder="Enter Room ID"></Input>
+            <Button disabled={loading || loadingCreatingGame} onClick={() => handleJoin(roomIdInput)}>
+              {loading ? "loading..." : "Submit"}
+            </Button>
+          </div>
+          <span>-- or --</span>
+          <Button
+            disabled={loadingCreatingGame}
+            onClick={async () => {
+              setLoadingCreatingGame(true);
+              const address = await createGame(embeddedWallet);
+              setLoadingCreatingGame(false);
+              setGameContract(address);
+            }}>
+            {loadingCreatingGame ? "Creating game..." : "Create game"}
           </Button>
         </div>
-        <span>-- or --</span>
-        <Button
-          disabled={loadingCreatingGame}
-          onClick={async () => {
-            setLoadingCreatingGame(true);
-            const address = await createGame(embeddedWallet);
-            setLoadingCreatingGame(false);
-            setGameContract(address);
-          }}>
-          {loadingCreatingGame ? "Creating game..." : "Create game"}
-        </Button>
-      </div>
+      </ErrorBoundary>
     </div>
   );
 };

@@ -11,6 +11,8 @@ import { parseEther } from "ethers";
 import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 import BottomBar from "@/components/bottom-bar";
 import { Spinner } from "@/components/spinner";
+import { ErrorBoundary } from "react-error-boundary";
+
 // import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 
 export const FACTORY_ADDRESS = "0x85F136F800130aDf5f58E15D76f671F588c623B2";
@@ -62,7 +64,9 @@ const Authenticated = () => {
       ) : gameContract === null ? (
         <RoomPicker games={data.games} setGameContract={setGameContract} />
       ) : (
-        <InGameScreen gameContract={gameContract} setGameContract={setGameContract} />
+        <ErrorBoundary fallback={<p>there was an error. please try again.</p>}>
+          <InGameScreen gameContract={gameContract} setGameContract={setGameContract} />
+        </ErrorBoundary>
       )}
       <BottomBar />
     </div>

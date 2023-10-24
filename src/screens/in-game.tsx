@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import * as Typography from "@/components/ui/typography";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
+import { ErrorBoundary } from "react-error-boundary";
 
 import {
   initializeGame,
@@ -60,6 +61,7 @@ const InGameScreen = ({
   const [playerRole, setPlayerRole] = useState<PlayerRole>(PlayerRole.Unknown);
 
   const { data, loading } = useQuery(game, { variables: { id: gameContract } });
+  const [loadingButtons, setLoadingButtons] = useState<boolean>(false);
 
   // const [displayName, setDisplayName] = useState<string | null>(null);
   // const [playerId, setPlayerId] = useState<string | null>(null);
@@ -134,201 +136,205 @@ const InGameScreen = ({
   return (
     <>
       <div className={gameStyle}>
-        {/* <p>{user.wallet.address}</p> */}
-        <div className="w-full  flex flex-row justify-center items-center gap-3">
-          <p className="text-lg font-semibold text-zinc-800">
-            Room id: <span className="font-bold">{roomId}</span>
-          </p>
-          <Button onClick={() => setGameContract(null)}>Exit room</Button>
-        </div>
-
-        {gamePhase === GamePhase.WaitingForPlayers && (
-          <>
-            {players && players.length >= 4 ? (
-              <Button
-                onClick={async () => {
-                  initializeGame(embeddedWallet, gameContract);
-                }}
-                size="lg"
-                className="mt-8">
-                Begin Game
-              </Button>
-            ) : playerIsJoined ? (
-              <InviteFriends roomId={data.game.roomId} />
-            ) : (
-              <>
+        <ErrorBoundary fallback={<p>something went wrong. please refresh.</p>}>
+          {/* <p>{user.wallet.address}</p> */}
+          <div className="w-full  flex flex-row justify-center items-center gap-3">
+            <p className="text-lg font-semibold text-zinc-800">
+              Room id: <span className="font-bold">{roomId}</span>
+            </p>
+            <Button disabled={loadingButtons} onClick={() => setGameContract(null)}>
+              Exit room
+            </Button>
+          </div>
+          {gamePhase === GamePhase.WaitingForPlayers && (
+            <>
+              {players && players.length >= 4 ? (
                 <Button
                   onClick={async () => {
-                    await joinGame(embeddedWallet, gameContract);
+                    initializeGame(embeddedWallet, gameContract);
                   }}
-                  // disabled={!hasFunds}
                   size="lg"
                   className="mt-8">
-                  Join Game
+                  Begin Game
                 </Button>
-              </>
-            )}
-          </>
-        )}
-
-        <div className="my-4 sm:my-16">
-          {!loading ? (
-            gamePhase === GamePhase.WaitingForPlayers ? (
-              <Typography.TypographyLarge className="animate-pulse">
-                {players && players.length < 4 ? "Waiting for other players to join..." : "Room full!"}
-              </Typography.TypographyLarge>
-            ) : gamePhase === GamePhase.AwaitPlayerActions ? (
-              playerHasAction ? (
-                <Typography.TypographyLarge>Waiting for others to take action...</Typography.TypographyLarge>
+              ) : playerIsJoined ? (
+                <InviteFriends roomId={data.game.roomId} />
               ) : (
-                <div>
-                  <Typography.TypographyLarge>
-                    {playerRole === PlayerRole.Unknown
-                      ? "Let's check to see what your role is!"
-                      : playerRole === 1
-                      ? "You are the Thief. 🥷🏼 Try to blend in."
-                      : playerRole === 2
-                      ? "You are the Detective. 🕵🏻‍♂️"
-                      : playerRole === 3
-                      ? "You are the Doctor. 👨🏻‍⚕️"
-                      : playerRole === 4
-                      ? "You are a Citizen. 👦🏻"
-                      : "There was an error finding your role."}
-                  </Typography.TypographyLarge>
-                  {playerRole !== PlayerRole.Unknown && (
-                    <Typography.TypographyMuted>
-                      <Typography.TypographySmall>
-                        {playerRole === PlayerRole.Citizen
-                          ? "Vote for who you think the thief is."
-                          : playerRole === PlayerRole.Thief
-                          ? "Choose the player you want to kill."
-                          : playerRole === PlayerRole.Doctor
-                          ? "Choose the player you want to save."
-                          : "Choose the player you want to examine."}
-                      </Typography.TypographySmall>
-                    </Typography.TypographyMuted>
-                  )}
-                </div>
-              )
-            ) : gamePhase === GamePhase.Voting ? (
-              <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
-            ) : (
-              gamePhase === GamePhase.GameComplete && (
-                <Typography.TypographyLarge>
-                  {data.game.winner === 0
-                    ? "Congrats to the players for defeating the Thief!"
-                    : "The Thief has escaped! The players have lost."}
-                </Typography.TypographyLarge>
-              )
-            )
-          ) : null}
-        </div>
-        {gamePhase === GamePhase.Voting &&
-          playerRole === PlayerRole.Detective &&
-          (investigationResults === null ? (
-            <Button
-              onClick={async () => {
-                const result = await viewCaught(embeddedWallet, gameContract);
-
-                switch (result) {
-                  case 0:
-                    setInvestigationResults("incorrect");
-                    break;
-                  case 1:
-                    setInvestigationResults("correct");
-                    break;
-                  default:
-                    setInvestigationResults("error");
-                }
-              }}>
-              🔍 Check investigation results
-            </Button>
-          ) : investigationResults === "correct" ? (
-            <div className="flex flex-col">
-              <span className="font-bold">Your investigation was correct! You found the Thief.</span>
-              <span>Now, try to convince the other players that you know who the thief is.</span>
-            </div>
-          ) : investigationResults === "incorrect" ? (
-            <p>Your investigation was incorrect. You did not find the thief.</p>
-          ) : (
-            <p>An error occurred during the investigation.</p>
-          ))}
-        {loading ? (
-          <div className="w-full">loading...</div>
-        ) : (
-          <div
-            id="player-cards-container"
-            className="flex flex-row items-center justify-center w-full  m-2 pt-4 sm:px-0">
-            <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
-              {players &&
-                gamePhase === GamePhase.WaitingForPlayers &&
-                players.map((p, i) => (
-                  <div>
-                    <ActivePlayerCard player={p} key={i} index={i} />
-                  </div>
-                ))}
-
-              {Array(4 - (players ? players.length : 0))
-                .fill(null)
-                .map((_, i) => (
-                  <WaitingPlayerCard key={i} />
-                ))}
-              {players &&
-                gamePhase === GamePhase.AwaitPlayerActions &&
-                players.map((p, i) => (
-                  <ClickablePlayerCard
-                    gamePhase={gamePhase}
-                    index={i}
-                    player={p}
-                    key={i}
-                    onClick={async () => await doAction(i)}
-                  />
-                ))}
-              {players &&
-                gamePhase === GamePhase.Voting &&
-                players.map((p, i) => (
-                  <ClickablePlayerCard
-                    index={i}
-                    gamePhase={gamePhase}
-                    player={p}
-                    key={i}
-                    onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
-                  />
-                ))}
-            </div>
-          </div>
-        )}
-        {dialog && <div>{dialog}</div>}
-
-        {/* {loading && <div>{loading}</div>} */}
-
-        {gamePhase !== GamePhase.WaitingForPlayers &&
-          gamePhase !== GamePhase.GameComplete &&
-          playerRole === PlayerRole.Unknown && (
-            <Button
-              className="mt-4"
-              onClick={async () => {
-                const role = await viewRole(embeddedWallet, gameContract);
-                if (role === 4) {
-                  setPlayerRole(PlayerRole.Citizen);
-                } else if (role === 1) {
-                  setPlayerRole(PlayerRole.Thief);
-                } else if (role === 2) {
-                  setPlayerRole(PlayerRole.Detective);
-                } else if (role === 3) {
-                  setPlayerRole(PlayerRole.Doctor);
-                }
-              }}>
-              View Role
-            </Button>
+                <>
+                  <Button
+                    onClick={async () => {
+                      setLoadingButtons(true);
+                      await joinGame(embeddedWallet, gameContract);
+                      setLoadingButtons(false);
+                    }}
+                    disabled={loadingButtons}
+                    // disabled={!hasFunds}
+                    size="lg"
+                    className="mt-8">
+                    Join Game
+                  </Button>
+                </>
+              )}
+            </>
           )}
-        {gamePhase === GamePhase.RoundComplete && (
-          <div>
-            <Typography.TypographyH3>{resultsText}</Typography.TypographyH3>
-            <Button className="mt-4">Play Again</Button>
+          <div className="my-4 sm:my-16">
+            {!loading ? (
+              gamePhase === GamePhase.WaitingForPlayers ? (
+                <Typography.TypographyLarge className="animate-pulse">
+                  {players && players.length < 4 ? "Waiting for other players to join..." : "Room full!"}
+                </Typography.TypographyLarge>
+              ) : gamePhase === GamePhase.AwaitPlayerActions ? (
+                playerHasAction ? (
+                  <Typography.TypographyLarge>Waiting for others to take action...</Typography.TypographyLarge>
+                ) : (
+                  <div>
+                    <Typography.TypographyLarge>
+                      {playerRole === PlayerRole.Unknown
+                        ? "Let's check to see what your role is!"
+                        : playerRole === 1
+                        ? "You are the Thief. 🥷🏼 Try to blend in."
+                        : playerRole === 2
+                        ? "You are the Detective. 🕵🏻‍♂️"
+                        : playerRole === 3
+                        ? "You are the Doctor. 👨🏻‍⚕️"
+                        : playerRole === 4
+                        ? "You are a Citizen. 👦🏻"
+                        : "There was an error finding your role."}
+                    </Typography.TypographyLarge>
+                    {playerRole !== PlayerRole.Unknown && (
+                      <Typography.TypographyMuted>
+                        <Typography.TypographySmall>
+                          {playerRole === PlayerRole.Citizen
+                            ? "Vote for who you think the thief is."
+                            : playerRole === PlayerRole.Thief
+                            ? "Choose the player you want to kill."
+                            : playerRole === PlayerRole.Doctor
+                            ? "Choose the player you want to save."
+                            : "Choose the player you want to examine."}
+                        </Typography.TypographySmall>
+                      </Typography.TypographyMuted>
+                    )}
+                  </div>
+                )
+              ) : gamePhase === GamePhase.Voting ? (
+                <Typography.TypographyLarge>Let's vote for who we think the thief is.</Typography.TypographyLarge>
+              ) : (
+                gamePhase === GamePhase.GameComplete && (
+                  <Typography.TypographyLarge>
+                    {data.game.winner === 0
+                      ? "Congrats to the players for defeating the Thief!"
+                      : "The Thief has escaped! The players have lost."}
+                  </Typography.TypographyLarge>
+                )
+              )
+            ) : null}
           </div>
-        )}
-        {playerIsJoined && playerId && <SidePanel roomId={roomId} player_id={playerId} hasJoined={playerIsJoined} />}
+          {gamePhase === GamePhase.Voting &&
+            playerRole === PlayerRole.Detective &&
+            (investigationResults === null ? (
+              <Button
+                onClick={async () => {
+                  const result = await viewCaught(embeddedWallet, gameContract);
+                  switch (result) {
+                    case 0:
+                      setInvestigationResults("incorrect");
+                      break;
+                    case 1:
+                      setInvestigationResults("correct");
+                      break;
+                    default:
+                      setInvestigationResults("error");
+                  }
+                }}>
+                🔍 Check investigation results
+              </Button>
+            ) : investigationResults === "correct" ? (
+              <div className="flex flex-col">
+                <span className="font-bold">Your investigation was correct! You found the Thief.</span>
+                <span>Now, try to convince the other players that you know who the thief is.</span>
+              </div>
+            ) : investigationResults === "incorrect" ? (
+              <p>Your investigation was incorrect. You did not find the thief.</p>
+            ) : (
+              <p>An error occurred during the investigation.</p>
+            ))}
+          {loading ? (
+            <div className="w-full">loading...</div>
+          ) : (
+            <div
+              id="player-cards-container"
+              className="flex flex-row items-center justify-center w-full  m-2 pt-4 sm:px-0">
+              <div id="waiting-cards" className="flex flex-row gap-2 items-center justify-center">
+                {players &&
+                  gamePhase === GamePhase.WaitingForPlayers &&
+                  players.map((p, i) => (
+                    <div>
+                      <ActivePlayerCard player={p} key={i} index={i} />
+                    </div>
+                  ))}
+                {Array(4 - (players ? players.length : 0))
+                  .fill(null)
+                  .map((_, i) => (
+                    <WaitingPlayerCard key={i} />
+                  ))}
+                {players &&
+                  gamePhase === GamePhase.AwaitPlayerActions &&
+                  players.map((p, i) => (
+                    <ClickablePlayerCard
+                      gamePhase={gamePhase}
+                      index={i}
+                      player={p}
+                      key={i}
+                      onClick={async () => await doAction(i)}
+                    />
+                  ))}
+                {players &&
+                  gamePhase === GamePhase.Voting &&
+                  players.map((p, i) => (
+                    <ClickablePlayerCard
+                      index={i}
+                      gamePhase={gamePhase}
+                      player={p}
+                      key={i}
+                      onClick={async () => await votePlayer(i, embeddedWallet, gameContract)}
+                    />
+                  ))}
+              </div>
+            </div>
+          )}
+          {dialog && <div>{dialog}</div>}
+          {/* {loading && <div>{loading}</div>} */}
+          {gamePhase !== GamePhase.WaitingForPlayers &&
+            gamePhase !== GamePhase.GameComplete &&
+            playerRole === PlayerRole.Unknown && (
+              <Button
+                className="mt-4"
+                disabled={loadingButtons}
+                onClick={async () => {
+                  setLoadingButtons(true);
+                  const role = await viewRole(embeddedWallet, gameContract);
+                  if (role === 4) {
+                    setPlayerRole(PlayerRole.Citizen);
+                  } else if (role === 1) {
+                    setPlayerRole(PlayerRole.Thief);
+                  } else if (role === 2) {
+                    setPlayerRole(PlayerRole.Detective);
+                  } else if (role === 3) {
+                    setPlayerRole(PlayerRole.Doctor);
+                  }
+                  setLoadingButtons(false);
+                }}>
+                View Role
+              </Button>
+            )}
+          {gamePhase === GamePhase.RoundComplete && (
+            <div>
+              <Typography.TypographyH3>{resultsText}</Typography.TypographyH3>
+              <Button className="mt-4">Play Again</Button>
+            </div>
+          )}
+          {playerIsJoined && playerId && <SidePanel roomId={roomId} player_id={playerId} hasJoined={playerIsJoined} />}
+        </ErrorBoundary>
       </div>
     </>
   );
