@@ -11,8 +11,7 @@ import { Button } from "./components/ui/button";
 import { usePrivy } from "@privy-io/react-auth";
 import Login from "./screens/login";
 import { SocketProvider } from "./context/SocketContext";
-import { ChatProvider } from './context/ChatContext';
-
+import { ChatProvider } from "./context/ChatContext";
 
 function App() {
   const { login, authenticated, ready } = usePrivy();
@@ -28,16 +27,16 @@ function App() {
 
   // if (!isInitialized) return null;
 
-  if (!ready) return <p>loading...</p>;
+  // if (!ready) return <p>loading...</p>;
 
   return (
     <ChatProvider>
-    <SocketProvider>
-      <main>
-        {!authenticated && <Login />}
-        {authenticated && <Authenticated />}
-      </main>
-    </SocketProvider>
+      <SocketProvider>
+        <main>
+          {!authenticated && <Login />}
+          {authenticated && <Authenticated />}
+        </main>
+      </SocketProvider>
     </ChatProvider>
   );
 }

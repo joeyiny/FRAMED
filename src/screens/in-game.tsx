@@ -111,29 +111,6 @@ const InGameScreen = ({
   // }, [user, players]);
 
   // useEffect(() => {
-  //   const provideInitialFunds = async () => {
-  //     const balance = await (await embeddedWallet.getEthersProvider()).getBalance(embeddedWallet.address);
-  //     if (balance.gte("200000000000000000")) {
-  //       setHasFunds(true);
-  //     } else {
-  //       const result = await fetchFundsForNewUser(embeddedWallet.getEthersProvider(), embeddedWallet.address);
-  //       // if(await )
-  //       if (result.status === "success") {
-  //         setHasFunds(true);
-  //       } else if (result.status === "error") {
-  //         console.error("Error fetching funds:", result.message);
-  //       } else {
-  //         console.log(
-  //           result.status === "already_funded" ? "User is already funded" : "Unexpected status:",
-  //           result.status
-  //         );
-  //       }
-  //     }
-  //   };
-  //   provideInitialFunds().catch((error) => console.error("Unexpected error:", error));
-  // }, [embeddedWallet]);
-
-  // useEffect(() => {
   //   const name = ensureDisplayName();
   //   setDisplayName(name);
   // }, []);
@@ -164,6 +141,35 @@ const InGameScreen = ({
           </p>
           <Button onClick={() => setGameContract(null)}>Exit room</Button>
         </div>
+
+        {gamePhase === GamePhase.WaitingForPlayers && (
+          <>
+            {players && players.length >= 4 ? (
+              <Button
+                onClick={async () => {
+                  initializeGame(embeddedWallet, gameContract);
+                }}
+                size="lg"
+                className="mt-8">
+                Begin Game
+              </Button>
+            ) : playerIsJoined ? (
+              <InviteFriends roomId={data.game.roomId} />
+            ) : (
+              <>
+                <Button
+                  onClick={async () => {
+                    await joinGame(embeddedWallet, gameContract);
+                  }}
+                  // disabled={!hasFunds}
+                  size="lg"
+                  className="mt-8">
+                  Join Game
+                </Button>
+              </>
+            )}
+          </>
+        )}
 
         <div className="my-4 sm:my-16">
           {!loading ? (
@@ -295,34 +301,7 @@ const InGameScreen = ({
         {dialog && <div>{dialog}</div>}
 
         {/* {loading && <div>{loading}</div>} */}
-        {gamePhase === GamePhase.WaitingForPlayers && (
-          <>
-            {players && players.length >= 4 ? (
-              <Button
-                onClick={async () => {
-                  initializeGame(embeddedWallet, gameContract);
-                }}
-                size="lg"
-                className="mt-8">
-                Begin Game
-              </Button>
-            ) : playerIsJoined ? (
-              <InviteFriends roomId={data.game.roomId} />
-            ) : (
-              <>
-                <Button
-                  onClick={async () => {
-                    await joinGame(embeddedWallet, gameContract);
-                  }}
-                  // disabled={!hasFunds}
-                  size="lg"
-                  className="mt-8">
-                  Join Game
-                </Button>
-              </>
-            )}
-          </>
-        )}
+
         {gamePhase !== GamePhase.WaitingForPlayers &&
           gamePhase !== GamePhase.GameComplete &&
           playerRole === PlayerRole.Unknown && (

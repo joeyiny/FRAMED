@@ -10,6 +10,7 @@ import { useWallets } from "@privy-io/react-auth";
 import { parseEther } from "ethers";
 import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 import BottomBar from "@/components/bottom-bar";
+import { Spinner } from "@/components/spinner";
 // import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 
 export const FACTORY_ADDRESS = "0x85F136F800130aDf5f58E15D76f671F588c623B2";
@@ -50,11 +51,15 @@ const Authenticated = () => {
     provideInitialFunds().catch((error) => console.error("Unexpected error:", error));
   }, [embeddedWallet]);
 
-  if (loading || !data) return <p>loading</p>;
+  // if (loading || !data) return <p>loading</p>;
   return (
     <div>
       <Navbar />
-      {gameContract === null ? (
+      {loading || !data ? (
+        <div className="w-full flex-col flex h-40 items-center justify-center">
+          <Spinner />
+        </div>
+      ) : gameContract === null ? (
         <RoomPicker games={data.games} setGameContract={setGameContract} />
       ) : (
         <InGameScreen gameContract={gameContract} setGameContract={setGameContract} />
