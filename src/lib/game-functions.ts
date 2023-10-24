@@ -244,10 +244,10 @@ export const createGame = async (w: ConnectedWallet) => {
       maxFeePerGas,
     });
     const iface = new Interface(factoryABI);
-    console.log(response);
+
     await p.waitForTransaction(response.hash);
     const receipt = await p.getTransactionReceipt(response.hash);
-    console.log(receipt);
+
     let address; // const data = decodeBytes32String(receipt.logs[0].data);
     // let address;
     // const logToParse = {
