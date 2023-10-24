@@ -21,6 +21,7 @@ const RoomPicker = ({
   const { data, loading } = useQuery(games);
   const [roomIdInput, setRoomIdInput] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [loadingCreatingGame, setLoadingCreatingGame] = useState(false);
 
   const handleJoin = (roomId: string) => {
     // Change this to string to match the input
@@ -87,18 +88,20 @@ const RoomPicker = ({
             type="number"
             min="0"
             placeholder="Enter Room ID"></Input>
-          <Button disabled={loading} onClick={() => handleJoin(roomIdInput)}>
+          <Button disabled={loading || loadingCreatingGame} onClick={() => handleJoin(roomIdInput)}>
             {loading ? "loading..." : "Submit"}
           </Button>
         </div>
         <span>-- or --</span>
         <Button
+          disabled={loadingCreatingGame}
           onClick={async () => {
+            setLoadingCreatingGame(true);
             const address = await createGame(embeddedWallet);
-
+            setLoadingCreatingGame(false);
             setGameContract(address);
           }}>
-          Create game
+          {loadingCreatingGame ? "Creating game..." : "Create game"}
         </Button>
       </div>
     </div>
