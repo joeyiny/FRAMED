@@ -80,7 +80,9 @@ const Chat: React.FC<ChatProps> = ({ roomId, player_id, hasJoined }) => {
 
   return (
     <div className="chat flex flex-col p-5 overflow-y-auto max-h-screen">
-      <p className="font-bold bg-red-200 mb-4">Room id: {roomId}</p>
+      <p className="font-bold bg-red-200 mb-4">
+        For best experience, we suggest players hop on a voice call with Discord/etc. rather than using Chat.
+      </p>
       <div ref={chatBoxRef} className="messages flex-grow overflow-y-auto flex flex-col items-start space-y-2">
         {messages.map(
           (message, index) =>
