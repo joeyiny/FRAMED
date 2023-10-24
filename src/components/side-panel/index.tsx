@@ -11,13 +11,13 @@ const SidePanel: React.FC<{ roomId: string | null; player_id: string | null; has
   const { chatsOpenState, toggleChat } = React.useContext(ChatContext);
   const isChatOpen = chatsOpenState[roomId || ""];
 
-  const desktopWidth = isChatOpen ? "sm:w-1/3" : "lg:w-20";
+  const desktopWidth = isChatOpen ? "sm:w-1/3 lg:w-100" : "sm:w-10";
   const desktopTranslateX = isChatOpen ? "sm:translate-x-0" : "sm:translate-x-[calc(100%-40px)]";
 
   return (
     <div
-      className={`absolute bottom-10 right-0 sm:top-11 w-full sm:w-20 ${desktopWidth} h-[45%] sm:h-auto bg-white text-black rounded-t-lg sm:rounded-lg shadow-xl flex flex-col justify-between transform ${
-        isChatOpen ? "translate-y-0" : "bottom-16 sm:bottom-10 h-8 translate-y-[calc(90%-14px)]"
+      className={`absolute bottom-10 right-0 sm:top-11 w-full  ${desktopWidth}  sm:h-auto bg-white text-black rounded-t-lg sm:rounded-lg shadow-xl flex flex-col justify-between transform ${
+        isChatOpen ? "translate-y-0 h-[45%]" : "bottom-16 h-4 "
       } ${desktopTranslateX} sm:translate-y-0 transition-transform ease-in-out duration-300`}>
       <div className="bg-gray-900 text-white py-2 px-4 rounded-t-lg sm:rounded-t-none sm:rounded-l-lg flex justify-between items-center">
         <div className="flex items-center cursor-pointer" onClick={() => toggleChat(roomId ? roomId : "999")}>

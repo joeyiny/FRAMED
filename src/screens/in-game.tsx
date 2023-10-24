@@ -73,7 +73,7 @@ const InGameScreen = ({
 
   const isChatOpen = chatsOpenState[roomId];
   const gameStyle = isChatOpen
-    ? "w-11/12 h-11/12 sm:w-full sm:h-auto sm:w-2/3 transition-all duration-300"
+    ? "w-11/12 h-11/12  sm:h-auto sm:w-2/3 transition-all duration-300"
     : "w-11/12 h-11/12 sm:w-full sm:h-auto  mt-20 sm:mt-0 transition-all duration-300";
 
   let players: Player[] = [];
