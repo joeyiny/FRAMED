@@ -158,7 +158,13 @@ const InGameScreen = ({
     <>
       <div className={gameStyle}>
         {/* <p>{user.wallet.address}</p> */}
-        <Button onClick={() => setGameContract(null)}>Exit room</Button>
+        <div className="w-full  flex flex-row justify-center items-center gap-3">
+          <p className="text-lg font-semibold text-zinc-800">
+            Room id: <span className="font-bold">{roomId}</span>
+          </p>
+          <Button onClick={() => setGameContract(null)}>Exit room</Button>
+        </div>
+
         <div className="my-4 sm:my-16">
           {!loading ? (
             gamePhase === GamePhase.WaitingForPlayers ? (
