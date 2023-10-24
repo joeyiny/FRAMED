@@ -3,6 +3,7 @@ import "./App.css";
 import Authenticated from "./screens/authenticated";
 import PendingGame from "./screens/loading";
 import { ErrorBoundary } from "react-error-boundary";
+import mixpanel from "mixpanel-browser";
 
 // import InGameScreen from "./screens/in-game";
 import { useState, useEffect } from "react";
@@ -14,8 +15,16 @@ import Login from "./screens/login";
 import { SocketProvider } from "./context/SocketContext";
 import { ChatProvider } from "./context/ChatContext";
 
+mixpanel.init(import.meta.env.VITE_REACT_APP_MIXPANEL_TOKEN as string, {
+  debug: true,
+  track_pageview: true,
+  persistence: "localStorage",
+  ignore_dnt: true,
+});
+
 function App() {
   const { login, authenticated, ready } = usePrivy();
+
   // const [isInitialized, setIsInitialized] = useState(false);
 
   // useEffect(() => {
