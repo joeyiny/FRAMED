@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import * as Typography from "@/components/ui/typography";
 import React, { useState, useEffect, SetStateAction, Dispatch } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import mixpanel from "mixpanel-browser";
 
 import {
   initializeGame,
@@ -147,7 +148,13 @@ const InGameScreen = ({
             <p className="text-lg font-semibold text-zinc-800">
               Room id: <span className="font-bold">{roomId}</span>
             </p>
-            <Button disabled={loadingButtons} onClick={() => setGameContract(null)}>
+            <Button
+              disabled={loadingButtons}
+              onClick={() => {
+                setGameContract(null);
+
+                mixpanel.track("Exit Room");
+              }}>
               Exit room
             </Button>
           </div>
@@ -157,6 +164,7 @@ const InGameScreen = ({
                 <Button
                   onClick={async () => {
                     initializeGame(embeddedWallet, gameContract);
+                    mixpanel.track("Begin Game Button Press");
                   }}
                   size="lg"
                   className="mt-8">
@@ -171,6 +179,8 @@ const InGameScreen = ({
                       setLoadingButtons(true);
                       await joinGame(embeddedWallet, gameContract);
                       setLoadingButtons(false);
+
+                      mixpanel.track("Join Game Button Press");
                     }}
                     disabled={loadingButtons}
                     // disabled={!hasFunds}
@@ -250,6 +260,8 @@ const InGameScreen = ({
                     default:
                       setInvestigationResults("error");
                   }
+
+                  mixpanel.track("Check Investigation Results");
                 }}>
                 🔍 Check investigation results
               </Button>
@@ -329,6 +341,7 @@ const InGameScreen = ({
                   } else if (role === 3) {
                     setPlayerRole(PlayerRole.Doctor);
                   }
+                  mixpanel.track("View Role");
                   setLoadingButtons(false);
                 }}>
                 View Role

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/ui/typography";
 import { usePrivy } from "@privy-io/react-auth";
 
+import mixpanel from "../lib/mixpanel";
 const Login = () => {
   const { login } = usePrivy();
   return (
@@ -14,7 +15,12 @@ const Login = () => {
         <TypographyH4 className="text-slate-700 text-base">in it for the art 🫡</TypographyH4>
 
         {/* <TypographyH4 className="text-slate-700 text-base">Groundbreaking encrypted blockchain game</TypographyH4> */}
-        <Button size={"lg"} onClick={login}>
+        <Button
+          size={"lg"}
+          onClick={() => {
+            login();
+            mixpanel.track("Log In");
+          }}>
           PLAY!
         </Button>
       </div>
