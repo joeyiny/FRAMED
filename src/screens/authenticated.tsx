@@ -15,7 +15,7 @@ import { ErrorBoundary } from "react-error-boundary";
 
 // import { fetchFundsForNewUser } from "@/lib/faucet-functions";
 
-export const FACTORY_ADDRESS = "0x85F136F800130aDf5f58E15D76f671F588c623B2";
+export const FACTORY_ADDRESS = "0x577c8E0565CeaeCfC6903B8eeBa90c57b6B79cA3";
 
 const Authenticated = () => {
   // const [clientState, setClientState] = useState<ClientState>(ClientState.Tutorial);

@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { TypographyH4 } from "@/components/ui/typography";
 import { usePrivy } from "@privy-io/react-auth";
 
-import mixpanel from "../lib/mixpanel";
 const Login = () => {
   const { login } = usePrivy();
   return (
@@ -19,7 +18,6 @@ const Login = () => {
           size={"lg"}
           onClick={() => {
             login();
-            mixpanel.track("Log In");
           }}>
           PLAY!
         </Button>

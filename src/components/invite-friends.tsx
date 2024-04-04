@@ -1,11 +1,9 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import mixpanel from "@/lib/mixpanel";
 const InviteFriends = ({ roomId }) => {
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
-    mixpanel.track("Invite Friends Button Press");
     const inviteMessage = `A theft has occurred, and someone's being FRAMED! Join me in room ${roomId} \nhttps://play.framed.gg`;
     navigator.clipboard.writeText(inviteMessage);
     setCopied(true);

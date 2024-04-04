@@ -650,7 +650,7 @@ export async function getMeshOptions(): Promise<GetMeshOptions> {
   const additionalTypeDefs = [] as any[];
   const uniswapv2Handler = new GraphqlHandler({
     name: "uniswapv2",
-    config: { endpoint: "https://subgraph.inco.network/subgraphs/name/framed/subgraphtest" },
+    config: { endpoint: "https://subgraph.testnet.inco.org/subgraphs/name/framed-subgraph" },
     baseDir,
     cache,
     pubsub,

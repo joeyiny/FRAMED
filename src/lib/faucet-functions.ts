@@ -1,5 +1,5 @@
 export const fetchFundsForNewUser = async (ethereumProvider, playerAddress) => {
-  const response = await fetch("https://faucet.inco.network/api/get-faucet", {
+  const response = await fetch("https://faucetdev.testnet.inco.org/api/get-faucet", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

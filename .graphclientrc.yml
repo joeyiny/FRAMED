@@ -2,7 +2,7 @@ sources:
   - name: uniswapv2
     handler:
       graphql:
-        endpoint: https://subgraph.inco.network/subgraphs/name/framed/subgraphtest
+        endpoint: https://subgraph.testnet.inco.org/subgraphs/name/framed-subgraph
 plugins:
   - pollingLive:
       defaultInterval: 1000

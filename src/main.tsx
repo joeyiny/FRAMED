@@ -17,7 +17,7 @@ const client = new ApolloClient({
 
 const incoChain: Chain = {
   id: 9090,
-  name: "Inco",
+  name: "Inco Gentry Testnet",
   network: "inco",
   nativeCurrency: {
     name: "Inco",
@@ -26,10 +26,10 @@ const incoChain: Chain = {
   },
   rpcUrls: {
     public: {
-      http: ["https://evm-rpc.inco.network/"],
+      http: ["https://testnet.inco.org/"],
     },
     default: {
-      http: ["https://evm-rpc.inco.network/"],
+      http: ["https://testnet.inco.org/"],
     },
   },
 };

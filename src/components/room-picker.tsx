@@ -6,7 +6,6 @@ import { Input } from "./ui/input";
 import { TypographyH2 } from "./ui/typography";
 import { useQuery } from "@apollo/client";
 import { games } from "@/query";
-import mixpanel from "@/lib/mixpanel";
 import { ErrorBoundary } from "react-error-boundary";
 
 const RoomPicker = ({
@@ -94,7 +93,6 @@ const RoomPicker = ({
             <Button
               disabled={loading || loadingCreatingGame}
               onClick={() => {
-                mixpanel.track("Join Game Button Press");
                 handleJoin(roomIdInput);
               }}>
               {loading ? "loading..." : "Submit"}
@@ -104,7 +102,6 @@ const RoomPicker = ({
           <Button
             disabled={loadingCreatingGame}
             onClick={async () => {
-              mixpanel.track("Create Game Button Press");
               setLoadingCreatingGame(true);
               const address = await createGame(embeddedWallet);
               setLoadingCreatingGame(false);
